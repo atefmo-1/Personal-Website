@@ -2,6 +2,7 @@ import { Reveal } from "./Reveal";
 import { ExperienceRows } from "./RoleRows";
 import { Section } from "./Section";
 import { Skills } from "./Skills";
+import { Certificates } from "./Certificates";
 import { workBio } from "@/lib/experience";
 
 export function Experience() {
@@ -19,6 +20,7 @@ export function Experience() {
 
       <ExperienceRows heading="h2" />
       <Skills />
+      <Certificates />
     </Section>
   );
 }
