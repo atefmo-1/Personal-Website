@@ -105,7 +105,7 @@ export const about = {
     { name: "Soccer", icon: IconBallFootball, motion: "roll" },
     { name: "Rock climbing", icon: IconMountain, motion: "climb" },
     { name: "Running", icon: IconRun, motion: "jog" },
-    { name: "Gym", icon: IconBarbell, motion: "lift", link: { label: "follow me on Hevy @atefmo", url: "https://hevy.com/user/atefmo" } },
+    { name: "Gym", icon: IconBarbell, motion: "lift", link: { label: "find me on Hevy @atefmo", url: "https://hevy.com/user/atefmo" } },
     { name: "Squash", icon: IconBallTennis, motion: "swing" },
     { name: "Meal-prepping", icon: IconToolsKitchen2, motion: "stir" },
     { name: "Documentaries", icon: IconMovie, motion: "flicker" },
