@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+.DS_Store
+.env*.local
+
+# Personal documents that live in this folder but must never be pushed
+/Transcript_*.pdf
+/Atef_Mohamed_Resume_*.pdf
+/Personal Website*.md
+.env*
+!.env.example

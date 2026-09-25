@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens as RGB channels, so Tailwind can apply opacity (e.g. bg-fg/10).
+   Light is the base; dark applies when the OS prefers it (unless the visitor picked light),
+   or when the visitor picked dark with the toggle. */
+:root {
+  color-scheme: light;
+  --bg: 246 245 242;
+  --surface: 255 255 255;
+  --fg: 20 20 20;
+  --muted: 104 104 110;
+  --line: 222 220 214;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: 11 11 12;
+    --surface: 20 20 22;
+    --fg: 237 235 231;
+    --muted: 142 142 147;
+    --line: 38 38 41;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 11 11 12;
+  --surface: 20 20 22;
+  --fg: 237 235 231;
+  --muted: 142 142 147;
+  --line: 38 38 41;
+}
+
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgb(var(--fg));
+  color: rgb(var(--bg));
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--fg));
+  outline-offset: 3px;
+}
+
+@layer components {
+  .label {
+    @apply font-mono text-[11px] uppercase tracking-label text-muted;
+  }
+  .container-x {
+    @apply mx-auto w-full max-w-[1280px] px-4 sm:px-8 lg:px-12;
+  }
+  .grid-12 {
+    @apply grid grid-cols-12 gap-x-4 sm:gap-x-6;
+  }
+}
+
+@keyframes march {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.march {
+  animation: march 1.2s linear infinite;
+}
+
+/* Hero entrance. Only runs when the reader hasn't asked for reduced motion; otherwise the
+   elements simply render in place. No JS involved, so there's no trigger to miss. */
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes enter-letter {
+  from {
+    transform: translateY(105%);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .enter-fade {
+    animation: enter-fade 0.8s ease both;
+  }
+  .enter-rise {
+    animation: enter-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .enter-letter {
+    animation: enter-letter 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Logos in brand colors. Each .brand element sets --brand-light / --brand-dark inline
+   (lib/brandColor.ts falls back to currentColor when a brand color would be too faint). */
+.brand {
+  color: var(--brand-light, currentColor);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand {
+    color: var(--brand-dark, currentColor);
+  }
+}
+:root[data-theme="dark"] .brand {
+  color: var(--brand-dark, currentColor);
+}
+
+/* Hobby pills: a small motion per hobby, played on hover. */
+@keyframes hobby-bounce {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  30% { transform: translateY(-5px) scale(0.95, 1.05); }
+  55% { transform: translateY(0) scale(1.1, 0.88); }
+  75% { transform: translateY(-2px) scale(1, 1); }
+}
+@keyframes hobby-roll {
+  to { transform: rotate(360deg); }
+}
+@keyframes hobby-climb {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-2px) rotate(-4deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+  75% { transform: translateY(-2px) rotate(-2deg); }
+}
+@keyframes hobby-jog {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(4px, 0); }
+  75% { transform: translate(2px, -2px); }
+}
+@keyframes hobby-lift {
+  0%, 100% { transform: translateY(0); }
+  40%, 60% { transform: translateY(-5px); }
+}
+@keyframes hobby-swing {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-25deg); }
+  65% { transform: rotate(20deg); }
+}
+@keyframes hobby-stir {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(12deg); }
+  75% { transform: rotate(-12deg); }
+}
+@keyframes hobby-flicker {
+  0%, 100% { opacity: 1; }
+  20%, 60% { opacity: 0.25; }
+  40%, 80% { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .hobby-bounce { animation: hobby-bounce 0.7s ease-out 2; }
+  .group:hover .hobby-roll { animation: hobby-roll 0.9s ease-in-out; }
+  .group:hover .hobby-climb { animation: hobby-climb 0.8s ease-in-out 2; }
+  .group:hover .hobby-jog { animation: hobby-jog 0.5s linear 3; }
+  .group:hover .hobby-lift { animation: hobby-lift 0.9s ease-in-out 2; }
+  .group:hover .hobby-swing { animation: hobby-swing 0.6s ease-in-out 2; }
+  .group:hover .hobby-stir { animation: hobby-stir 0.4s ease-in-out 3; }
+  .group:hover .hobby-flicker { animation: hobby-flicker 0.8s steps(1) 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .march {
+    animation: none;
+  }
+}
