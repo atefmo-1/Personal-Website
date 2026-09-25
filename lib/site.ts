@@ -131,6 +131,14 @@ export const about = {
     { name: "Morley Kert", handle: "@MorleyKert", url: "https://www.youtube.com/@MorleyKert", avatar: "https://yt3.googleusercontent.com/rUcPlBi8IaRx4R8THfYMi-67x-tZ50Fiqt_ybTXwVoQtKepxgsD94XfF4zkfImU0yeailBF7=s176-c-k-c0x00ffffff-no-rj" },
     { name: "Good Work", handle: "@GoodWorkMB", url: "https://www.youtube.com/@GoodWorkMB", avatar: "https://yt3.googleusercontent.com/Uj7Ky8T7owxiMSQCDLeEaeD-x0rJYkt7e4iqIo8Q8SV3d0yB1UWxo68O4N7Hstmjh-j1J2X3=s176-c-k-c0x00ffffff-no-rj" },
   ],
+  // From the Outward Bound course evaluation (WOTE-341, 7/31 to 8/14/2023).
+  highlight: {
+    label: "Best two weeks outdoors",
+    title: "Outward Bound, Oregon",
+    url: "https://www.outwardbound.org/",
+    dates: "Aug 2023",
+    text: "15 days with Northwest Outward Bound School: a week of rock climbing at Smith Rock, then 18 miles of alpine backpacking around Broken Top and a roped climb to its summit. Not bad for someone who'd been scared of heights for 15 years.",
+  },
   currentlyTitle: "Where you'll find me",
   currently: [
     "Carolina Analytics and Data Science",

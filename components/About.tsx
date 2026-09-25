@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { IconBrandYoutube, IconMapPin } from "@tabler/icons-react";
+import { IconBrandYoutube, IconCompass, IconMapPin } from "@tabler/icons-react";
 import { Reveal } from "./Reveal";
 import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
@@ -71,6 +71,24 @@ export function About() {
             </li>
           ))}
         </ul>
+
+        {/* One standout trip */}
+        <h3 className="label mt-8">{about.highlight.label}</h3>
+        <Reveal className="mt-3 max-w-3xl rounded-xl border border-line p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <a
+              href={about.highlight.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
+            >
+              <IconCompass size={18} stroke={1.6} className="self-center" aria-hidden />
+              {about.highlight.title} <span aria-hidden className="text-muted">↗</span>
+            </a>
+            <span className="font-mono text-xs uppercase tracking-label text-muted">{about.highlight.dates}</span>
+          </div>
+          <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
+        </Reveal>
       </section>
 
       {/* Orgs */}
