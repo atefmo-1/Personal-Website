@@ -1,4 +1,4 @@
-import { IconBrandGithub, IconBrandLinkedin, IconFileText } from "@tabler/icons-react";
+import { IconBrandLinkedin, IconFileText } from "@tabler/icons-react";
 import { ContactForm } from "./ContactForm";
 import { CopyEmail } from "./CopyEmail";
 import { Reveal } from "./Reveal";
@@ -7,7 +7,6 @@ import { site } from "@/lib/site";
 
 const links = [
   { label: "LinkedIn", href: site.linkedin, icon: IconBrandLinkedin, external: true },
-  { label: "GitHub", href: site.github, icon: IconBrandGithub, external: true },
   { label: "Resume", href: site.resume, icon: IconFileText, external: true },
 ];
 

@@ -24,6 +24,7 @@ export const site = {
   email: "mohamedatefali18@gmail.com",
   schoolEmail: "atefmo@ad.unc.edu",
   linkedin: "https://www.linkedin.com/in/mohamedatefali/",
+  // Not linked anywhere yet; add it back to Contact.tsx and Footer.tsx once there are public repos.
   github: "https://github.com/atefmo-1",
   resume: "/Atef_Mohamed_Resume.pdf",
   portrait: "/portrait.webp",
