@@ -1,8 +1,5 @@
 import { site } from "@/lib/site";
 
-// Build time, so the stamp moves every time the site is redeployed.
-const lastUpdated = new Date().toISOString().slice(0, 10).replaceAll("-", ".");
-
 export function Footer() {
   return (
     <footer className="border-t border-line">
@@ -21,7 +18,6 @@ export function Footer() {
             Resume
           </a>
         </div>
-        <p>Updated {lastUpdated}</p>
       </div>
     </footer>
   );
