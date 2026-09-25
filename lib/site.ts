@@ -137,7 +137,8 @@ export const about = {
     title: "Outward Bound, Oregon",
     url: "https://www.outwardbound.org/",
     dates: "Aug 2023",
-    text: "15 days with Northwest Outward Bound School: a week of rock climbing at Smith Rock, then 18 miles of alpine backpacking around Broken Top and a roped climb to its summit. Not bad for someone who'd been scared of heights for 15 years.",
+    text: "15 days with Northwest Outward Bound School: a week of rock climbing at Smith Rock, then alpine backpacking around Broken Top and a roped climb to its summit.",
+    image: { src: "/about/smith-rock.webp", alt: "Atef rock climbing at Smith Rock, Oregon", width: 900, height: 675 },
   },
   currentlyTitle: "Where you'll find me",
   currently: [
