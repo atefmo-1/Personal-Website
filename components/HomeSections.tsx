@@ -13,7 +13,7 @@ function More({ href, children }: { href: string; children: React.ReactNode }) {
   );
 }
 
-// Under the hero on the home page: the short story, then experience and education.
+// Under the hero on the home page: the short story, then education and experience.
 export function HomeSections() {
   return (
     <div className="container-x space-y-16 pb-24 sm:space-y-20 sm:pb-32">
@@ -29,16 +29,16 @@ export function HomeSections() {
       </Reveal>
 
       <section>
+        <h2 className={`${h2} mb-5`}>Education</h2>
+        <EducationRows />
+      </section>
+
+      <section>
         <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
           <h2 className={h2}>Experience</h2>
           <More href="/experience">Skills and more on work</More>
         </div>
         <ExperienceRows />
-      </section>
-
-      <section>
-        <h2 className={`${h2} mb-5`}>Education</h2>
-        <EducationRows />
       </section>
     </div>
   );
