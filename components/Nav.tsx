@@ -23,8 +23,7 @@ export function Nav() {
               // Sub-pages (like a project page) keep their section highlighted.
               const active = pathname === p.href || (p.href !== "/" && pathname.startsWith(`${p.href}/`));
               return (
-                // On phones the brand link doubles as Home, to fit the row.
-                <li key={p.href} className={p.href === "/" ? "hidden sm:block" : undefined}>
+                <li key={p.href}>
                   <Link
                     href={p.href}
                     aria-current={active ? "page" : undefined}
