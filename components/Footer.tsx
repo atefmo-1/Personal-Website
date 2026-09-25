@@ -20,7 +20,7 @@ export function Footer() {
           <a className="transition-colors hover:text-fg" href={`mailto:${site.email}`}>
             Email
           </a>
-          <a className="transition-colors hover:text-fg" href={site.resume} download>
+          <a className="transition-colors hover:text-fg" href={site.resume} target="_blank" rel="noopener noreferrer">
             Resume
           </a>
         </div>

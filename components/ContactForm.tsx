@@ -119,7 +119,7 @@ export function ContactForm() {
             aria-invalid={!!errors.name}
             aria-describedby={describedBy("name")}
             className={`${field} ${border("name")}`}
-            placeholder="First and last name"
+            placeholder="Atef"
           />
           {errorText("name")}
         </div>

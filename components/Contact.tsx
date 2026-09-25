@@ -1,4 +1,4 @@
-import { IconBrandGithub, IconBrandLinkedin, IconFileDownload } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandLinkedin, IconFileText } from "@tabler/icons-react";
 import { ContactForm } from "./ContactForm";
 import { CopyEmail } from "./CopyEmail";
 import { Reveal } from "./Reveal";
@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 const links = [
   { label: "LinkedIn", href: site.linkedin, icon: IconBrandLinkedin, external: true },
   { label: "GitHub", href: site.github, icon: IconBrandGithub, external: true },
-  { label: "Resume", href: site.resume, icon: IconFileDownload, download: true },
+  { label: "Resume", href: site.resume, icon: IconFileText, external: true },
 ];
 
 export function Contact() {
@@ -35,7 +35,6 @@ export function Contact() {
               <li key={l.label}>
                 <a
                   href={l.href}
-                  download={l.download}
                   {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-[15px] transition-colors hover:border-fg"
                 >
@@ -45,8 +44,6 @@ export function Contact() {
               </li>
             ))}
           </ul>
-
-          <p className="mt-8 text-sm text-muted">Based in {site.location}. Graduating May 2027.</p>
         </Reveal>
 
         {/* The form, in a card */}

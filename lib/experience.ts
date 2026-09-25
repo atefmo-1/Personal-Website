@@ -25,11 +25,20 @@ export const experience: Experience[] = [
   {
     company: "Ethos",
     url: "https://www.ethossystems.com/",
-    what: "AI-powered workforce readiness software",
+    what: "Readiness analytics for the U.S. military, pharma, and pro sports",
     role: "Product & Analytics Intern",
     focus: "Analytics",
     dates: "Summer 2025",
     location: "SF Bay Area, CA",
+  },
+  {
+    company: "Center on Technology Policy",
+    url: "https://techpolicy.unc.edu/",
+    what: "UNC research center shaping public policy for a better internet",
+    role: "Research Assistant",
+    focus: "Design & Data Visualization Lead",
+    dates: "Jul–Oct 2024",
+    location: "Chapel Hill, NC",
   },
   {
     company: "MNIPL",
@@ -43,5 +52,5 @@ export const experience: Experience[] = [
 
 // The work-focused bio at the top of the Work & Experience page.
 export const workBio = [
-  "Product is my home base, but I like working close to the data and the code. Three summers, three very different teams: health tech 🩺, workforce software 💼, and a climate nonprofit 🌱",
+  "Product is my home base, but I like working close to the data and the code. So far that's meant health tech 🩺, readiness analytics 📊, tech policy research 🏛️, and a climate nonprofit 🌱",
 ];

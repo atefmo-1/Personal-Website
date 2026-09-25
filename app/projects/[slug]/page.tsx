@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudy } from "@/components/CaseStudy";
+import { showProjects } from "@/lib/pages";
 import { projects } from "@/lib/projects";
 
 // One page per project that has a case study; everything else 404s.
@@ -26,6 +27,6 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
   const project = withCaseStudy.find((p) => p.slug === params.slug);
-  if (!project) notFound();
+  if (!showProjects || !project) notFound();
   return <CaseStudy project={project} />;
 }

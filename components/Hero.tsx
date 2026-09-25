@@ -83,8 +83,8 @@ export function Hero() {
               <RotatingWord {...site.positioning} />
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={site.resume} download>
-                Grab my resume <span aria-hidden>↓</span>
+              <Button href={site.resume} external>
+                Grab my resume <span aria-hidden>↗</span>
               </Button>
               <Button href="/contact" variant="ghost">
                 Say hello <span aria-hidden>→</span>
