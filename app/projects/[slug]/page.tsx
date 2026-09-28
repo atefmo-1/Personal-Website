@@ -19,7 +19,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   const project = withCaseStudy.find((p) => p.slug === params.slug);
   if (!project) return {};
   return {
-    title: project.name,
+    title: project.caseStudy.metaTitle ?? project.name,
     description: project.caseStudy.oneLiner,
     openGraph: { images: [project.caseStudy.hero.src] },
   };

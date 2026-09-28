@@ -48,6 +48,8 @@ export type Feature = {
 };
 
 export type CaseStudy = {
+  // Browser tab title; the layout adds " | Atef Mohamed".
+  metaTitle?: string;
   oneLiner: string;
   metaLine: string[];
   cta: { label: string; url: string };
@@ -147,13 +149,14 @@ export const projects: Project[] = [
     name: "Reloco",
     status: "Live",
     blurb:
-      "A step-by-step roadmap for F-1 students at UNC, built first for freshmen landing in the US for the first time. I researched, designed, built and shipped it on my own.",
+      "A mobile app that walks F-1 students at UNC through every visa, tax and campus task, in order and with the official source. Built first for freshmen. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
     image: "/projects/reloco/card-painting.webp",
     caseStudy: {
+      metaTitle: "Reloco: an F-1 co-pilot app for international students",
       oneLiner:
-        "A step-by-step roadmap for F-1 students at UNC, built first for freshmen landing in the US for the first time.",
+        "A mobile app that knows every visa, tax and campus task an international student at UNC will face, puts them in order around their dates, and walks them through each one with the official source. Built first for freshmen landing in the US for the first time.",
       metaLine: [
         "Solo project",
         "Research, product, design, engineering",
@@ -167,7 +170,7 @@ export const projects: Project[] = [
         width: 1680,
         height: 944,
         alt: "Oil painting of UNC's Old Well and campus at golden hour, with a plane crossing the sky",
-        caption: "The F-1 roadmap for UNC students",
+        caption: "Your co-pilot for life on an F-1 visa.",
       },
       numbers: [
         { value: "44", label: "sourced tasks" },
@@ -182,7 +185,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions build a dated roadmap for the whole degree, one next step at a time, each backed by its official source.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them one at a time, each backed by its official source.",
         },
         {
           label: "Role",
@@ -242,7 +245,7 @@ export const projects: Project[] = [
             quote: "The people before me passed the knowledge to me.",
             who: "Junior from Vietnam",
             today:
-              "About 10 questions build the plan an upperclassman would give you, starting before the flight.",
+              "Reloco gives every student the plan an upperclassman would, starting before the flight.",
           },
           {
             insight: "Deadlines hide years ahead",
@@ -250,7 +253,7 @@ export const projects: Project[] = [
               "You should be meeting with them like eight to twelve months in advance.",
             who: "Junior from London, on CPT approval",
             today:
-              "The roadmap runs by class year through After graduation, and CPT comes back every spring.",
+              "The plan runs by class year through After graduation, and CPT comes back every spring.",
           },
         ],
         personas: [
@@ -286,7 +289,7 @@ export const projects: Project[] = [
               level: 0.45,
             },
             {
-              name: "Roadmap",
+              name: "Plan",
               doing: "Sees tasks by phase and taps Build credit",
               level: 0.56,
             },
@@ -311,7 +314,7 @@ export const projects: Project[] = [
               "Land on Reloco",
               "Sign up with Google",
               "Onboarding",
-              "Roadmap generated",
+              "Plan generated",
               "Open a task",
             ],
             decision: "Has an unfinished prerequisite?",
@@ -352,25 +355,25 @@ export const projects: Project[] = [
             ),
           ],
           what: "About 10 questions: still at home, just arrived or already studying; country; arrival, start and graduation dates; housing; funding; SSN and bank; plans. A boarding pass fills in as you answer.",
-          why: "A freshman two days from landing and a junior planning CPT need different roadmaps. The stage question comes first so nobody sees tasks that don't apply.",
+          why: "A freshman two days from landing and a junior planning CPT need completely different plans. The stage question comes first so nobody sees tasks that don't apply.",
           how: "Dates are validated against realistic ranges per stage. For current students, past first-year tasks are checked off automatically.",
           note: "The last question lists the Pre-flight tasks grouped by chapter, so a freshman who has already booked a flight or signed a lease starts with those checked off.",
         },
         {
           id: "engine",
-          title: "A roadmap engine, not a checklist",
+          title: "A rules engine that knows what applies to you",
           shots: [
             phone(
               "04-onboarding-built-phone",
               900,
               1948,
-              "Ziad's roadmap built: Cleared for takeoff, 35 tasks across 9 areas such as immigration, banking and housing",
+              "Ziad's plan built: Cleared for takeoff, 35 tasks across 9 areas such as immigration, banking and housing",
               "The plan, grouped by area",
             ),
           ],
-          what: "A dated plan grouped by area. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive.",
+          what: "A personal, dated plan grouped by area. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive.",
           why: "A generic checklist buries what matters to you.",
-          how: 'A pure, deterministic function from profile to roadmap. It filters by conditions, schedules from the student\'s dates and orders by dependency. Tests check invariants, like "never opens a task before its prerequisites". Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.',
+          how: 'A pure, deterministic function from profile to plan. It filters by conditions, schedules from the student\'s dates and orders by dependency. Tests check invariants, like "never opens a task before its prerequisites". Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.',
         },
         {
           id: "today",
@@ -414,7 +417,7 @@ export const projects: Project[] = [
               "What to bring, add to calendar, official sources, and Mark complete +80 miles.",
             ),
           ],
-          what: 'Each task breaks into short steps with a tick box. Where a step needs an official page, the link sits right on that step, like "ISSS: Pre-arrival steps" and "SEVIS I-901 fee (FMJfee.com)". Below the steps: Bring (the documents to have in hand, linked to the wallet), Add due date to Google Calendar, the official sources the task is built from, and a "Guidance, not legal advice. Status questions → ISSS" line. A fixed bar holds Mark complete +80 miles and Skip. A task that needs another first shows it at the top, like "Do first: Download your I-94 and check it".',
+          what: "Each task is a few short steps with a tick box, and the official link sits on the step that needs it. Below: what to bring (linked to the wallet), add to calendar, the sources the task is built from, and a fixed Mark complete / Skip bar. A task that depends on another says 'Do first' at the top.",
           why: 'A task like "Pack your entry documents" is really four small actions. Breaking it down makes a stressful job doable in 20 minutes, and putting the source on the step means nobody has to hunt for it.',
           how: "Steps, sources, what to bring, time estimates and miles are typed fields in the task library, so every task renders the same way. Ticked steps are saved per student. Skipping a task also skips the tasks that only exist because of it (the requires cascade), and reopening it brings them back.",
         },
@@ -440,19 +443,12 @@ export const projects: Project[] = [
           ],
           what: 'Two days before landing, Today switches to a landing-day checklist: documents to keep in hand at the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On landing day it asks "Did you make it?" before clearing the travel tasks.',
           why: "The border is the highest-stakes moment of a freshman's first year, and flights move. Reloco asks instead of assuming.",
-          note: 'Answering "Yes" clears the travel-only tasks and switches the roadmap to life on the ground. "On a different day" fixes the date and reschedules everything.',
+          note: 'Answering "Yes" clears the travel-only tasks and switches the app to life on the ground. "On a different day" fixes the date and reschedules everything.',
         },
         {
           id: "sources",
-          title: "Every step sourced",
+          title: "Sourced and current",
           shots: [
-            phone(
-              "09-task-steps-sources-phone",
-              900,
-              1948,
-              "Task page for downloading the I-94: three steps, the first linked to CBP",
-              "Steps with official links",
-            ),
             phone(
               "10-task-rule-30-days-phone",
               900,
@@ -460,10 +456,17 @@ export const projects: Project[] = [
               "Ziad's task Book a flight inside your entry window: you can enter the US no earlier than 30 days before your I-20 start date",
               "The 30-day entry rule, sourced to UNC ISSS",
             ),
+            phone(
+              "35-catch-up-journey-phone",
+              900,
+              1948,
+              "Journey screen with a rules update about the 2026 DHS duration-of-status rule and its court pause, above the Pre-flight chapter",
+              "A rule change, and what still applies",
+            ),
           ],
-          what: "Tickable steps, a time estimate, what to bring, and the exact official page. Example: you can enter the US no earlier than 30 days before your I-20 start date.",
-          why: "Students told me chatbots were often wrong, but the sources they cited were right. Reloco leads with the source.",
-          how: "A typed library of 44 tasks and 34 official sources. Rule changes get a notice, like the 2026 DHS duration-of-status rule and its court pause.",
+          what: "44 tasks built from 34 official pages (UNC ISSS, the IRS, USCIS, CBP, the SSA). Rules that change get a notice in the app, like the 2026 DHS duration-of-status rule and its court pause, which says what still applies.",
+          why: "In compliance, being current is the product. Students told me chatbots were often wrong but their sources were right.",
+          how: "A typed task library, where every task carries its sources, and a rules notice shown on Journey.",
         },
         {
           id: "degree",
@@ -509,12 +512,12 @@ export const projects: Project[] = [
         {
           icon: "wallet",
           title: "Wallet, dates only",
-          text: "Passport, visa, I-20 and I-94 dates plan the roadmap. No copies, no ID numbers.",
+          text: "Passport, visa, I-20 and I-94 dates drive the plan. No copies, no ID numbers.",
         },
         {
           icon: "calendar",
           title: "Calendar sync",
-          text: "One tap for Google, Apple or Outlook. It updates as the roadmap changes.",
+          text: "One tap for Google, Apple or Outlook. It updates as the plan changes.",
         },
         {
           icon: "share",
@@ -529,7 +532,7 @@ export const projects: Project[] = [
         {
           icon: "google",
           title: "Google sign-in",
-          text: "One tap, no password, and the roadmap follows you to any device.",
+          text: "One tap, no password, and your plan follows you to any device.",
         },
         {
           icon: "lock",
@@ -549,7 +552,7 @@ export const projects: Project[] = [
         {
           icon: "reschedule",
           title: "Change a date, everything moves",
-          text: "Editing arrival, start or graduation dates in Profile reschedules the whole roadmap and keeps progress.",
+          text: "Editing arrival, start or graduation dates in Profile reschedules the whole plan and keeps progress.",
         },
       ],
       alsoShots: [
@@ -583,8 +586,8 @@ export const projects: Project[] = [
         },
         {
           decision: "Accounts from day one, with Google sign-in",
-          rejected: "A guest mode that stores the roadmap in one browser",
-          why: "A roadmap is a four-year record. It has to survive a new phone, sync to a calendar and be there at OPT time. One tap with Google, no password to create.",
+          rejected: "A guest mode that stores the plan in one browser",
+          why: "Reloco holds a four-year record. It has to survive a new phone, sync to a calendar and be there at OPT time. One tap with Google, no password to create.",
         },
         {
           decision: "Weekly streaks",
@@ -611,7 +614,7 @@ export const projects: Project[] = [
         "36-sign-in-phone",
         900,
         1948,
-        "Sign-in screen over a painting of the Old Well: Let's build your roadmap, with one Continue with Google button",
+        "Sign-in screen over a painting of the Old Well, with one Continue with Google button",
         "Sign-in: one Google button, no password",
       ),
       story: {
@@ -717,9 +720,9 @@ export const projects: Project[] = [
           },
           {
             metric: "Activation",
-            definition: "Visitors who finish onboarding and get a roadmap",
+            definition: "Visitors who finish onboarding and get a plan",
             why: "Tests whether onboarding is short and clear enough",
-            source: "Roadmaps created vs visits",
+            source: "Plans created vs visits",
           },
           {
             metric: "Sign-in drop-off",
@@ -772,7 +775,7 @@ export const projects: Project[] = [
         },
       ],
       tryIt: {
-        text: "Sign in with Google and build a roadmap as a freshman landing next month. It takes about two minutes.",
+        text: "Sign in with Google and set up Reloco as a freshman landing next month. It takes about two minutes.",
         button: "Open reloco.app",
         url: "https://reloco.app",
       },

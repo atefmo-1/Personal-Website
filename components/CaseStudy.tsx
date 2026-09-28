@@ -258,7 +258,7 @@ function Architecture() {
         {arrow}
         <div className={key}>Rules engine (pure function)</div>
         {arrow}
-        <div className={box}>Roadmap</div>
+        <div className={box}>Personal plan</div>
         {arrow}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {["Today", "Journey", "Calendar feed", "Share page"].map((t) => (
@@ -278,8 +278,8 @@ function Architecture() {
       </div>
       <p className="sr-only">
         A profile goes into the rules engine, a pure function, which produces
-        the roadmap. The roadmap feeds Today, Journey, the calendar feed and the
-        share page. Below that, one Store interface is backed by Supabase
+        the personal plan. The plan feeds Today, Journey, the calendar feed and
+        the share page. Below that, one Store interface is backed by Supabase
         Postgres with row-level security for accounts. A cookie-backed store
         runs the app with no database, for local development and screenshot
         testing.
@@ -568,7 +568,7 @@ export function CaseStudy({
               <Head
                 n={productN}
                 title="The product"
-                intro="Each feature: what it does, why it matters, and how I built it."
+                intro="One job: get a student through the US system without missing a step. Each feature: what it does, why it matters, and how I built it."
               />
               <div className="space-y-24 sm:space-y-32">
                 {cs.features.map((f, i) => (
