@@ -16,7 +16,7 @@ import type { Skill } from "./skills";
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
 // Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_BRIEF.md (v2) and
-// RELOCO_CASE_STUDY_UPDATE_V3.md (phone screenshots only, fuller product tour).
+// RELOCO_CASE_STUDY_UPDATE_V3.md and _V4.md (accounts required: Google sign-in, no guest mode).
 
 export type Shot = {
   src: string;
@@ -24,8 +24,6 @@ export type Shot = {
   caption: string;
   width: number;
   height: number;
-  // Taller-than-a-screen captures render in a frame that scrolls inside itself.
-  tall?: boolean;
 };
 
 export type Persona = {
@@ -71,10 +69,21 @@ export type CaseStudy = {
   alsoInV1: {
     title: string;
     text: string;
-    icon: "wallet" | "calendar" | "share" | "stamp" | "guest" | "lock" | "notNeeded" | "notes" | "reschedule";
-    shot?: Shot;
+    icon:
+      | "wallet"
+      | "calendar"
+      | "share"
+      | "stamp"
+      | "google"
+      | "lock"
+      | "notNeeded"
+      | "notes"
+      | "reschedule";
   }[];
-  decisions: { decision: string; rejected: string; why: string; shot?: Shot }[];
+  // Text-only cards, with screenshots in a row of their own.
+  alsoShots: Shot[];
+  decisions: { decision: string; rejected: string; why: string }[];
+  decisionsShot: Shot;
   story: { title: string; paragraphs: string[]; shots: Shot[] };
   engineering: {
     highlights: string[];
@@ -109,7 +118,13 @@ export type Project = {
 };
 
 const dir = "/projects/reloco/cs/";
-const phone = (file: string, width: number, height: number, alt: string, caption: string): Shot => ({
+const phone = (
+  file: string,
+  width: number,
+  height: number,
+  alt: string,
+  caption: string,
+): Shot => ({
   src: `${dir}${file}.webp`,
   width,
   height,
@@ -145,7 +160,7 @@ export const projects: Project[] = [
         "Live at reloco.app",
         "2026",
       ],
-      cta: { label: "Try it, no account needed", url: "https://reloco.app" },
+      cta: { label: "Open reloco.app", url: "https://reloco.app" },
       // A painting from the app (public/art/campus-golden.jpg), with the name set over it.
       hero: {
         src: `${dir}hero-painting.webp`,
@@ -384,19 +399,23 @@ export const projects: Project[] = [
           id: "task",
           title: "Inside a task",
           shots: [
-            {
-              ...phone(
-                "40-task-in-progress-phone",
-                900,
-                3545,
-                "Full task page for Pack your entry documents in your carry-on: two of four steps ticked, step links to ISSS and the SEVIS I-901 fee site, a Bring list, Add due date to Google Calendar, official sources, and a Mark complete bar",
-                "A full task, 2 of 4 steps done. Scroll inside the frame.",
-              ),
-              tall: true,
-            },
+            phone(
+              "40a-task-steps-phone",
+              900,
+              1948,
+              "Pack your entry documents in your carry-on: four steps, two ticked, with links to ISSS pre-arrival steps and the SEVIS I-901 fee site",
+              "Steps, each with its own source link. 2 of 4 done.",
+            ),
+            phone(
+              "40b-task-bring-sources-phone",
+              900,
+              1948,
+              "The same task further down: a Bring list, Add due date to Google Calendar, official sources, and a Mark complete +80 bar",
+              "What to bring, add to calendar, official sources, and Mark complete +80 miles.",
+            ),
           ],
-          what: "Each task breaks into short steps with a tick box. Where a step needs an official page, the link sits right on that step, like \"ISSS: Pre-arrival steps\" and \"SEVIS I-901 fee (FMJfee.com)\". Below the steps: Bring (the documents to have in hand, linked to the wallet), Add due date to Google Calendar, the official sources the task is built from, and a \"Guidance, not legal advice. Status questions → ISSS\" line. A fixed bar holds Mark complete +80 miles and Skip. A task that needs another first shows it at the top, like \"Do first: Download your I-94 and check it\".",
-          why: "A task like \"Pack your entry documents\" is really four small actions. Breaking it down makes a stressful job doable in 20 minutes, and putting the source on the step means nobody has to hunt for it.",
+          what: 'Each task breaks into short steps with a tick box. Where a step needs an official page, the link sits right on that step, like "ISSS: Pre-arrival steps" and "SEVIS I-901 fee (FMJfee.com)". Below the steps: Bring (the documents to have in hand, linked to the wallet), Add due date to Google Calendar, the official sources the task is built from, and a "Guidance, not legal advice. Status questions → ISSS" line. A fixed bar holds Mark complete +80 miles and Skip. A task that needs another first shows it at the top, like "Do first: Download your I-94 and check it".',
+          why: 'A task like "Pack your entry documents" is really four small actions. Breaking it down makes a stressful job doable in 20 minutes, and putting the source on the step means nobody has to hunt for it.',
           how: "Steps, sources, what to bring, time estimates and miles are typed fields in the task library, so every task renders the same way. Ticked steps are saved per student. Skipping a task also skips the tasks that only exist because of it (the requires cascade), and reopening it brings them back.",
         },
         {
@@ -421,7 +440,7 @@ export const projects: Project[] = [
           ],
           what: 'Two days before landing, Today switches to a landing-day checklist: documents to keep in hand at the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On landing day it asks "Did you make it?" before clearing the travel tasks.',
           why: "The border is the highest-stakes moment of a freshman's first year, and flights move. Reloco asks instead of assuming.",
-          note: "Answering \"Yes\" clears the travel-only tasks and switches the roadmap to life on the ground. \"On a different day\" fixes the date and reschedules everything.",
+          note: 'Answering "Yes" clears the travel-only tasks and switches the roadmap to life on the ground. "On a different day" fixes the date and reschedules everything.',
         },
         {
           id: "sources",
@@ -491,13 +510,6 @@ export const projects: Project[] = [
           icon: "wallet",
           title: "Wallet, dates only",
           text: "Passport, visa, I-20 and I-94 dates plan the roadmap. No copies, no ID numbers.",
-          shot: phone(
-            "16-wallet-ready-phone",
-            900,
-            1948,
-            "Wallet with nine of nine documents ready and their key dates",
-            "Wallet",
-          ),
         },
         {
           icon: "calendar",
@@ -508,30 +520,16 @@ export const projects: Project[] = [
           icon: "share",
           title: "Family share page",
           text: "Read-only progress for a parent or sponsor.",
-          shot: phone(
-            "23-family-share-phone",
-            900,
-            1948,
-            "Read-only share page showing a student's first-year certificate and stamps",
-            "Share page",
-          ),
         },
         {
           icon: "stamp",
           title: "Miles, stamps and a certificate",
           text: "Miles, stamps, weekly streaks and a first-year certificate.",
-          shot: phone(
-            "22-certificate-phone",
-            900,
-            1948,
-            "First-year certificate listing tasks, miles and the finish date",
-            "Certificate",
-          ),
         },
         {
-          icon: "guest",
-          title: "Try first",
-          text: "The full product works without an account. Google sign-in carries progress over.",
+          icon: "google",
+          title: "Google sign-in",
+          text: "One tap, no password, and the roadmap follows you to any device.",
         },
         {
           icon: "lock",
@@ -541,7 +539,7 @@ export const projects: Project[] = [
         {
           icon: "notNeeded",
           title: "Not needed",
-          text: "Optional tasks whose date passes, like a summer internship or a trip home, close as \"Not needed\" instead of sitting overdue.",
+          text: 'Optional tasks whose date passes, like a summer internship or a trip home, close as "Not needed" instead of sitting overdue.',
         },
         {
           icon: "notes",
@@ -554,6 +552,29 @@ export const projects: Project[] = [
           text: "Editing arrival, start or graduation dates in Profile reschedules the whole roadmap and keeps progress.",
         },
       ],
+      alsoShots: [
+        phone(
+          "16-wallet-ready-phone",
+          900,
+          1948,
+          "Wallet with nine of nine documents ready and their key dates",
+          "Wallet: dates only, 9 of 9 ready",
+        ),
+        phone(
+          "23-family-share-phone",
+          900,
+          1948,
+          "Read-only share page showing a student's first-year certificate and stamps",
+          "Share page: read-only progress for family",
+        ),
+        phone(
+          "22-certificate-phone",
+          900,
+          1948,
+          "First-year certificate listing tasks, miles and the finish date",
+          "The first-year certificate",
+        ),
+      ],
       decisions: [
         {
           decision: "Freshmen first, one school",
@@ -561,16 +582,9 @@ export const projects: Project[] = [
           why: "Precision is the product in compliance, and freshmen have the most at stake.",
         },
         {
-          decision: "Guest mode first",
-          rejected: "A sign-up wall",
-          why: "Students see the value before committing.",
-          shot: phone(
-            "36-sign-in-phone",
-            900,
-            1948,
-            "Sign-in screen: Continue with Google, or Try it first, without an account",
-            "Google or try it first: no wall before the value",
-          ),
+          decision: "Accounts from day one, with Google sign-in",
+          rejected: "A guest mode that stores the roadmap in one browser",
+          why: "A roadmap is a four-year record. It has to survive a new phone, sync to a calendar and be there at OPT time. One tap with Google, no password to create.",
         },
         {
           decision: "Weekly streaks",
@@ -593,6 +607,13 @@ export const projects: Project[] = [
           why: "A control that does nothing breaks trust.",
         },
       ],
+      decisionsShot: phone(
+        "36-sign-in-phone",
+        900,
+        1948,
+        "Sign-in screen over a painting of the Old Well: Let's build your roadmap, with one Continue with Google button",
+        "Sign-in: one Google button, no password",
+      ),
       story: {
         title: "Catching a day-one problem",
         paragraphs: [
@@ -613,7 +634,7 @@ export const projects: Project[] = [
       engineering: {
         highlights: [
           "A deterministic engine with 103 Vitest tests on invariants.",
-          "One Store interface, two implementations, with guest progress imported on sign-in.",
+          "One Store interface: Postgres in production, a cookie store for local development and visual QA.",
           "Row-level security on every table. Zod validation on every server action.",
           "An RFC 5545 calendar feed behind a revocable token.",
           "Revocable share links read through a narrow database function.",
@@ -701,10 +722,11 @@ export const projects: Project[] = [
             source: "Roadmaps created vs visits",
           },
           {
-            metric: "Guest-to-account",
-            definition: "Guests who continue with Google",
-            why: "Tests whether the product earns trust before asking for it",
-            source: "Accounts with imported guest progress",
+            metric: "Sign-in drop-off",
+            definition:
+              "Visitors who reach the sign-in screen but don't continue",
+            why: "Tests whether requiring an account costs too many students",
+            source: "Sign-in page visits vs new accounts",
           },
           {
             metric: "Week-4 retention",
@@ -750,7 +772,7 @@ export const projects: Project[] = [
         },
       ],
       tryIt: {
-        text: "Try Reloco as a freshman landing next month. It takes about two minutes and needs no account.",
+        text: "Sign in with Google and build a roadmap as a freshman landing next month. It takes about two minutes.",
         button: "Open reloco.app",
         url: "https://reloco.app",
       },
