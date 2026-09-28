@@ -146,13 +146,14 @@ export const projects: Project[] = [
         "2026",
       ],
       cta: { label: "Try it, no account needed", url: "https://reloco.app" },
-      hero: phone(
-        "01-hero-landing-phone",
-        900,
-        1948,
-        "Reloco's landing page on a phone: an oil painting of UNC's Old Well at sunset, with Build my roadmap and How it works buttons",
-        "reloco.app",
-      ),
+      // A painting from the app (public/art/campus-golden.jpg), with the name set over it.
+      hero: {
+        src: `${dir}hero-painting.webp`,
+        width: 1680,
+        height: 944,
+        alt: "Oil painting of UNC's Old Well and campus at golden hour, with a plane crossing the sky",
+        caption: "The F-1 roadmap for UNC students",
+      },
       numbers: [
         { value: "44", label: "sourced tasks" },
         { value: "34", label: "official sources" },

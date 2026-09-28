@@ -276,33 +276,42 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
         <span aria-hidden>← </span>All projects
       </Link>
 
-      {/* 1. Hero: text on the left, the phone on the right; on phones the phone sits under the buttons */}
-      <header className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16">
-        <div>
-          <h1 className="font-display text-5xl font-bold tracking-tight sm:text-7xl">{project.name}</h1>
-          <p className="mt-4 max-w-[44ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
-          <p className="mt-4 text-sm text-muted">{cs.metaLine.join(" · ")}</p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Button href={cs.cta.url} external>
-              {cs.cta.label} <span aria-hidden>↗</span>
-            </Button>
-            <a
-              href="#glance"
-              className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs uppercase tracking-label transition-colors hover:border-fg"
-            >
-              Read the case study <span aria-hidden>↓</span>
-            </a>
-          </div>
-        </div>
-        <div className="mx-auto w-full max-w-[280px] lg:max-w-none">
-          <PhoneFrame
+      {/* 1. Hero: one of the app's paintings with the name set over it, then the summary and actions */}
+      <header className="mt-8">
+        <div className="relative isolate overflow-hidden rounded-3xl border border-line">
+          <Image
             src={cs.hero.src}
             alt={cs.hero.alt}
             width={cs.hero.width}
             height={cs.hero.height}
-            sizes="300px"
             priority
+            sizes="(min-width: 1280px) 1200px, 100vw"
+            className="block aspect-[4/5] h-full w-full object-cover sm:aspect-[16/9]"
           />
+          {/* Darken toward the middle so the white type reads on any part of the painting */}
+          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45),rgba(0,0,0,0.15)_70%)]" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
+            <h1 className="font-display text-6xl font-bold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-8xl lg:text-9xl">
+              {project.name}
+            </h1>
+            <p className="mt-3 font-mono text-xs uppercase tracking-label drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-sm">
+              {cs.hero.caption}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-8 max-w-[44ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
+        <p className="mt-4 text-sm text-muted">{cs.metaLine.join(" · ")}</p>
+        <div className="mt-7 flex flex-wrap gap-3">
+          <Button href={cs.cta.url} external>
+            {cs.cta.label} <span aria-hidden>↗</span>
+          </Button>
+          <a
+            href="#glance"
+            className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs uppercase tracking-label transition-colors hover:border-fg"
+          >
+            Read the case study <span aria-hidden>↓</span>
+          </a>
         </div>
       </header>
 
