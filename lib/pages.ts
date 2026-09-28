@@ -1,7 +1,7 @@
 // The site's pages, in nav order.
 // `short` is the label used on phones, where the full titles don't fit in one row.
 // Projects is hidden until Reloco is ready. Flip this to true to bring back the tab and its pages.
-export const showProjects = false;
+export const showProjects = true;
 
 const allPages = [
   { href: "/", title: "Home" },

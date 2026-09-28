@@ -29,10 +29,9 @@ Five routes share one root layout (`app/layout.tsx`: nav + footer): `/` (hero, s
 
 ### Project images
 
-Reloco's page uses placeholder phone mockups in `public/projects/reloco/` (rebuild with `node scripts/reloco-mockups.mjs public/projects/reloco`). Replace them with real screenshots when you have them.
+Reloco's images in `public/projects/reloco/` are real screens: `cover.webp` is the live landing page, and each feature image is a phone screenshot of the app (run locally in demo mode with a sample student) framed on one of Reloco's own paintings. `card.webp` is three of those phones on a transparent background for the Projects card.
 
-
-Each card's image is `image` in `lib/projects.ts` (Reloco uses `public/projects/reloco/phones.svg`). Transparent images blend best with the card.
+For a new project, give it the same pieces in `lib/projects.ts`: a live link, meta, a few checkable numbers, real screens, product and engineering decisions, and the stack. The comment at the top of that file lists the order.
 
 ## Contact form
 

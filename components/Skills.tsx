@@ -1,5 +1,5 @@
 import { Reveal } from "./Reveal";
-import { brandColors, brandStyle } from "@/lib/brandColor";
+import { SkillPill } from "./SkillPill";
 import { skillGroups, skillsIntro } from "@/lib/skills";
 
 // Compact block that sits under the roles on the Work & Experience page.
@@ -24,17 +24,7 @@ export function Skills() {
               <dd>
                 <ul className="flex flex-wrap gap-1.5">
                   {group.items.map((s) => (
-                    <li
-                      key={s.name}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-sm"
-                    >
-                      {s.icon && (
-                        <svg viewBox="0 0 24 24" className="brand h-3.5 w-3.5 shrink-0 fill-current" style={brandStyle(brandColors(s.icon.hex))} aria-hidden>
-                          <path d={s.icon.path} />
-                        </svg>
-                      )}
-                      {s.name}
-                    </li>
+                    <SkillPill key={s.name} skill={s} />
                   ))}
                 </ul>
               </dd>

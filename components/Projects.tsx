@@ -37,19 +37,32 @@ export function Projects() {
                       </li>
                     ))}
                   </ul>
-                  {p.caseStudy && (
-                    <p className="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-label" aria-hidden>
-                      Read the story
-                      <span className="transition-transform group-hover:translate-x-1">→</span>
-                    </p>
-                  )}
+                  <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 font-mono text-xs uppercase tracking-label">
+                    {p.caseStudy && (
+                      <p className="inline-flex items-center gap-2" aria-hidden>
+                        Read the case study
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
+                      </p>
+                    )}
+                    {p.live && (
+                      // Sits above the card's stretched link so it stays its own click target.
+                      <a
+                        href={p.live.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative z-10 inline-flex items-center gap-1.5 text-muted underline-offset-4 transition-colors hover:text-fg hover:underline"
+                      >
+                        {p.live.label} <span aria-hidden>↗</span>
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
                 <div className="relative aspect-[3/2] w-full">
                   <Image
                     src={p.image}
                     alt=""
                     fill
-                    unoptimized
                     sizes="(min-width: 1024px) 50vw, 100vw"
                     className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   />
