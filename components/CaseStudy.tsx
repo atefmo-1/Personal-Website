@@ -1,5 +1,8 @@
 import {
   IconCalendarEvent,
+  IconCalendarRepeat,
+  IconCircleDashed,
+  IconSparkles,
   IconDoorEnter,
   IconLock,
   IconRosette,
@@ -34,16 +37,24 @@ function Head({ n, title, intro }: { n: number; title: string; intro?: string })
   );
 }
 
-// One screenshot with a caption that always wraps, never clips.
+// One phone screenshot with a caption that always wraps, never clips. A capture taller than a
+// screen sits in a phone-shaped frame that scrolls inside itself, so rows keep one height.
 function ShotFig({ s, sizes }: { s: Shot; sizes: string }) {
   return (
     <figure className="min-w-0">
-      {s.kind === "phone" ? (
-        <PhoneFrame src={s.src} alt={s.alt} width={s.width} height={s.height} sizes={sizes} />
-      ) : (
-        <div className="overflow-hidden rounded-xl border border-line">
-          <Image src={s.src} alt={s.alt} width={s.width} height={s.height} sizes={sizes} className="block h-auto w-full" />
+      {s.tall ? (
+        <div className="rounded-[2.2rem] bg-[#0b0b0c] p-[7px] shadow-[0_18px_40px_-18px_rgba(0,0,0,0.55)] ring-1 ring-line">
+          <div
+            tabIndex={0}
+            role="region"
+            aria-label={`${s.caption} Scrollable screenshot.`}
+            className="aspect-[900/1948] overflow-y-auto overscroll-contain rounded-[1.8rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg"
+          >
+            <Image src={s.src} alt={s.alt} width={s.width} height={s.height} sizes={sizes} className="block h-auto w-full" />
+          </div>
         </div>
+      ) : (
+        <PhoneFrame src={s.src} alt={s.alt} width={s.width} height={s.height} sizes={sizes} />
       )}
       <figcaption className="mt-3 text-center text-sm leading-snug text-muted">{s.caption}</figcaption>
     </figure>
@@ -64,40 +75,53 @@ function PhoneRow({ shots, className = "" }: { shots: Shot[]; className?: string
   );
 }
 
-function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
-  const phones = f.shots.filter((s) => s.kind === "phone");
-  const desktops = f.shots.filter((s) => s.kind === "desktop");
+function FeatureText({ f, n }: { f: Feature; n: string }) {
   const lines = [
     ["What it does", f.what],
     ["Why it matters", f.why],
     ["How I built it", f.how],
   ].filter((l): l is [string, string] => !!l[1]);
   return (
-    <Reveal as="article" id={`f-${f.id}`} className="grid scroll-mt-24 items-center gap-8 lg:grid-cols-2 lg:gap-14">
-      <div className={`grid gap-6 ${i % 2 ? "lg:order-last" : ""}`}>
-        {phones.length > 0 && (
-          <div className={`mx-auto grid w-full grid-cols-2 gap-4 ${phones.length === 1 ? "max-w-[250px] !grid-cols-1" : "max-w-[500px]"}`}>
-            {phones.map((s) => (
-              <ShotFig key={s.src + s.caption} s={s} sizes="(min-width: 1024px) 240px, 45vw" />
+    <div className={measure}>
+      <p className="font-mono text-xs text-muted">{n}</p>
+      <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h3>
+      <dl className="mt-6 space-y-5">
+        {lines.map(([label, text]) => (
+          <div key={label}>
+            <dt className="label">{label}</dt>
+            <dd className="mt-1.5 text-[16px] leading-relaxed">{text}</dd>
+          </div>
+        ))}
+      </dl>
+      {f.note && <p className="mt-5 border-l-2 border-line pl-4 text-[15px] leading-relaxed text-muted">{f.note}</p>}
+    </div>
+  );
+}
+
+// One or two phones sit beside the text (alternating sides). Three phones get a full-width row
+// under the text so every frame keeps a readable size. `more` adds a row under the block.
+function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
+  const tall = f.shots.some((s) => s.tall);
+  const wide = f.shots.length >= 3;
+  const beside = tall ? "max-w-[340px]" : f.shots.length === 1 ? "max-w-[260px]" : "max-w-[500px]";
+  return (
+    <Reveal as="article" id={`f-${f.id}`} className="scroll-mt-24">
+      {wide ? (
+        <>
+          <FeatureText f={f} n={n} />
+          <PhoneRow shots={f.shots} className="mt-10" />
+        </>
+      ) : (
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
+          <div className={`mx-auto grid w-full gap-4 ${f.shots.length === 1 ? "grid-cols-1" : "grid-cols-2"} ${beside} ${i % 2 ? "lg:order-last" : ""}`}>
+            {f.shots.map((s) => (
+              <ShotFig key={s.src + s.caption} s={s} sizes={tall ? "340px" : "(min-width: 1024px) 250px, 45vw"} />
             ))}
           </div>
-        )}
-        {desktops.map((s) => (
-          <ShotFig key={s.src} s={s} sizes="(min-width: 1024px) 560px, 100vw" />
-        ))}
-      </div>
-      <div className={measure}>
-        <p className="font-mono text-xs text-muted">{n}</p>
-        <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h3>
-        <dl className="mt-6 space-y-5">
-          {lines.map(([label, text]) => (
-            <div key={label}>
-              <dt className="label">{label}</dt>
-              <dd className="mt-1.5 text-[16px] leading-relaxed">{text}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+          <FeatureText f={f} n={n} />
+        </div>
+      )}
+      {f.more && <PhoneRow shots={f.more} className="mx-auto mt-12 max-w-[560px]" />}
     </Reveal>
   );
 }
@@ -223,6 +247,9 @@ const icons = {
   stamp: IconRosette,
   guest: IconDoorEnter,
   lock: IconLock,
+  notNeeded: IconCircleDashed,
+  notes: IconSparkles,
+  reschedule: IconCalendarRepeat,
 };
 
 export function CaseStudy({ project }: { project: Project & { caseStudy: CS } }) {
@@ -249,35 +276,35 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
         <span aria-hidden>← </span>All projects
       </Link>
 
-      {/* 1. Hero */}
-      <header className="mt-8">
-        <h1 className="font-display text-5xl font-bold tracking-tight sm:text-7xl">{project.name}</h1>
-        <p className="mt-4 max-w-[44ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
-        <p className="mt-4 text-sm text-muted">{cs.metaLine.join(" · ")}</p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Button href={cs.cta.url} external>
-            {cs.cta.label} <span aria-hidden>↗</span>
-          </Button>
-          <a
-            href="#glance"
-            className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs uppercase tracking-label transition-colors hover:border-fg"
-          >
-            Read the case study <span aria-hidden>↓</span>
-          </a>
+      {/* 1. Hero: text on the left, the phone on the right; on phones the phone sits under the buttons */}
+      <header className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16">
+        <div>
+          <h1 className="font-display text-5xl font-bold tracking-tight sm:text-7xl">{project.name}</h1>
+          <p className="mt-4 max-w-[44ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
+          <p className="mt-4 text-sm text-muted">{cs.metaLine.join(" · ")}</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button href={cs.cta.url} external>
+              {cs.cta.label} <span aria-hidden>↗</span>
+            </Button>
+            <a
+              href="#glance"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs uppercase tracking-label transition-colors hover:border-fg"
+            >
+              Read the case study <span aria-hidden>↓</span>
+            </a>
+          </div>
+        </div>
+        <div className="mx-auto w-full max-w-[280px] lg:max-w-none">
+          <PhoneFrame
+            src={cs.hero.src}
+            alt={cs.hero.alt}
+            width={cs.hero.width}
+            height={cs.hero.height}
+            sizes="300px"
+            priority
+          />
         </div>
       </header>
-
-      <figure className="mt-10 overflow-hidden rounded-2xl border border-line sm:mt-14">
-        <Image
-          src={cs.hero.src}
-          alt={cs.hero.alt}
-          width={cs.hero.width}
-          height={cs.hero.height}
-          priority
-          sizes="(min-width: 1280px) 1200px, 100vw"
-          className="block h-auto w-full"
-        />
-      </figure>
 
       {/* Stats: screen readers hear one sentence per stat; the counter and label are hidden from them */}
       <ul className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -448,7 +475,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             {/* 6. Product thinking */}
             <section id="thinking" className={section}>
               <Head n={num("thinking")} title="Product thinking" intro="What I chose, what I turned down, and why." />
-              <ul className="grid gap-4 md:grid-cols-2">
+              <ul className="grid items-start gap-4 md:grid-cols-2">
                 {cs.decisions.map((d) => (
                   <li key={d.decision} className={`p-5 ${card}`}>
                     <p className="font-medium">{d.decision}</p>
@@ -462,6 +489,11 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                         <dd>{d.why}</dd>
                       </div>
                     </dl>
+                    {d.shot && (
+                      <div className="mx-auto mt-5 w-full max-w-[200px]">
+                        <ShotFig s={d.shot} sizes="200px" />
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

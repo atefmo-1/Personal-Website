@@ -15,7 +15,8 @@ import type { Skill } from "./skills";
 // Project pages show product thinking, design, engineering and shipping, in balance. Every
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
-// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_BRIEF.md (v2).
+// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_BRIEF.md (v2) and
+// RELOCO_CASE_STUDY_UPDATE_V3.md (phone screenshots only, fuller product tour).
 
 export type Shot = {
   src: string;
@@ -23,7 +24,8 @@ export type Shot = {
   caption: string;
   width: number;
   height: number;
-  kind: "phone" | "desktop";
+  // Taller-than-a-screen captures render in a frame that scrolls inside itself.
+  tall?: boolean;
 };
 
 export type Persona = {
@@ -41,6 +43,10 @@ export type Feature = {
   what: string;
   why?: string;
   how?: string;
+  // One extra line under the three labels.
+  note?: string;
+  // A row of phones under the block.
+  more?: Shot[];
 };
 
 export type CaseStudy = {
@@ -65,10 +71,10 @@ export type CaseStudy = {
   alsoInV1: {
     title: string;
     text: string;
-    icon: "wallet" | "calendar" | "share" | "stamp" | "guest" | "lock";
+    icon: "wallet" | "calendar" | "share" | "stamp" | "guest" | "lock" | "notNeeded" | "notes" | "reschedule";
     shot?: Shot;
   }[];
-  decisions: { decision: string; rejected: string; why: string }[];
+  decisions: { decision: string; rejected: string; why: string; shot?: Shot }[];
   story: { title: string; paragraphs: string[]; shots: Shot[] };
   engineering: {
     highlights: string[];
@@ -103,29 +109,12 @@ export type Project = {
 };
 
 const dir = "/projects/reloco/cs/";
-const phone = (
-  file: string,
-  width: number,
-  height: number,
-  alt: string,
-  caption: string,
-): Shot => ({
+const phone = (file: string, width: number, height: number, alt: string, caption: string): Shot => ({
   src: `${dir}${file}.webp`,
   width,
   height,
   alt,
   caption,
-  kind: "phone",
-});
-const desktop = (
-  file: string,
-  width: number,
-  height: number,
-  alt: string,
-  caption: string,
-): Shot => ({
-  ...phone(file, width, height, alt, caption),
-  kind: "desktop",
 });
 
 // Shots used in more than one place.
@@ -157,11 +146,11 @@ export const projects: Project[] = [
         "2026",
       ],
       cta: { label: "Try it, no account needed", url: "https://reloco.app" },
-      hero: desktop(
-        "00-hero-landing-desktop",
-        2000,
-        1250,
-        "Reloco's landing page: an oil painting of UNC's Old Well at sunset, with a button to build a roadmap",
+      hero: phone(
+        "01-hero-landing-phone",
+        900,
+        1948,
+        "Reloco's landing page on a phone: an oil painting of UNC's Old Well at sunset, with Build my roadmap and How it works buttons",
         "reloco.app",
       ),
       numbers: [
@@ -338,10 +327,18 @@ export const projects: Project[] = [
               "Onboarding question about plans, with an off-campus internship and a STEM major selected",
               "Plans decide which tasks apply",
             ),
+            phone(
+              "37-onboarding-done-already-phone",
+              900,
+              1948,
+              "Last onboarding question: Done any of these already? Pre-flight tasks such as booking a flight and signing a lease, each with a tick box",
+              "Freshmen who've already done some prep tick it off",
+            ),
           ],
           what: "About 10 questions: still at home, just arrived or already studying; country; arrival, start and graduation dates; housing; funding; SSN and bank; plans. A boarding pass fills in as you answer.",
           why: "A freshman two days from landing and a junior planning CPT need different roadmaps. The stage question comes first so nobody sees tasks that don't apply.",
           how: "Dates are validated against realistic ranges per stage. For current students, past first-year tasks are checked off automatically.",
+          note: "The last question lists the Pre-flight tasks grouped by chapter, so a freshman who has already booked a flight or signed a lease starts with those checked off.",
         },
         {
           id: "engine",
@@ -370,17 +367,36 @@ export const projects: Project[] = [
               "Aisha's Today as a junior: day 780 in Chapel Hill, 63% progress, and one next task, a travel signature before winter break",
               "A junior's Today",
             ),
-            desktop(
-              "24-today-desktop",
-              2000,
-              1250,
-              "Mei's Today on desktop two days before landing, in arrival mode",
-              "Arrival mode on desktop",
+            phone(
+              "44-task-do-first-phone",
+              900,
+              1948,
+              "Open a US bank account task with a Do first link: Download your I-94 and check it",
+              "A task that needs another first says so",
             ),
           ],
           what: 'A boarding pass, one focus task and at most two more this week. If a task depends on another, the card says "After [task]" and links to it.',
           why: "Hick's Law. One clear action beats a list of 40.",
           how: "A planner ranks tasks by due date and dependencies. Skipping a task cascades to the tasks that depend on it, and reopening it restores them.",
+        },
+        {
+          id: "task",
+          title: "Inside a task",
+          shots: [
+            {
+              ...phone(
+                "40-task-in-progress-phone",
+                900,
+                3545,
+                "Full task page for Pack your entry documents in your carry-on: two of four steps ticked, step links to ISSS and the SEVIS I-901 fee site, a Bring list, Add due date to Google Calendar, official sources, and a Mark complete bar",
+                "A full task, 2 of 4 steps done. Scroll inside the frame.",
+              ),
+              tall: true,
+            },
+          ],
+          what: "Each task breaks into short steps with a tick box. Where a step needs an official page, the link sits right on that step, like \"ISSS: Pre-arrival steps\" and \"SEVIS I-901 fee (FMJfee.com)\". Below the steps: Bring (the documents to have in hand, linked to the wallet), Add due date to Google Calendar, the official sources the task is built from, and a \"Guidance, not legal advice. Status questions → ISSS\" line. A fixed bar holds Mark complete +80 miles and Skip. A task that needs another first shows it at the top, like \"Do first: Download your I-94 and check it\".",
+          why: "A task like \"Pack your entry documents\" is really four small actions. Breaking it down makes a stressful job doable in 20 minutes, and putting the source on the step means nobody has to hunt for it.",
+          how: "Steps, sources, what to bring, time estimates and miles are typed fields in the task library, so every task renders the same way. Ticked steps are saved per student. Skipping a task also skips the tasks that only exist because of it (the requires cascade), and reopening it brings them back.",
         },
         {
           id: "arrival",
@@ -394,9 +410,17 @@ export const projects: Project[] = [
               "Arrival mode two days out: documents to keep in hand at the border, each with a Mark ready button",
               "At the border: keep these in hand",
             ),
+            phone(
+              "43-landing-check-phone",
+              900,
+              1948,
+              "Landing-day card: Did you make it to Chapel Hill? with Yes, I landed, On a different day, and Not yet, my trip moved",
+              "On landing day, Reloco asks",
+            ),
           ],
           what: 'Two days before landing, Today switches to a landing-day checklist: documents to keep in hand at the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On landing day it asks "Did you make it?" before clearing the travel tasks.',
           why: "The border is the highest-stakes moment of a freshman's first year, and flights move. Reloco asks instead of assuming.",
+          note: "Answering \"Yes\" clears the travel-only tasks and switches the roadmap to life on the ground. \"On a different day\" fixes the date and reschedules everything.",
         },
         {
           id: "sources",
@@ -443,6 +467,22 @@ export const projects: Project[] = [
           what: "9 chapters. Five cover the first year (Pre-flight, Touchdown, First month, Settling in, First spring), then Sophomore, Junior and Senior years, and After graduation. Yearly tasks repeat: enrollment, summer address, travel signature, taxes, CPT. Chapters earn passport stamps.",
           why: "The costly mistakes in later years (CPT timing, the OPT filing window) show up years early.",
           how: "Class year is computed from the start and graduation dates. Repeating tasks expand into one instance per year.",
+          more: [
+            phone(
+              "41-reward-miles-phone",
+              900,
+              1948,
+              "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal",
+              "Every task earns miles and counts toward the weekly goal",
+            ),
+            phone(
+              "42-reward-stamp-phone",
+              900,
+              1948,
+              "Chapter complete: Pre-flight stamped, plus 50 miles",
+              "Finishing a chapter earns its stamp",
+            ),
+          ],
         },
       ],
       alsoInV1: [
@@ -497,6 +537,21 @@ export const projects: Project[] = [
           title: "Privacy",
           text: "Row-level security, and delete everything anytime.",
         },
+        {
+          icon: "notNeeded",
+          title: "Not needed",
+          text: "Optional tasks whose date passes, like a summer internship or a trip home, close as \"Not needed\" instead of sitting overdue.",
+        },
+        {
+          icon: "notes",
+          title: "Personal notes (AI)",
+          text: "Where enabled, a short note tailored to the student sits on the task. It can't add, move or remove tasks.",
+        },
+        {
+          icon: "reschedule",
+          title: "Change a date, everything moves",
+          text: "Editing arrival, start or graduation dates in Profile reschedules the whole roadmap and keeps progress.",
+        },
       ],
       decisions: [
         {
@@ -508,6 +563,13 @@ export const projects: Project[] = [
           decision: "Guest mode first",
           rejected: "A sign-up wall",
           why: "Students see the value before committing.",
+          shot: phone(
+            "36-sign-in-phone",
+            900,
+            1948,
+            "Sign-in screen: Continue with Google, or Try it first, without an account",
+            "Google or try it first: no wall before the value",
+          ),
         },
         {
           decision: "Weekly streaks",
