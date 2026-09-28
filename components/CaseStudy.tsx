@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./Button";
 import { CaseStudyToc } from "./CaseStudyToc";
-import { Journey, Personas } from "./CaseStudyUx";
+import { Journey, Personas, Timeline, TodayFlow } from "./CaseStudyUx";
 import { CountText } from "./CountText";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
@@ -20,6 +20,16 @@ function Head({ n, title, lead }: { n: number; title: string; lead?: string }) {
       <span className="font-mono text-xs text-muted">{String(n).padStart(2, "0")}</span>
       <h2 className={`${h2} mt-2`}>{title}</h2>
       {lead && <p className="mt-4 max-w-[62ch] text-lg leading-relaxed text-muted">{lead}</p>}
+    </div>
+  );
+}
+
+// A heading inside a section.
+function Sub({ title, lead }: { title: string; lead?: string }) {
+  return (
+    <div className="mb-6">
+      <h3 className="font-display text-2xl font-bold tracking-tight">{title}</h3>
+      {lead && <p className="mt-3 max-w-[62ch] text-[17px] leading-relaxed text-muted">{lead}</p>}
     </div>
   );
 }
@@ -42,24 +52,22 @@ function Shots({ shots, aspect }: { shots: CS["screens"]; aspect: string }) {
   );
 }
 
-// A project page, in the order a recruiter reads: what it is, the numbers, the problem, what users
-// said, personas and the journey map, how I worked, what it does, the product and engineering
-// calls, AI, the stack, what's next.
+// A project page, in the order a recruiter reads: what it is and the numbers, the problem, where
+// it started (v0 research), how it works today, what it does, the product and engineering calls,
+// AI, the stack, and the timeline.
 export function CaseStudy({ project }: { project: Project & { caseStudy: CS } }) {
   const cs = project.caseStudy;
 
   // Only sections this project has, numbered in order.
   const sections = [
     { id: "problem", label: "Problem" },
-    ...(cs.research ? [{ id: "research", label: "Research" }] : []),
-    ...(cs.personas ? [{ id: "personas", label: "Personas" }] : []),
-    ...(cs.journey ? [{ id: "journey", label: "Journey map" }] : []),
-    { id: "process", label: "How I worked" },
+    ...(cs.v0 ? [{ id: "v0", label: "v0: Where it started" }] : []),
+    ...(cs.today ? [{ id: "today", label: "How it works today" }] : []),
     { id: "product", label: "What it does" },
     { id: "decisions", label: "Decisions" },
     ...(cs.ai ? [{ id: "ai", label: "Where AI fits" }] : []),
     { id: "stack", label: "Built with" },
-    { id: "next", label: "What's next" },
+    { id: "timeline", label: "Timeline" },
   ];
   const num = (id: string) => sections.findIndex((s) => s.id === id) + 1;
   const section = "scroll-mt-24";
@@ -77,6 +85,15 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
         </span>
         <h1 className="mt-5 font-display text-5xl font-bold tracking-tight sm:text-7xl">{project.name}</h1>
         <p className="mt-5 max-w-[36ch] text-xl leading-snug sm:text-2xl">{cs.tagline}</p>
+        {cs.glance && (
+          <ul className="mt-5 flex flex-wrap gap-y-2 text-sm text-muted">
+            {cs.glance.map((g, i) => (
+              <li key={g} className={i > 0 ? "border-l border-line pl-3 ml-3" : ""}>
+                {g}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="mt-8 flex flex-wrap gap-3">
           {cs.links.map((l, i) => (
             <Button key={l.url} href={l.url} external variant={i === 0 ? "primary" : "ghost"}>
@@ -107,19 +124,20 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
         ))}
       </dl>
 
-      {/* By the numbers: scale and rigor at a glance */}
+      {/* By the numbers. Screen readers hear each stat once ("44 tasks in a researched rules
+          library"); the counting number and the visible label are hidden from them. */}
       <Reveal>
-        <dl className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <ul className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {cs.numbers.map((n) => (
-            <div key={n.label} className={`p-5 sm:p-6 ${card}`}>
-              <dt className="sr-only">{n.label}</dt>
-              <dd>
+            <li key={n.label} className={`p-5 sm:p-6 ${card}`}>
+              <span className="sr-only">{`${n.value} ${n.label}`}</span>
+              <span aria-hidden>
                 <CountText text={n.value} className="block font-display text-4xl font-bold tracking-tight sm:text-5xl" />
                 <span className="mt-2 block text-sm leading-snug text-muted">{n.label}</span>
-              </dd>
-            </div>
+              </span>
+            </li>
           ))}
-        </dl>
+        </ul>
       </Reveal>
 
       <div className="mt-20 grid gap-16 sm:mt-28 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
@@ -151,64 +169,47 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             )}
           </Reveal>
 
-          {cs.research && (
-            <section id="research" className={section}>
-              <Head n={num("research")} title="What students told me" lead={cs.research.intro} />
+          {cs.v0 && (
+            <section id="v0" className={section}>
+              <Head n={num("v0")} title="v0: Where it started" lead={cs.v0.intro} />
+
+              <Sub title="What students told me" />
               <ol className="grid gap-4 md:grid-cols-2">
-                {cs.research.insights.map((ins, i) => (
+                {cs.v0.insights.map((ins, i) => (
                   <Reveal as="li" key={ins.title} className={`flex flex-col p-6 sm:p-7 ${card}`}>
                     <span className="label">Insight {i + 1}</span>
-                    <h3 className="mt-2 font-display text-xl font-bold tracking-tight">{ins.title}</h3>
+                    <h4 className="mt-2 font-display text-xl font-bold tracking-tight">{ins.title}</h4>
                     <blockquote className="mt-4 border-l-2 border-fg pl-4">
                       <p className="font-display text-lg leading-snug">&ldquo;{ins.quote}&rdquo;</p>
                       <footer className="mt-2 text-xs text-muted">{ins.who}</footer>
                     </blockquote>
                     <p className="mb-5 mt-4 text-[15px] leading-relaxed text-muted">{ins.finding}</p>
-                    <p className="mt-auto flex gap-2 border-t border-line pt-4 text-[15px] leading-relaxed">
-                      <span aria-hidden className="shrink-0">→</span>
-                      <span>
-                        <span className="sr-only">So Reloco: </span>
-                        {ins.response}
-                      </span>
-                    </p>
+                    <div className="mt-auto border-t border-line pt-4">
+                      <p className="label">Reloco today</p>
+                      <p className="mt-1.5 text-[15px] leading-relaxed">{ins.response}</p>
+                    </div>
                   </Reveal>
                 ))}
               </ol>
+
+              <div className="mt-16">
+                <Sub title="Who I designed for" lead={cs.v0.personas.intro} />
+                <Personas data={cs.v0.personas} />
+              </div>
+
+              <div className="mt-16">
+                <Sub title="Mapping the first concept" lead={cs.v0.journey.intro} />
+                <Journey data={cs.v0.journey} />
+              </div>
             </section>
           )}
 
-          {cs.personas && (
-            <section id="personas" className={section}>
-              <Head n={num("personas")} title="Who I designed for" lead={cs.personas.intro} />
-              <Personas data={cs.personas} />
+          {cs.today && (
+            <section id="today" className={section}>
+              <Head n={num("today")} title="How it works today" lead={cs.today.intro} />
+              <TodayFlow data={cs.today} />
             </section>
           )}
-
-          {cs.journey && (
-            <section id="journey" className={section}>
-              <Head n={num("journey")} title="Mapping the journey" lead={cs.journey.intro} />
-              <Journey data={cs.journey} />
-            </section>
-          )}
-
-          <section id="process" className={section}>
-            <Head n={num("process")} title="How I worked" />
-            {/* A timeline: interviews to launch */}
-            <ol className="relative ml-3 max-w-2xl border-l border-line">
-              {cs.process.map((step, i) => (
-                <Reveal as="li" key={step.title} className="relative pb-10 pl-10 last:pb-0">
-                  <span
-                    aria-hidden
-                    className="absolute -left-[13px] top-0 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-line bg-bg font-mono text-[10px] text-muted"
-                  >
-                    {i + 1}
-                  </span>
-                  <h3 className="font-display text-xl font-bold tracking-tight">{step.title}</h3>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{step.text}</p>
-                </Reveal>
-              ))}
-            </ol>
-          </section>
 
           <section id="product" className={section}>
             <Head n={num("product")} title="What it does" />
@@ -312,21 +313,15 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             </dl>
           </Reveal>
 
-          <Reveal as="section" id="next" className={section}>
-            <Head n={num("next")} title="What's next" />
-            <div className="max-w-[62ch] space-y-5">
-              {cs.next.map((p) => (
-                <p key={p} className="text-lg leading-relaxed text-muted">
-                  {p}
-                </p>
-              ))}
-            </div>
-          </Reveal>
+          <section id="timeline" className={section}>
+            <Head n={num("timeline")} title="Timeline" />
+            <Timeline items={cs.timeline} closing={cs.closing} />
+          </section>
 
           <Reveal className={`p-8 sm:p-12 ${card}`}>
             <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Want a walkthrough?</p>
             <p className="mt-3 max-w-[48ch] text-lg text-muted">
-              Happy to go deeper on the research, the product calls, the roadmap engine, or anything else.
+              I&apos;m happy to go deeper on the research, the product calls or the roadmap engine.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button href="/contact">

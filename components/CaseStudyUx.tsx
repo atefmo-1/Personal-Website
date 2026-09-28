@@ -57,7 +57,9 @@ function PersonaCard({ p, filled }: { p: Persona; filled: boolean }) {
   );
 }
 
-export function Personas({ data }: { data: NonNullable<CaseStudy["personas"]> }) {
+type V0 = NonNullable<CaseStudy["v0"]>;
+
+export function Personas({ data }: { data: V0["personas"] }) {
   const [a, b] = data.people;
   const first = (name: string) => name.split(" ").pop();
   const lean = (v: number, left: string, right: string) =>
@@ -113,7 +115,9 @@ export function Personas({ data }: { data: NonNullable<CaseStudy["personas"]> })
   );
 }
 
-export function Journey({ data }: { data: NonNullable<CaseStudy["journey"]> }) {
+const concept = "rounded-full border border-dashed border-fg px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-label";
+
+export function Journey({ data }: { data: V0["journey"] }) {
   const n = data.stages.length;
   const x = (i: number) => ((i + 0.5) / n) * 100;
   const y = (level: number) => (1 - level) * 100;
@@ -132,6 +136,10 @@ export function Journey({ data }: { data: NonNullable<CaseStudy["journey"]> }) {
     <>
       {/* The map scrolls sideways on narrow screens so each stage keeps a readable width */}
       <Reveal className={`overflow-hidden ${card}`}>
+        <div className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-3.5">
+          <span className={concept}>v0 concept</span>
+          <h3 className="label">Journey map: Amara&apos;s first week</h3>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] table-fixed border-collapse text-left">
             <caption className="sr-only">Journey map, stage by stage</caption>
@@ -214,7 +222,10 @@ export function Journey({ data }: { data: NonNullable<CaseStudy["journey"]> }) {
 
       {/* The task flow: the happy path, then a branch at the dependency check */}
       <Reveal className={`mt-10 p-6 sm:p-7 ${card}`}>
-        <h3 className="label">{data.flow.title}</h3>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className={concept}>v0 concept</span>
+          <h3 className="label">{data.flow.title.replace(/^v0 concept:\s*/i, "")}</h3>
+        </div>
         <ol className="mt-5 flex flex-wrap items-center gap-2">
           {data.flow.steps.map((s, i) => (
             <li key={s} className="flex items-center gap-2">
@@ -251,6 +262,38 @@ export function Journey({ data }: { data: NonNullable<CaseStudy["journey"]> }) {
         </div>
       </Reveal>
 
+      <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-muted">{data.note}</p>
+    </>
+  );
+}
+
+// The product as it ships: a numbered flow, with side notes where it branches.
+export function TodayFlow({ data }: { data: NonNullable<CaseStudy["today"]> }) {
+  return (
+    <>
+      <Reveal className={`p-6 sm:p-8 ${card}`}>
+        <h3 className="label">Today&apos;s flow</h3>
+        <ol className="relative mt-6 ml-3 border-l border-line">
+          {data.steps.map((s, i) => (
+            <li key={s.text} className="relative pb-6 pl-8 last:pb-0">
+              <span
+                aria-hidden
+                className="absolute -left-[12px] top-0 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-surface font-mono text-[10px] text-muted"
+              >
+                {i + 1}
+              </span>
+              <p className="text-[15px] leading-relaxed">{s.text}</p>
+              {s.branch && (
+                <p className="mt-2 inline-flex gap-2 rounded-lg border border-dashed border-line px-3 py-1.5 text-sm text-muted">
+                  <span aria-hidden>↳</span>
+                  {s.branch}
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      </Reveal>
+
       <ul className="mt-4 grid gap-4 md:grid-cols-2">
         {data.principles.map((p) => (
           <Reveal as="li" key={p.title} className={`p-6 ${card}`}>
@@ -260,6 +303,44 @@ export function Journey({ data }: { data: NonNullable<CaseStudy["journey"]> }) {
           </Reveal>
         ))}
       </ul>
+    </>
+  );
+}
+
+// Where the project has been and where it's going, oldest first.
+export function Timeline({ items, closing }: { items: CaseStudy["timeline"]; closing?: string }) {
+  const badge = {
+    Completed: "border-fg bg-fg text-bg",
+    "In progress": "border-fg text-fg",
+    Planned: "border-dashed border-line text-muted",
+  } as const;
+  const dot = {
+    Completed: "bg-fg border-fg",
+    "In progress": "bg-bg border-fg",
+    Planned: "bg-bg border-muted",
+  } as const;
+  return (
+    <>
+      <ol className="relative ml-2 max-w-2xl border-l border-line">
+        {items.map((t) => (
+          <Reveal as="li" key={t.phase} className="relative pb-10 pl-8 last:pb-0">
+            <span aria-hidden className={`absolute -left-[7px] top-1.5 h-3.5 w-3.5 rounded-full border-2 ${dot[t.status]}`} />
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <h3 className="font-display text-xl font-bold tracking-tight">{t.phase}</h3>
+              <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-label ${badge[t.status]}`}>
+                {t.status}
+              </span>
+              {t.date && <span className="font-mono text-xs uppercase tracking-label text-muted">{t.date}</span>}
+            </div>
+            <p className="mt-2 text-[15px] leading-relaxed text-muted">{t.text}</p>
+          </Reveal>
+        ))}
+      </ol>
+      {closing && (
+        <Reveal className="mt-12 max-w-[48ch] border-l-2 border-fg pl-5">
+          <p className="font-display text-xl font-bold leading-snug tracking-tight sm:text-2xl">{closing}</p>
+        </Reveal>
+      )}
     </>
   );
 }
