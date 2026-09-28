@@ -89,8 +89,8 @@ export type Project = {
   tags: string[];
   // Live product, shown as its own link on the card.
   live?: { label: string; url: string };
-  // Card image for a project without a case study. With one, the card shows caseStudy.cover.
-  image?: string;
+  // Card image, shown on the left of the Projects card.
+  image: string;
   // Projects with a case study get their own page, and their card links to it.
   caseStudy?: CaseStudy;
 };
@@ -104,6 +104,8 @@ export const projects: Project[] = [
       "A gamified roadmap that guides F-1 international students at UNC from their first flight to their first job. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
+    // One of Reloco's own paintings (public/art/campus-golden.jpg in the app).
+    image: "/projects/reloco/card-painting.webp",
     // Sources: /Users/atefmo/reloco/RELOCO_PROJECT_BRIEF.md, the app's README and code (44 tasks and
     // 34 official links in src/lib/library/tasks.ts, 101 Vitest tests, repeating tasks under
     // "Every year", "After [task]" in components/today/focus-card.tsx), the interviews doc
