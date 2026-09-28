@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "./Button";
 import { CaseStudyToc } from "./CaseStudyToc";
 import { Journey, Personas, Timeline, TodayFlow } from "./CaseStudyUx";
+import { PhoneFrame } from "./PhoneFrame";
 import { CountText } from "./CountText";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
@@ -34,17 +35,15 @@ function Sub({ title, lead }: { title: string; lead?: string }) {
   );
 }
 
-function Shots({ shots, aspect }: { shots: CS["screens"]; aspect: string }) {
+function Screens({ shots }: { shots: CS["screens"] }) {
   return (
-    // Side by side from tablet up; a swipeable row on phones.
-    <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
+    // Full screens in phone frames: three across from tablet up, a swipeable row on phones.
+    <ul className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
       {shots.map((s) => (
-        <li key={s.src} className="w-[72%] shrink-0 snap-start sm:w-[45%] md:w-auto">
+        <li key={s.src} className="w-[66%] shrink-0 snap-center sm:w-[42%] md:w-auto">
           <figure>
-            <div className={`relative ${aspect} overflow-hidden ${card}`}>
-              <Image src={s.src} alt={s.alt} fill sizes="(min-width: 768px) 30vw, 72vw" className="object-cover object-top" />
-            </div>
-            <figcaption className="mt-3 text-sm text-muted">{s.caption}</figcaption>
+            <PhoneFrame src={s.src} alt={s.alt} width={s.width} height={s.height} sizes="(min-width: 768px) 28vw, 66vw" />
+            <figcaption className="mt-4 text-center text-sm text-muted">{s.caption}</figcaption>
           </figure>
         </li>
       ))}
@@ -223,16 +222,10 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               ))}
             </ul>
 
-            <div className="mt-14">
-              <h3 className="label mb-4">In the app</h3>
-              <Shots shots={cs.screens} aspect="aspect-[2/3]" />
+            <div className={`mt-14 px-4 py-10 sm:px-10 sm:py-14 ${card}`}>
+              <h3 className="label mb-8 text-center">In the app</h3>
+              <Screens shots={cs.screens} />
             </div>
-            {cs.gallery && (
-              <div className="mt-10">
-                <h3 className="label mb-4">More screens</h3>
-                <Shots shots={cs.gallery} aspect="aspect-square" />
-              </div>
-            )}
           </section>
 
           {/* The calls I made: product judgment on one side, engineering on the other */}

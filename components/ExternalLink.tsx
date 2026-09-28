@@ -19,7 +19,7 @@ export function ExternalLink({
     >
       {children}
       <span
-        className="text-xs text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg"
+        className="text-xs text-muted transition-colors group-hover:text-fg"
         aria-hidden
       >
         ↗

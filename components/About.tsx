@@ -20,10 +20,9 @@ export function About() {
             {about.hobbies.map((h) => (
               <li
                 key={h.name}
-                className="group inline-flex cursor-default items-center gap-2 rounded-full border border-line px-4 py-2 text-[15px] transition-colors hover:border-fg"
+                className="inline-flex cursor-default items-center gap-2 rounded-full border border-line px-4 py-2 text-[15px] transition-colors hover:border-fg"
               >
-                {/* Each icon gets its own little hover motion; see .hobby-* in globals.css */}
-                <h.icon size={18} stroke={1.6} className={`hobby-${h.motion}`} aria-hidden />
+                <h.icon size={18} stroke={1.6} aria-hidden />
                 {h.name}
                 {h.link && (
                   <a

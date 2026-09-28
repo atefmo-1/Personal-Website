@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Button } from "./Button";
 import { Globe } from "./Globe";
 import { RotatingWord } from "./RotatingWord";
-import { TiltCard } from "./TiltCard";
 import { site } from "@/lib/site";
 
 // The entrance is pure CSS (see .enter-* in globals.css), gated on
@@ -37,7 +36,7 @@ export function Hero() {
         {/* Portrait: first on phones, right column on desktop */}
         <figure className="enter-fade relative col-span-12 lg:order-last lg:col-span-4 lg:col-start-9" style={delay(0.2)}>
           <Globe className="pointer-events-none absolute left-[4.5rem] top-1/2 -z-10 aspect-square w-[260px] -translate-x-1/2 -translate-y-1/2 sm:left-[5.5rem] sm:w-[320px] lg:left-auto lg:right-[150px] lg:w-[520px] lg:translate-x-1/2" />
-          <TiltCard className="w-36 sm:w-44 lg:ml-auto lg:w-full lg:max-w-[300px]">
+          <div className="w-36 sm:w-44 lg:ml-auto lg:w-full lg:max-w-[300px]">
             <div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl bg-line">
               <Image
                 src={site.portrait}
@@ -48,7 +47,7 @@ export function Hero() {
                 className="object-contain object-bottom"
               />
             </div>
-          </TiltCard>
+          </div>
         </figure>
 
         <div className="col-span-12 lg:col-span-8">

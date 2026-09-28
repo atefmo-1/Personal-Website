@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Magnetic } from "./Magnetic";
 
 type Props = {
   href: string;
@@ -19,22 +18,18 @@ export function Button({ href, children, variant = "primary", download, external
   const className = `${base} ${styles}`;
   // Internal pages use client-side navigation; files, mailto and external links stay plain anchors.
   const internal = href.startsWith("/") && !download && !/\.[a-z0-9]+$/i.test(href);
-  return (
-    <Magnetic className="inline-block" strength={0.25}>
-      {internal ? (
-        <Link href={href} className={className}>
-          {children}
-        </Link>
-      ) : (
-        <a
-          href={href}
-          className={className}
-          download={download}
-          {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        >
-          {children}
-        </a>
-      )}
-    </Magnetic>
+  return internal ? (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  ) : (
+    <a
+      href={href}
+      className={className}
+      download={download}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {children}
+    </a>
   );
 }

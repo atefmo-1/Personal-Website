@@ -17,7 +17,7 @@ import type { Skill } from "./skills";
 //   what it is and where to try it (tagline, glance, links, cover, meta, numbers)
 //   why it matters (problem, framing)
 //   where it started (v0: research, personas, journey)
-//   how it works today (today), what it does with real screens (features, screens, gallery)
+//   how it works today (today), what it does with real screens (features, screens)
 //   the calls I made (decisions), where AI fits (ai), what it's built with (stack)
 //   where it's been and where it's going (timeline)
 // Voice: first person, short sentences, specific. No em dashes. Keep every number and quote
@@ -70,10 +70,8 @@ export type CaseStudy = {
   // The product as it ships: the main flow, with branches, and the principles behind it.
   today?: { intro: string; steps: { text: string; branch?: string }[]; principles: Titled[] };
   features: Titled[];
-  // Phone screens shown side by side.
+  // Full phone screens, shown uncropped in a phone frame.
   screens: Shot[];
-  // More screens, as square images.
-  gallery?: Shot[];
   decisions: { product: Titled[]; engineering: Titled[] };
   ai?: { intro: string; built: Titled[]; next: Titled[] };
   stack: { label: string; items: Skill[] }[];
@@ -91,8 +89,8 @@ export type Project = {
   tags: string[];
   // Live product, shown as its own link on the card.
   live?: { label: string; url: string };
-  // Card image, shown beside the text. Transparent images blend best with the card.
-  image: string;
+  // Card image for a project without a case study. With one, the card shows caseStudy.cover.
+  image?: string;
   // Projects with a case study get their own page, and their card links to it.
   caseStudy?: CaseStudy;
 };
@@ -106,13 +104,12 @@ export const projects: Project[] = [
       "A gamified roadmap that guides F-1 international students at UNC from their first flight to their first job. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
-    image: "/projects/reloco/card.webp",
     // Sources: /Users/atefmo/reloco/RELOCO_PROJECT_BRIEF.md, the app's README and code (44 tasks and
     // 34 official links in src/lib/library/tasks.ts, 101 Vitest tests, repeating tasks under
     // "Every year", "After [task]" in components/today/focus-card.tsx), the interviews doc
     // "Atef - 3 interviews" and the Figma persona and journey files. Quotes are verbatim from the
     // two real interviews (Giang, Nana); interview 3 there is simulated, so it isn't used.
-    // Screens: /Users/atefmo/reloco/portfolio-screenshots, plus demo-mode screens on Reloco's paintings.
+    // Screens: the live landing page, and 3x captures of the app in its local demo mode.
     caseStudy: {
       tagline: "A gamified roadmap that takes F-1 students at UNC from their first flight to their first job.",
       glance: [
@@ -347,50 +344,50 @@ export const projects: Project[] = [
           text: "Tasks earn miles, chapters fill passport stamps, and finishing earns a certificate. Change a date and the roadmap reschedules.",
         },
       ],
+      // Clean 3x captures from Reloco's local demo mode (a sample junior; arrival mode from a
+      // student landing in January), shown uncropped in a phone frame.
       screens: [
         {
-          src: "/projects/reloco/today-phone.webp",
-          alt: "Reloco's Today screen for a junior: a boarding pass from Pune to RDU at 64% progress, and the next task, get a travel signature before going home for winter",
-          caption: "Today: one next move and a boarding pass",
-          width: 780,
-          height: 1688,
+          src: "/projects/reloco/screen-today.webp",
+          alt: "Reloco's Today screen for a junior: day 780 in Chapel Hill, a boarding pass at 68% progress, and the next task, get a travel signature before going home for winter",
+          caption: "Today: one next task and a boarding pass",
+          width: 1170,
+          height: 2532,
         },
         {
-          src: "/projects/reloco/journey-phone.webp",
-          alt: "Reloco's Journey screen: a rules update about the DHS duration of status rule, above stamped chapters for Pre-flight, Touchdown and First month",
+          src: "/projects/reloco/screen-journey.webp",
+          alt: "Reloco's Journey screen: a rules update about the DHS duration-of-status rule above the stamped Pre-flight, Touchdown and First month chapters",
           caption: "Journey: the whole degree in chapters",
-          width: 780,
-          height: 1688,
+          width: 1170,
+          height: 2532,
         },
         {
-          src: "/projects/reloco/passport-phone.webp",
+          src: "/projects/reloco/screen-passport.webp",
           alt: "Reloco's passport page with six of nine chapter stamps collected and a certificate ready",
           caption: "Passport: a stamp for every chapter",
-          width: 780,
-          height: 1120,
-        },
-      ],
-      gallery: [
-        {
-          src: "/projects/reloco/task.webp",
-          alt: "A Reloco task page with three steps, each linking to Campus Health's official pages",
-          caption: "A task: steps, time and official sources",
-          width: 1200,
-          height: 1200,
+          width: 1170,
+          height: 2532,
         },
         {
-          src: "/projects/reloco/wallet.webp",
-          alt: "Reloco's document wallet explaining that it never keeps copies of documents",
+          src: "/projects/reloco/screen-task.webp",
+          alt: "A Reloco task page for a winter travel signature: two steps, each linked to ISSS or Study in the States",
+          caption: "A task: steps linked to official sources",
+          width: 1170,
+          height: 2532,
+        },
+        {
+          src: "/projects/reloco/screen-wallet.webp",
+          alt: "Reloco's document wallet: it never keeps copies of documents, only key dates for the passport and visa",
           caption: "Wallet: dates, not documents",
-          width: 1200,
-          height: 1200,
+          width: 1170,
+          height: 2532,
         },
         {
-          src: "/projects/reloco/arrival.webp",
-          alt: "Reloco's arrival mode: a checklist of documents to keep in hand at the border",
+          src: "/projects/reloco/screen-arrival.webp",
+          alt: "Reloco's arrival mode 98 days before landing: the documents to keep in hand at the border",
           caption: "Arrival mode: the landing-day checklist",
-          width: 1200,
-          height: 1200,
+          width: 1170,
+          height: 2532,
         },
       ],
       decisions: {
