@@ -17,6 +17,7 @@ import { CountText } from "./CountText";
 import { PhoneFrame } from "./PhoneFrame";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
+import { relocoDisplay, relocoSans } from "@/lib/relocoFonts";
 import type { CaseStudy as CS, Feature, Project, Shot } from "@/lib/projects";
 
 // A project page in 11 sections: hero, at a glance, why freshmen first, research (v0), the
@@ -291,10 +292,12 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
           {/* Darken toward the middle so the white type reads on any part of the painting */}
           <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45),rgba(0,0,0,0.15)_70%)]" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
-            <h1 className="font-display text-6xl font-bold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-8xl lg:text-9xl">
+            <h1
+              className={`${relocoDisplay.className} text-7xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-9xl lg:text-[10rem]`}
+            >
               {project.name}
             </h1>
-            <p className="mt-3 font-mono text-xs uppercase tracking-label drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-sm">
+            <p className={`${relocoSans.className} mt-3 text-sm drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-lg`}>
               {cs.hero.caption}
             </p>
           </div>
