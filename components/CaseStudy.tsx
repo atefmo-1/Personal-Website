@@ -295,7 +295,8 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             <h1
               className={`${relocoDisplay.className} text-7xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-9xl lg:text-[10rem]`}
             >
-              {project.name}
+              {/* Reloco's wordmark is lowercase */}
+              <span className="lowercase">{project.name}</span>
             </h1>
             <p className={`${relocoSans.className} mt-3 text-sm drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-lg`}>
               {cs.hero.caption}
