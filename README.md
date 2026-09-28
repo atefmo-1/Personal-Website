@@ -29,7 +29,7 @@ Five routes share one root layout (`app/layout.tsx`: nav + footer): `/` (hero, s
 
 ### Project images
 
-Reloco's images in `public/projects/reloco/` are real screens: `cover.webp` is the live landing page, and each feature image is a phone screenshot of the app (run locally in demo mode with a sample student) framed on one of Reloco's own paintings. `card.webp` is three of those phones on a transparent background for the Projects card.
+Reloco's images in `public/projects/reloco/`: `landing.webp` and the three `*-phone.webp` screens come from `/Users/atefmo/reloco/portfolio-screenshots`; `task`, `wallet` and `arrival.webp` are app screens (local demo mode) framed on Reloco's own paintings; `card.webp` is three phones on a transparent background for the Projects card.
 
 For a new project, give it the same pieces in `lib/projects.ts`: a live link, meta, a few checkable numbers, real screens, product and engineering decisions, and the stack. The comment at the top of that file lists the order.
 

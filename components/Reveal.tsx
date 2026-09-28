@@ -7,17 +7,19 @@ type Props = {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  as?: "div" | "li" | "article";
+  as?: "div" | "li" | "article" | "section";
+  id?: string;
 };
 
 // Scroll-triggered fade + slide-up. Renders fully visible by default; see useScrollReveal
 // for when (and whether) the dip-and-reveal actually runs.
-export function Reveal({ children, className, delay = 0, as = "div" }: Props) {
+export function Reveal({ children, className, delay = 0, as = "div", id }: Props) {
   const { ref, hidden } = useScrollReveal();
   const Tag = motion[as] as typeof motion.div;
   return (
     <Tag
       ref={ref}
+      id={id}
       className={className}
       initial={false}
       animate={hidden ? "hidden" : "shown"}
