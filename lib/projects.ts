@@ -43,7 +43,11 @@ export type Feature = {
   how?: string;
 };
 
-export type Layer = { name: string; note?: string; parts: { title: string; text?: string }[] };
+export type Layer = {
+  name: string;
+  note?: string;
+  parts: { title: string; text?: string }[];
+};
 
 export type CaseStudy = {
   // Browser tab title; the layout adds " | Atef Mohamed".
@@ -54,7 +58,10 @@ export type CaseStudy = {
   hero: Shot;
   numbers: { value: string; label: string }[];
   glance: { label: string; text: string }[];
-  audience: { intro: string; groups: { title: string; text: string; shots: Shot[] }[] };
+  audience: {
+    intro: string;
+    groups: { title: string; text: string; shots: Shot[] }[];
+  };
   v0: {
     intro: string;
     insights: { insight: string; quote: string; who: string; today: string }[];
@@ -123,7 +130,7 @@ const arrivalToday = phone(
 );
 
 const ONE_LINER =
-  "A mobile app that knows every visa, tax and campus task an international student at UNC will face, puts them in order around their dates, and walks them through each one with the official source: from the first flight, through every CPT and tax season, to OPT.";
+  "A web app, on any phone or computer, that knows every task an international student at UNC will face, from visas and taxes to a bank account, an SSN and a first credit card. It puts them in order around their dates and walks them through each one with the right source: from the first flight, through every CPT and tax season, to OPT.";
 
 export const projects: Project[] = [
   {
@@ -131,14 +138,19 @@ export const projects: Project[] = [
     name: "Reloco",
     status: "Live",
     blurb:
-      "A mobile app that walks F-1 students at UNC through every visa, tax and campus task, from the first flight through CPT and tax season to OPT. I researched, designed, built and shipped it on my own.",
+      "A web app that walks F-1 students at UNC through everything the US asks of them: visas, taxes, banking, IDs, housing and health, from the first flight through CPT and tax season to OPT. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
     image: "/projects/reloco/card-painting.webp",
     caseStudy: {
       metaTitle: "Reloco: an F-1 co-pilot app for international students",
       oneLiner: ONE_LINER,
-      metaLine: ["Solo project", "Research, product, design, engineering", "Live at reloco.app", "2026"],
+      metaLine: [
+        "Solo project",
+        "Research, product, design, engineering",
+        "Live at reloco.app",
+        "2026",
+      ],
       cta: { label: "Open reloco.app", url: "https://reloco.app" },
       // A painting from the app (public/art/campus-golden.jpg), with the name set over it.
       hero: {
@@ -150,14 +162,14 @@ export const projects: Project[] = [
       },
       numbers: [
         { value: "44", label: "sourced tasks" },
-        { value: "34", label: "official sources" },
+        { value: "34", label: "trusted sources" },
         { value: "9", label: "chapters" },
         { value: "103", label: "tests" },
       ],
       glance: [
         {
           label: "Problem",
-          text: "F-1 rules span UNC ISSS, the IRS, USCIS, CBP and the SSA. The order lives in word of mouth, and one missed step can put a student's status at risk.",
+          text: "A new F-1 student has to handle immigration rules, taxes, an SSN, a US bank account and credit, housing, health insurance and IDs, each explained on a different site. The order lives in word of mouth, and one missed step can put a student's status at risk.",
         },
         {
           label: "Solution",
@@ -179,7 +191,7 @@ export const projects: Project[] = [
         groups: [
           {
             title: "Arriving: new students",
-            text: "The heaviest stretch. For a sample freshman, 16 tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan. Reloco counts down to landing, then switches to arrival mode.",
+            text: "The heaviest stretch. For a sample freshman, 16 tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan, a lease and health insurance. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
                 "31-freshman-today-countdown-phone",
@@ -224,7 +236,8 @@ export const projects: Project[] = [
         ],
       },
       v0: {
-        intro: "Reloco started with interviews with international students at UNC. Four findings shaped v1.",
+        intro:
+          "Reloco started with interviews with international students at UNC. Four findings shaped v1.",
         // Quotes are verbatim from the two real interviews ("Atef - 3 interviews"); the third,
         // simulated interview is not used. Interviewees are described, not named.
         insights: [
@@ -232,25 +245,30 @@ export const projects: Project[] = [
             insight: "Order is the hard part",
             quote: "I first had to find a job on campus.",
             who: "Junior from Vietnam, on getting an SSN",
-            today: 'Tasks know their dependencies. A task that needs another first says "Do first" and links to it.',
+            today:
+              'Tasks know their dependencies. A task that needs another first says "Do first" and links to it.',
           },
           {
             insight: "The information is scattered",
             quote: "It's all out there, but it's, like, all fragmented.",
             who: "Junior from London",
-            today: "Every step links to its official source at UNC ISSS, the IRS, USCIS, CBP or the SSA.",
+            today:
+              "Every step links to its source: a UNC office, a federal or state agency, or a consumer-protection guide.",
           },
           {
             insight: "Know-how travels by word of mouth",
             quote: "The people before me passed the knowledge to me.",
             who: "Junior from Vietnam",
-            today: "Reloco gives every student the plan an upperclassman would, starting before the flight.",
+            today:
+              "Reloco gives every student the plan an upperclassman would, starting before the flight.",
           },
           {
             insight: "Deadlines hide years ahead",
-            quote: "You should be meeting with them like eight to twelve months in advance.",
+            quote:
+              "You should be meeting with them like eight to twelve months in advance.",
             who: "Junior from London, on CPT approval",
-            today: "The plan runs by class year through After graduation, and CPT comes back every spring.",
+            today:
+              "The plan runs by class year through After graduation, and CPT comes back every spring.",
           },
         ],
         personas: [
@@ -258,14 +276,16 @@ export const projects: Project[] = [
             name: "Connected Khoa",
             archetype: "The community learner",
             basedOn: "From the interview with a junior from Vietnam",
-            summary: "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
+            summary:
+              "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
             tags: ["Peer-dependent", "Guided by others"],
           },
           {
             name: "Independent Amara",
             archetype: "The self-driven researcher",
             basedOn: "From the interview with a junior from London",
-            summary: "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
+            summary:
+              "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
             tags: ["Self-reliant", "High frustration"],
           },
         ],
@@ -273,22 +293,56 @@ export const projects: Project[] = [
           summary:
             "The v0 concept organized tasks by phase, used a Build credit task and blocked tasks behind a lock screen. None of these ship today.",
           stages: [
-            { name: "Discovery", doing: "Finds Reloco through a peer tip in a WhatsApp group", level: 0.08 },
-            { name: "Onboarding", doing: "Answers a few questions", level: 0.45 },
-            { name: "Plan", doing: "Sees tasks by phase and taps Build credit", level: 0.56 },
-            { name: "Blocked task", doing: "Hits a lock: complete your SSN first", level: 0.3 },
-            { name: "SSN first", doing: "Follows the guide to the SSA office", level: 0.72 },
-            { name: "Credit card", doing: "Returns to the unlocked task and applies", level: 0.94 },
+            {
+              name: "Discovery",
+              doing: "Finds Reloco through a peer tip in a WhatsApp group",
+              level: 0.08,
+            },
+            {
+              name: "Onboarding",
+              doing: "Answers a few questions",
+              level: 0.45,
+            },
+            {
+              name: "Plan",
+              doing: "Sees tasks by phase and taps Build credit",
+              level: 0.56,
+            },
+            {
+              name: "Blocked task",
+              doing: "Hits a lock: complete your SSN first",
+              level: 0.3,
+            },
+            {
+              name: "SSN first",
+              doing: "Follows the guide to the SSA office",
+              level: 0.72,
+            },
+            {
+              name: "Credit card",
+              doing: "Returns to the unlocked task and applies",
+              level: 0.94,
+            },
           ],
           flow: {
-            steps: ["Land on Reloco", "Onboarding", "Plan generated", "Open a task"],
+            steps: [
+              "Land on Reloco",
+              "Onboarding",
+              "Plan generated",
+              "Open a task",
+            ],
             decision: "Has an unfinished prerequisite?",
-            yes: ["Locked: complete SSN first", "Do the SSN task", "Return, now unlocked"],
+            yes: [
+              "Locked: complete SSN first",
+              "Do the SSN task",
+              "Return, now unlocked",
+            ],
             no: ["Read the guide", "Mark complete", "Next task suggested"],
           },
         },
       },
-      productIntro: "One job: get a student through the US system without missing a step.",
+      productIntro:
+        "One job: get a student through the US system without missing a step.",
       features: [
         {
           id: "onboarding",
@@ -324,7 +378,7 @@ export const projects: Project[] = [
               "The rest of the degree, by class year",
             ),
           ],
-          what: "A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
+          what: "Nine areas: immigration, taxes, work, banking, IDs, housing, health, campus and tech. A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
           why: "A generic checklist buries what matters to you.",
           how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.",
         },
@@ -353,11 +407,11 @@ export const projects: Project[] = [
             ),
             phone(
               "40b-task-bring-sources-phone",
-              "The same task further down: a Bring list, Add due date to Google Calendar, official sources, and a Mark complete bar",
+              "The same task further down: a Bring list, Add due date to Google Calendar, sources, and a Mark complete bar",
               "What to bring, calendar, sources, Mark complete",
             ),
           ],
-          what: "A few short steps with tick boxes, and the official link on the step that needs it. Then what to bring (linked to the wallet), add to calendar, the sources, and a fixed Mark complete / Skip bar.",
+          what: "A few short steps with tick boxes, and the source link on the step that needs it. Then what to bring (linked to the wallet), add to calendar, the sources (UNC offices, federal and state agencies, and consumer-protection guides), and a fixed Mark complete / Skip bar.",
           why: '"Pack your entry documents" is really four small actions. Broken down, it\'s 20 minutes, not a worry.',
           how: "Steps, sources, documents, time and miles are typed fields in the task library, so every task renders the same way.",
         },
@@ -428,7 +482,8 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "44 tasks built from 34 official pages.",
+            "44 tasks built from 34 trusted sources: official pages for rules, and guides like the CFPB's for banking and credit.",
+            "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department), North Carolina (the DMV and Department of Revenue), and consumer guides from the CFPB and FTC.",
             "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
             "The wallet keeps only document dates (passport, visa, I-20, I-94), which drive reminders like passport renewal.",
             "Deadlines sync to Google, Apple or Outlook.",
@@ -441,17 +496,36 @@ export const projects: Project[] = [
         title: "Progress that motivates",
         text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts.",
         shots: [
-          phone("41-reward-miles-phone", "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal", "Miles for every task"),
-          phone("42-reward-stamp-phone", "Chapter complete: Pre-flight stamped, plus 50 miles", "A stamp for every chapter"),
-          phone("20-passport-phone", "Aisha's profile: a passport with six of nine chapter stamps and her trip dates", "The passport"),
-          phone("22-certificate-phone", "First-year certificate listing tasks, miles and the finish date", "The first-year certificate"),
+          phone(
+            "41-reward-miles-phone",
+            "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal",
+            "Miles for every task",
+          ),
+          phone(
+            "42-reward-stamp-phone",
+            "Chapter complete: Pre-flight stamped, plus 50 miles",
+            "A stamp for every chapter",
+          ),
+          phone(
+            "20-passport-phone",
+            "Aisha's profile: a passport with six of nine chapter stamps and her trip dates",
+            "The passport",
+          ),
+          phone(
+            "22-certificate-phone",
+            "First-year certificate listing tasks, miles and the finish date",
+            "The first-year certificate",
+          ),
         ],
       },
       design: {
         intro:
           "I design in loops: interview, build, walk the app as real students, change what doesn't hold up. The walkthroughs use scripted personas: a freshman months out, a freshman landing in two days, a junior, a student landing today.",
         principles: [
-          { title: "One next step (Hick's Law)", text: "Today shows 1 focus task and at most 2 more." },
+          {
+            title: "One next step (Hick's Law)",
+            text: "Today shows 1 focus task and at most 2 more.",
+          },
           {
             title: "The system carries the complexity (Tesler's Law)",
             text: "Dependencies and dates live in the engine, not in the student's head.",
@@ -460,8 +534,14 @@ export const projects: Project[] = [
             title: "Calm urgency",
             text: "Red only for real overdue deadlines. Due-soon is blue, and missed-before-joining is a question, not an alarm.",
           },
-          { title: "Progressive disclosure", text: "Chapters collapse, and each task opens to steps, then sources." },
-          { title: "Mobile-first, light and dark, accessible", text: "Built at 375px first, with visible focus and reduced motion." },
+          {
+            title: "Progressive disclosure",
+            text: "Chapters collapse, and each task opens to steps, then sources.",
+          },
+          {
+            title: "Mobile-first, works everywhere",
+            text: "Built at 375px first, then scaled up for laptops, in light and dark, with visible focus and reduced motion.",
+          },
         ],
         iterations: [
           {
@@ -503,8 +583,14 @@ export const projects: Project[] = [
                 title: "Task library",
                 text: "44 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard requirements, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
               },
-              { title: "School pack", text: "UNC's offices, links and airport, kept separate from the engine." },
-              { title: "Country data", text: "Tax treaties and passport-validity rules." },
+              {
+                title: "School pack",
+                text: "UNC's offices, links and airport, kept separate from the engine.",
+              },
+              {
+                title: "Country data",
+                text: "Tax treaties and passport-validity rules.",
+              },
             ],
           },
           {
@@ -517,16 +603,28 @@ export const projects: Project[] = [
               { title: "Expand repeating tasks" },
               { title: "Order by dependencies" },
               { title: "Place in chapters by class year" },
-              { title: "AI notes (optional)", text: "Can only write notes, never add, move or remove tasks." },
+              {
+                title: "AI notes (optional)",
+                text: "Can only write notes, never add, move or remove tasks.",
+              },
             ],
           },
           {
             name: "Runtime rules",
             parts: [
-              { title: "Not needed", text: "Closes optional tasks whose date passed." },
-              { title: "Catch-up", text: "Marks tasks due before the join date." },
+              {
+                title: "Not needed",
+                text: "Closes optional tasks whose date passed.",
+              },
+              {
+                title: "Catch-up",
+                text: "Marks tasks due before the join date.",
+              },
               { title: "Cascades", text: "Applies skip and reopen cascades." },
-              { title: "Resync by slug", text: "Progress survives library updates." },
+              {
+                title: "Resync by slug",
+                text: "Progress survives library updates.",
+              },
             ],
           },
           {
@@ -536,8 +634,14 @@ export const projects: Project[] = [
                 title: "Store interface → Supabase Postgres",
                 text: "Row-level security on every table, 7 migrations, and security-definer functions that serve the share page and calendar feed by revocable token.",
               },
-              { title: "Google OAuth", text: "Session refreshed in the request proxy." },
-              { title: "Cookie store", text: "Runs the app with no database, for local development and visual QA." },
+              {
+                title: "Google OAuth",
+                text: "Session refreshed in the request proxy.",
+              },
+              {
+                title: "Cookie store",
+                text: "Runs the app with no database, for local development and visual QA.",
+              },
             ],
           },
           {
@@ -549,7 +653,10 @@ export const projects: Project[] = [
               { title: "Wallet" },
               { title: "RFC 5545 calendar feed" },
               { title: "Family share page" },
-              { title: "Email reminders", text: "Built, off until sending is live." },
+              {
+                title: "Email reminders",
+                text: "Built, off until sending is live.",
+              },
             ],
           },
         ],
@@ -568,7 +675,8 @@ export const projects: Project[] = [
           "Deployed on Vercel.",
         ],
         ai: {
-          built: "Personal task notes that can't change the schedule, and a document scanner that returns dates only.",
+          built:
+            "Personal task notes that can't change the schedule, and a document scanner that returns dates only.",
           next: 'Ask Reloco (answers only from sourced tasks, with citations) and "What does this mean?" for official emails.',
           cost: "A small model, per-student limits and a hard monthly cap.",
         },
@@ -576,7 +684,10 @@ export const projects: Project[] = [
           {
             label: "Frontend",
             items: [
-              { name: "Next.js 16 (App Router, server actions)", icon: siNextdotjs },
+              {
+                name: "Next.js 16 (App Router, server actions)",
+                icon: siNextdotjs,
+              },
               { name: "React 19", icon: siReact },
               { name: "TypeScript", icon: siTypescript },
               { name: "Tailwind v4", icon: siTailwindcss },
@@ -607,19 +718,22 @@ export const projects: Project[] = [
         rows: [
           {
             metric: "On-time rate (north star)",
-            definition: "Completed tasks finished by their due date ÷ all completed tasks",
+            definition:
+              "Completed tasks finished by their due date ÷ all completed tasks",
             why: "The core promise: no missed deadlines",
             source: "Completion date vs due date, Postgres",
           },
           {
             metric: "Pre-arrival readiness",
-            definition: "Share of a freshman's Pre-flight tasks done before landing day",
+            definition:
+              "Share of a freshman's Pre-flight tasks done before landing day",
             why: "Freshmen are the focus, and the border is the highest-stakes moment",
             source: "Task status vs arrival date",
           },
           {
             metric: "OPT filed in window",
-            definition: 'Graduating students who complete "File your I-765" before its window closes',
+            definition:
+              'Graduating students who complete "File your I-765" before its window closes',
             why: "The highest-stakes deadline for upperclassmen",
             source: "Task completion vs window end",
           },
@@ -644,15 +758,33 @@ export const projects: Project[] = [
         ],
       },
       timeline: [
-        { phase: "v0", status: "Completed", date: "[Month Year]", text: "Interviews, personas, journey map, first concept." },
-        { phase: "v1", status: "Completed", date: "September 2026", text: "Live at reloco.app with everything above." },
+        {
+          phase: "v0",
+          status: "Completed",
+          date: "[Month Year]",
+          text: "Interviews, personas, journey map, first concept.",
+        },
+        {
+          phase: "v1",
+          status: "Completed",
+          date: "September 2026",
+          text: "Live at reloco.app with everything above.",
+        },
         {
           phase: "v1.1",
           status: "In progress",
           text: 'Ask Reloco, "What does this mean?" for official emails, and the document scanner going live.',
         },
-        { phase: "v2", status: "Planned", text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS." },
-        { phase: "Later", status: "Planned", text: "More schools on the school-pack layer." },
+        {
+          phase: "v2",
+          status: "Planned",
+          text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS.",
+        },
+        {
+          phase: "Later",
+          status: "Planned",
+          text: "More schools on the school-pack layer.",
+        },
       ],
       tryIt: {
         text: "Set it up as a freshman landing next month or a junior planning a summer internship. It takes about two minutes.",
@@ -663,4 +795,5 @@ export const projects: Project[] = [
   },
 ];
 
-export const projectsIntro = "Things I build when nobody's assigning homework 🛠️";
+export const projectsIntro =
+  "Things I build when nobody's assigning homework 🛠️";
