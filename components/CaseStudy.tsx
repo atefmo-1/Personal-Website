@@ -239,7 +239,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
     { id: "timeline", label: "Timeline" },
     { id: "try", label: "Try it" },
   ];
-  const num = (id: string) => sections.findIndex((s) => s.id === id) + 2; // 1 is the hero
+  const num = (id: string) => sections.findIndex((s) => s.id === id) + 1;
   const section = "scroll-mt-24";
   const productN = num("product");
 
@@ -294,7 +294,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
 
       <div className="mt-20 grid gap-12 sm:mt-28 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
         <aside className="hidden lg:block">
-          <CaseStudyToc items={sections} start={2} />
+          <CaseStudyToc items={sections} />
         </aside>
 
         <div className="min-w-0">
@@ -305,7 +305,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               {sections.map((s, i) => (
                 <li key={s.id}>
                   <a href={`#${s.id}`} className="flex gap-3 py-1.5 text-sm text-muted hover:text-fg">
-                    <span className="font-mono text-xs">{two(i + 2)}</span>
+                    <span className="font-mono text-xs">{two(i + 1)}</span>
                     {s.label}
                   </a>
                 </li>
