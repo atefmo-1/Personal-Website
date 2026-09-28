@@ -923,63 +923,105 @@ export function CaseStudy({
             {/* 07 What I'm measuring */}
             <section id="metrics" className={section}>
               <Head n={num("metrics")} title="What I'm measuring" />
-              <dl className="border-t border-line md:hidden">
-                {cs.metrics.rows.map((r) => (
-                  <div
-                    key={r.metric}
-                    className="space-y-1.5 border-b border-line py-4 text-[15px]"
-                  >
-                    <dt className="text-[16px] font-medium">{r.metric}</dt>
-                    <dd>{r.definition}</dd>
-                    <dd className="text-muted">
-                      <span className={`${cap} mr-2`}>Why</span>
-                      {r.why}
-                    </dd>
-                    <dd className="text-muted">
-                      <span className={`${cap} mr-2`}>Source</span>
-                      {r.source}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="hidden md:block">
-                <table className="w-full border-collapse text-left text-[15px]">
-                  <thead>
-                    <tr className="border-b border-fg">
-                      {["Metric", "Definition", "Why it matters", "Source"].map(
-                        (h) => (
-                          <th
-                            key={h}
-                            scope="col"
-                            className={`${cap} py-3 pr-6 font-normal`}
-                          >
-                            {h}
-                          </th>
-                        ),
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cs.metrics.rows.map((r) => (
-                      <tr
-                        key={r.metric}
-                        className="border-b border-line align-top"
-                      >
-                        <th
-                          scope="row"
-                          className="py-4 pr-6 text-[16px] font-medium"
+              <div className="space-y-16">
+                {cs.metrics.groups.map((g) => {
+                  const name = (r: (typeof g.rows)[number]) => (
+                    <>
+                      {r.metric}
+                      {r.northStar && (
+                        <span
+                          className={`${cap} ml-2 whitespace-nowrap rounded-full border border-line px-2 py-0.5 align-middle`}
                         >
-                          {r.metric}
-                        </th>
-                        <td className="py-4 pr-6">{r.definition}</td>
-                        <td className="py-4 pr-6 text-muted">{r.why}</td>
-                        <td className="py-4 text-muted">{r.source}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          North star
+                        </span>
+                      )}
+                    </>
+                  );
+                  return (
+                    <div key={g.title}>
+                      <h3 className="font-display text-2xl font-bold tracking-tight">
+                        {g.title}
+                      </h3>
+                      <p
+                        className={`mt-2 text-[16px] leading-relaxed text-muted ${measure}`}
+                      >
+                        {g.intro}
+                      </p>
+                      <dl className="mt-6 border-t border-line md:hidden">
+                        {g.rows.map((r) => (
+                          <div
+                            key={r.metric}
+                            className="space-y-1.5 border-b border-line py-4 text-[15px]"
+                          >
+                            <dt className="text-[16px] font-medium">
+                              {name(r)}
+                            </dt>
+                            <dd>{r.definition}</dd>
+                            <dd className="text-muted">
+                              <span className={`${cap} mr-2`}>Why</span>
+                              {r.why}
+                            </dd>
+                            <dd className="text-muted">
+                              <span className={`${cap} mr-2`}>Source</span>
+                              {r.source}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                      <div className="mt-6 hidden md:block">
+                        <table className="w-full table-fixed border-collapse text-left text-[15px]">
+                          <caption className="sr-only">{g.title}</caption>
+                          <colgroup>
+                            <col className="w-[22%]" />
+                            <col className="w-[30%]" />
+                            <col className="w-[28%]" />
+                            <col className="w-[20%]" />
+                          </colgroup>
+                          <thead>
+                            <tr className="border-b border-fg">
+                              {[
+                                "Metric",
+                                "Definition",
+                                "Why it matters",
+                                "Source",
+                              ].map((h) => (
+                                <th
+                                  key={h}
+                                  scope="col"
+                                  className={`${cap} py-3 pr-6 font-normal`}
+                                >
+                                  {h}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {g.rows.map((r) => (
+                              <tr
+                                key={r.metric}
+                                className="border-b border-line align-top"
+                              >
+                                <th
+                                  scope="row"
+                                  className="py-4 pr-6 text-[16px] font-medium"
+                                >
+                                  {name(r)}
+                                </th>
+                                <td className="py-4 pr-6">{r.definition}</td>
+                                <td className="py-4 pr-6 text-muted">
+                                  {r.why}
+                                </td>
+                                <td className="py-4 text-muted">{r.source}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <p className="mt-4 text-[14px] text-muted">{cs.metrics.note}</p>
+              <p className="mt-6 text-[14px] text-muted">{cs.metrics.note}</p>
             </section>
 
             {/* 08 Timeline */}

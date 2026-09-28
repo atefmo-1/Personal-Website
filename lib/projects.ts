@@ -108,7 +108,17 @@ export type CaseStudy = {
   };
   metrics: {
     note: string;
-    rows: { metric: string; definition: string; why: string; source: string }[];
+    groups: {
+      title: string;
+      intro: string;
+      rows: {
+        metric: string;
+        northStar?: boolean;
+        definition: string;
+        why: string;
+        source: string;
+      }[];
+    }[];
   };
   timeline: {
     phase: string;
@@ -753,45 +763,80 @@ export const projects: Project[] = [
       },
       metrics: {
         note: "Baselines come from the first tester cohort.",
-        rows: [
+        groups: [
           {
-            metric: "On-time rate (north star)",
-            definition:
-              "Completed tasks finished by their due date ÷ all completed tasks",
-            why: "The core promise: no missed deadlines",
-            source: "Completion date vs due date, Postgres",
+            title: "Now: is v1 working?",
+            intro:
+              "Signals that move within weeks, so I can act on them during the first tester cohort.",
+            rows: [
+              {
+                metric: "Activation",
+                definition: "Visitors who finish onboarding and get a plan",
+                why: "Tests whether onboarding is short and clear enough",
+                source: "Plans created vs visits",
+              },
+              {
+                metric: "First task in week one",
+                definition:
+                  "New students who complete at least one task within 7 days",
+                why: "Shows the plan turns into action, not just a list",
+                source: "Completion dates",
+              },
+              {
+                metric: "Week-4 retention",
+                definition: "Students who complete a task in their fourth week",
+                why: "A degree lasts years, so habit has to form early",
+                source: "Completions by week",
+              },
+              {
+                metric: "Calendar connection",
+                definition: "Students who add their deadlines to a calendar",
+                why: "Reminders outside the app protect deadlines",
+                source: "Accounts with a calendar feed",
+              },
+              {
+                metric: '"Not needed" rate by task',
+                definition: "How often each task is marked not needed",
+                why: "Content quality: a high rate means a task is shown to the wrong students",
+                source: "Task statuses",
+              },
+            ],
           },
           {
-            metric: "Pre-arrival readiness",
-            definition:
-              "Share of a freshman's Pre-flight tasks done before landing day",
-            why: "Freshmen are the focus, and the border is the highest-stakes moment",
-            source: "Task status vs arrival date",
-          },
-          {
-            metric: "OPT filed in window",
-            definition:
-              'Graduating students who complete "File your I-765" before its window closes',
-            why: "The highest-stakes deadline for upperclassmen",
-            source: "Task completion vs window end",
-          },
-          {
-            metric: "Activation",
-            definition: "Visitors who finish onboarding and get a plan",
-            why: "Tests whether onboarding is short and clear enough",
-            source: "Plans created vs visits",
-          },
-          {
-            metric: "Week-4 retention",
-            definition: "Students who complete a task in week 4",
-            why: "A degree lasts years, so habit matters",
-            source: "Completions by week",
-          },
-          {
-            metric: '"Not needed" rate by task',
-            definition: "How often each task is marked not needed",
-            why: "Content quality: shown to the wrong students",
-            source: "Task statuses",
+            title: "Over time: is it changing outcomes?",
+            intro:
+              "The reason Reloco exists. These take a semester or more to show up.",
+            rows: [
+              {
+                metric: "On-time rate",
+                northStar: true,
+                definition:
+                  "Completed tasks finished by their due date ÷ all completed tasks",
+                why: "The core promise: no missed deadlines",
+                source: "Completion date vs due date",
+              },
+              {
+                metric: "Pre-arrival readiness",
+                definition:
+                  "Share of a freshman's Pre-flight tasks done before landing day",
+                why: "The border is the highest-stakes moment of year one",
+                source: "Task status vs arrival date",
+              },
+              {
+                metric: "Return each semester",
+                definition:
+                  "Students active again at the start of each new semester",
+                why: "Yearly tasks only help if students come back for them",
+                source: "Activity by semester",
+              },
+              {
+                metric: "OPT filed in window",
+                definition:
+                  'Graduating students who complete "File your I-765" before its window closes',
+                why: "The highest-stakes deadline of the degree",
+                source: "Task completion vs window end",
+              },
+            ],
           },
         ],
       },
@@ -799,7 +844,6 @@ export const projects: Project[] = [
         {
           phase: "v0",
           status: "Completed",
-          date: "[Month Year]",
           text: "Interviews, personas, journey map, first concept.",
         },
         {
