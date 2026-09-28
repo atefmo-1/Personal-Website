@@ -15,8 +15,8 @@ import type { Skill } from "./skills";
 // Project pages show product thinking, design, engineering and shipping, in balance. Every
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
-// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_BRIEF.md (v2) and
-// RELOCO_CASE_STUDY_UPDATE_V3.md and _V4.md (accounts required: Google sign-in, no guest mode).
+// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild):
+// Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
 export type Shot = {
   src: string;
@@ -38,14 +38,12 @@ export type Feature = {
   id: string;
   title: string;
   shots: Shot[];
-  what: string;
+  what: string | string[];
   why?: string;
   how?: string;
-  // One extra line under the three labels.
-  note?: string;
-  // A row of phones under the block.
-  more?: Shot[];
 };
+
+export type Layer = { name: string; note?: string; parts: { title: string; text?: string }[] };
 
 export type CaseStudy = {
   // Browser tab title; the layout adds " | Atef Mohamed".
@@ -56,7 +54,7 @@ export type CaseStudy = {
   hero: Shot;
   numbers: { value: string; label: string }[];
   glance: { label: string; text: string }[];
-  freshmen: { paragraphs: string[]; shots: Shot[] };
+  audience: { intro: string; groups: { title: string; text: string; shots: Shot[] }[] };
   v0: {
     intro: string;
     insights: { insight: string; quote: string; who: string; today: string }[];
@@ -67,32 +65,21 @@ export type CaseStudy = {
       flow: { steps: string[]; decision: string; yes: string[]; no: string[] };
     };
   };
+  productIntro: string;
   features: Feature[];
-  alsoInV1: {
-    title: string;
-    text: string;
-    icon:
-      | "wallet"
-      | "calendar"
-      | "share"
-      | "stamp"
-      | "google"
-      | "lock"
-      | "notNeeded"
-      | "notes"
-      | "reschedule";
-  }[];
-  // Text-only cards, with screenshots in a row of their own.
-  alsoShots: Shot[];
-  decisions: { decision: string; rejected: string; why: string }[];
-  decisionsShot: Shot;
-  story: { title: string; paragraphs: string[]; shots: Shot[] };
+  progress: { title: string; text: string; shots: Shot[] };
+  design: {
+    intro: string;
+    principles: { title: string; text: string }[];
+    iterations: { title: string; text: string; shots?: Shot[] }[];
+  };
   engineering: {
-    highlights: string[];
+    layers: Layer[];
+    pipeline: string[];
+    quality: string[];
     ai: { built: string; next: string; cost: string };
     stack: { label: string; items: Skill[] }[];
   };
-  design: { title: string; text: string }[];
   metrics: {
     note: string;
     rows: { metric: string; definition: string; why: string; source: string }[];
@@ -120,28 +107,23 @@ export type Project = {
 };
 
 const dir = "/projects/reloco/cs/";
-const phone = (
-  file: string,
-  width: number,
-  height: number,
-  alt: string,
-  caption: string,
-): Shot => ({
+// Every screenshot is a 1170x2532 phone capture, converted to 900x1948.
+const phone = (file: string, alt: string, caption: string): Shot => ({
   src: `${dir}${file}.webp`,
-  width,
-  height,
+  width: 900,
+  height: 1948,
   alt,
   caption,
 });
 
-// Shots used in more than one place.
 const arrivalToday = phone(
   "33-landing-today-arrival-mode-phone",
-  900,
-  1948,
   "Mei's Today screen two days before landing: a boarding pass from Shanghai to RDU and the landing-day checklist",
-  "Two days out: arrival mode takes over.",
+  "Two days out: arrival mode",
 );
+
+const ONE_LINER =
+  "A mobile app that knows every visa, tax and campus task an international student at UNC will face, puts them in order around their dates, and walks them through each one with the official source: from the first flight, through every CPT and tax season, to OPT.";
 
 export const projects: Project[] = [
   {
@@ -149,20 +131,14 @@ export const projects: Project[] = [
     name: "Reloco",
     status: "Live",
     blurb:
-      "A mobile app that walks F-1 students at UNC through every visa, tax and campus task, in order and with the official source. Built first for freshmen. I researched, designed, built and shipped it on my own.",
+      "A mobile app that walks F-1 students at UNC through every visa, tax and campus task, from the first flight through CPT and tax season to OPT. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
     image: "/projects/reloco/card-painting.webp",
     caseStudy: {
       metaTitle: "Reloco: an F-1 co-pilot app for international students",
-      oneLiner:
-        "A mobile app that knows every visa, tax and campus task an international student at UNC will face, puts them in order around their dates, and walks them through each one with the official source. Built first for freshmen landing in the US for the first time.",
-      metaLine: [
-        "Solo project",
-        "Research, product, design, engineering",
-        "Live at reloco.app",
-        "2026",
-      ],
+      oneLiner: ONE_LINER,
+      metaLine: ["Solo project", "Research, product, design, engineering", "Live at reloco.app", "2026"],
       cta: { label: "Open reloco.app", url: "https://reloco.app" },
       // A painting from the app (public/art/campus-golden.jpg), with the name set over it.
       hero: {
@@ -185,44 +161,70 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them one at a time, each backed by its official source.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them, one at a time, for the whole degree.",
+        },
+        {
+          label: "Scope",
+          text: "F-1 undergrads at UNC only, so every office, deadline and link is exact. Schools are a data layer, so the next one is a content change, not a rebuild.",
         },
         {
           label: "Role",
           text: "Solo. User interviews, product strategy, UX and visual design, full-stack engineering, launch.",
         },
-        {
-          label: "Stack",
-          text: "Next.js 16, React 19, TypeScript, Tailwind v4, Supabase (Postgres, RLS, Google OAuth), Zod, Vitest, Claude API, Vercel.",
-        },
         { label: "Status", text: "v1 live at reloco.app, September 2026." },
       ],
-      freshmen: {
-        paragraphs: [
-          "A freshman's first year is the heaviest. For a sample freshman, 22 of 35 tasks fall in year one, and 16 of them land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan.",
-          "Upperclassmen have done it once. Freshmen haven't, and they have no one to ask yet. So v1 is designed around the first year and carries students through graduation and OPT.",
-        ],
-        shots: [
-          phone(
-            "30-freshman-onboarding-stage-phone",
-            900,
-            1948,
-            "Onboarding question for Ziad: where are you right now? Still at home, just arrived, or already studying at UNC",
-            "Where are you right now? The first answer shapes everything.",
-          ),
-          phone(
-            "31-freshman-today-countdown-phone",
-            900,
-            1948,
-            "Ziad's Today screen 97 days before landing: a boarding pass from Cairo to RDU and one next task, activate your Onyen",
-            "Months out: a countdown and one next step.",
-          ),
-          arrivalToday,
+      audience: {
+        intro:
+          "An F-1 degree has three very different stretches. Reloco changes what it shows as a student moves through them.",
+        groups: [
+          {
+            title: "Arriving: new students",
+            text: "The heaviest stretch. For a sample freshman, 16 tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan. Reloco counts down to landing, then switches to arrival mode.",
+            shots: [
+              phone(
+                "31-freshman-today-countdown-phone",
+                "Ziad's Today screen 97 days before landing: a boarding pass from Cairo to RDU and one next task",
+                "Months out: a countdown and one next step",
+              ),
+              arrivalToday,
+            ],
+          },
+          {
+            title: "Studying: sophomore to senior",
+            text: "The work comes in yearly cycles: a travel signature before winter break, taxes every February, CPT before a summer internship, full-time enrollment each fall. Reloco brings each one back on schedule, every year. Current students who join mid-degree start with everything behind them already checked off.",
+            shots: [
+              phone(
+                "07-today-junior-phone",
+                "Aisha's Today as a junior: day 780 in Chapel Hill, 63% progress, and one next task, a travel signature before winter break",
+                "A junior's Today: the winter travel signature",
+              ),
+              phone(
+                "50-cpt-summer-phone",
+                "Task: Summer 2027 internship? Get CPT approved first. Four steps, the first linked to the ISSS Portal",
+                "CPT for a summer 2027 internship",
+              ),
+            ],
+          },
+          {
+            title: "Graduating: OPT and STEM OPT",
+            text: "The highest-stakes filing of the degree has a strict window. Reloco times it from the graduation date: decide, request the OPT I-20, file the I-765 inside the window, then report the job and watch the unemployment limit. STEM majors get the 24-month extension on the same track.",
+            shots: [
+              phone(
+                "52-opt-request-phone",
+                "Task: Request your OPT I-20 from ISSS, with Do first: Decide what's next after graduation",
+                "Request the OPT I-20. 'Do first' keeps the order.",
+              ),
+              phone(
+                "53-stem-opt-phone",
+                "Task: Apply for the 24-month STEM OPT extension, with two Do first prerequisites",
+                "The STEM OPT extension, with its prerequisites",
+              ),
+            ],
+          },
         ],
       },
       v0: {
-        intro:
-          "Reloco started with interviews with international students at UNC. Four findings shaped v1.",
+        intro: "Reloco started with interviews with international students at UNC. Four findings shaped v1.",
         // Quotes are verbatim from the two real interviews ("Atef - 3 interviews"); the third,
         // simulated interview is not used. Interviewees are described, not named.
         insights: [
@@ -230,30 +232,25 @@ export const projects: Project[] = [
             insight: "Order is the hard part",
             quote: "I first had to find a job on campus.",
             who: "Junior from Vietnam, on getting an SSN",
-            today:
-              'Tasks know their dependencies. A card that needs another task first says "After" that task and links to it.',
+            today: 'Tasks know their dependencies. A task that needs another first says "Do first" and links to it.',
           },
           {
             insight: "The information is scattered",
             quote: "It's all out there, but it's, like, all fragmented.",
             who: "Junior from London",
-            today:
-              "Every step links to its official source at UNC ISSS, the IRS, USCIS, CBP or the SSA.",
+            today: "Every step links to its official source at UNC ISSS, the IRS, USCIS, CBP or the SSA.",
           },
           {
             insight: "Know-how travels by word of mouth",
             quote: "The people before me passed the knowledge to me.",
             who: "Junior from Vietnam",
-            today:
-              "Reloco gives every student the plan an upperclassman would, starting before the flight.",
+            today: "Reloco gives every student the plan an upperclassman would, starting before the flight.",
           },
           {
             insight: "Deadlines hide years ahead",
-            quote:
-              "You should be meeting with them like eight to twelve months in advance.",
+            quote: "You should be meeting with them like eight to twelve months in advance.",
             who: "Junior from London, on CPT approval",
-            today:
-              "The plan runs by class year through After graduation, and CPT comes back every spring.",
+            today: "The plan runs by class year through After graduation, and CPT comes back every spring.",
           },
         ],
         personas: [
@@ -261,16 +258,14 @@ export const projects: Project[] = [
             name: "Connected Khoa",
             archetype: "The community learner",
             basedOn: "From the interview with a junior from Vietnam",
-            summary:
-              "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
+            summary: "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
             tags: ["Peer-dependent", "Guided by others"],
           },
           {
             name: "Independent Amara",
             archetype: "The self-driven researcher",
             basedOn: "From the interview with a junior from London",
-            summary:
-              "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
+            summary: "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
             tags: ["Self-reliant", "High frustration"],
           },
         ],
@@ -278,55 +273,22 @@ export const projects: Project[] = [
           summary:
             "The v0 concept organized tasks by phase, used a Build credit task and blocked tasks behind a lock screen. None of these ship today.",
           stages: [
-            {
-              name: "Discovery",
-              doing: "Finds Reloco through a peer tip in a WhatsApp group",
-              level: 0.08,
-            },
-            {
-              name: "Onboarding",
-              doing: "Signs up and answers a few questions",
-              level: 0.45,
-            },
-            {
-              name: "Plan",
-              doing: "Sees tasks by phase and taps Build credit",
-              level: 0.56,
-            },
-            {
-              name: "Blocked task",
-              doing: "Hits a lock: complete your SSN first",
-              level: 0.3,
-            },
-            {
-              name: "SSN first",
-              doing: "Follows the guide to the SSA office",
-              level: 0.72,
-            },
-            {
-              name: "Credit card",
-              doing: "Returns to the unlocked task and applies",
-              level: 0.94,
-            },
+            { name: "Discovery", doing: "Finds Reloco through a peer tip in a WhatsApp group", level: 0.08 },
+            { name: "Onboarding", doing: "Answers a few questions", level: 0.45 },
+            { name: "Plan", doing: "Sees tasks by phase and taps Build credit", level: 0.56 },
+            { name: "Blocked task", doing: "Hits a lock: complete your SSN first", level: 0.3 },
+            { name: "SSN first", doing: "Follows the guide to the SSA office", level: 0.72 },
+            { name: "Credit card", doing: "Returns to the unlocked task and applies", level: 0.94 },
           ],
           flow: {
-            steps: [
-              "Land on Reloco",
-              "Sign up with Google",
-              "Onboarding",
-              "Plan generated",
-              "Open a task",
-            ],
+            steps: ["Land on Reloco", "Onboarding", "Plan generated", "Open a task"],
             decision: "Has an unfinished prerequisite?",
-            yes: [
-              "Locked: complete SSN first",
-              "Do the SSN task",
-              "Return, now unlocked",
-            ],
+            yes: ["Locked: complete SSN first", "Do the SSN task", "Return, now unlocked"],
             no: ["Read the guide", "Mark complete", "Next task suggested"],
           },
         },
       },
+      productIntro: "One job: get a student through the US system without missing a step.",
       features: [
         {
           id: "onboarding",
@@ -334,30 +296,18 @@ export const projects: Project[] = [
           shots: [
             phone(
               "05-onboarding-stage-phone",
-              900,
-              1948,
-              "Aisha's onboarding: where are you right now? Still at home, just arrived, or already studying at UNC, with a boarding pass above",
-              "The stage comes first",
+              "Onboarding question: where are you right now? Still at home, just arrived, or already studying at UNC, with a boarding pass above",
+              "Where are you right now? The first answer shapes everything",
             ),
             phone(
               "06-onboarding-plans-phone",
-              900,
-              1948,
               "Onboarding question about plans, with an off-campus internship and a STEM major selected",
               "Plans decide which tasks apply",
             ),
-            phone(
-              "37-onboarding-done-already-phone",
-              900,
-              1948,
-              "Last onboarding question: Done any of these already? Pre-flight tasks such as booking a flight and signing a lease, each with a tick box",
-              "Freshmen who've already done some prep tick it off",
-            ),
           ],
-          what: "About 10 questions: still at home, just arrived or already studying; country; arrival, start and graduation dates; housing; funding; SSN and bank; plans. A boarding pass fills in as you answer.",
-          why: "A freshman two days from landing and a junior planning CPT need completely different plans. The stage question comes first so nobody sees tasks that don't apply.",
-          how: "Dates are validated against realistic ranges per stage. For current students, past first-year tasks are checked off automatically.",
-          note: "The last question lists the Pre-flight tasks grouped by chapter, so a freshman who has already booked a flight or signed a lease starts with those checked off.",
+          what: "About 10 questions: the stage (still at home, just arrived, already studying), country, arrival, start and graduation dates, housing, funding, SSN and bank, and plans (campus job, internship, STEM major, driving). A boarding pass fills in as you answer.",
+          why: "A freshman two days from landing and a junior planning CPT need completely different plans. New students can tick off prep they've already done; current students start with year one behind them.",
+          how: "Date ranges are validated per stage, and answers are validated on the server with Zod.",
         },
         {
           id: "engine",
@@ -365,38 +315,32 @@ export const projects: Project[] = [
           shots: [
             phone(
               "04-onboarding-built-phone",
-              900,
-              1948,
               "Ziad's plan built: Cleared for takeoff, 35 tasks across 9 areas such as immigration, banking and housing",
               "The plan, grouped by area",
             ),
+            phone(
+              "18-journey-whole-degree-phone",
+              "Journey screen listing chapters from Settling in and First spring through Sophomore, Junior and Senior year and After graduation",
+              "The rest of the degree, by class year",
+            ),
           ],
-          what: "A personal, dated plan grouped by area. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive.",
+          what: "A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
           why: "A generic checklist buries what matters to you.",
-          how: 'A pure, deterministic function from profile to plan. It filters by conditions, schedules from the student\'s dates and orders by dependency. Tests check invariants, like "never opens a task before its prerequisites". Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.',
+          how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.",
         },
         {
           id: "today",
           title: "Today: one next step",
           shots: [
             phone(
-              "07-today-junior-phone",
-              900,
-              1948,
-              "Aisha's Today as a junior: day 780 in Chapel Hill, 63% progress, and one next task, a travel signature before winter break",
-              "A junior's Today",
-            ),
-            phone(
               "44-task-do-first-phone",
-              900,
-              1948,
               "Open a US bank account task with a Do first link: Download your I-94 and check it",
               "A task that needs another first says so",
             ),
           ],
-          what: 'A boarding pass, one focus task and at most two more this week. If a task depends on another, the card says "After [task]" and links to it.',
+          what: "One focus task and at most two more this week. Blocked tasks say what comes first.",
           why: "Hick's Law. One clear action beats a list of 40.",
-          how: "A planner ranks tasks by due date and dependencies. Skipping a task cascades to the tasks that depend on it, and reopening it restores them.",
+          how: "A planner ranks by urgency and dependencies. Skipping cascades to the tasks that depend on it, and reopening restores them.",
         },
         {
           id: "task",
@@ -404,248 +348,227 @@ export const projects: Project[] = [
           shots: [
             phone(
               "40a-task-steps-phone",
-              900,
-              1948,
               "Pack your entry documents in your carry-on: four steps, two ticked, with links to ISSS pre-arrival steps and the SEVIS I-901 fee site",
-              "Steps, each with its own source link. 2 of 4 done.",
+              "Steps, each with its own source. 2 of 4 done.",
             ),
             phone(
               "40b-task-bring-sources-phone",
-              900,
-              1948,
-              "The same task further down: a Bring list, Add due date to Google Calendar, official sources, and a Mark complete +80 bar",
-              "What to bring, add to calendar, official sources, and Mark complete +80 miles.",
+              "The same task further down: a Bring list, Add due date to Google Calendar, official sources, and a Mark complete bar",
+              "What to bring, calendar, sources, Mark complete",
             ),
           ],
-          what: "Each task is a few short steps with a tick box, and the official link sits on the step that needs it. Below: what to bring (linked to the wallet), add to calendar, the sources the task is built from, and a fixed Mark complete / Skip bar. A task that depends on another says 'Do first' at the top.",
-          why: 'A task like "Pack your entry documents" is really four small actions. Breaking it down makes a stressful job doable in 20 minutes, and putting the source on the step means nobody has to hunt for it.',
-          how: "Steps, sources, what to bring, time estimates and miles are typed fields in the task library, so every task renders the same way. Ticked steps are saved per student. Skipping a task also skips the tasks that only exist because of it (the requires cascade), and reopening it brings them back.",
+          what: "A few short steps with tick boxes, and the official link on the step that needs it. Then what to bring (linked to the wallet), add to calendar, the sources, and a fixed Mark complete / Skip bar.",
+          why: '"Pack your entry documents" is really four small actions. Broken down, it\'s 20 minutes, not a worry.',
+          how: "Steps, sources, documents, time and miles are typed fields in the task library, so every task renders the same way.",
         },
         {
           id: "arrival",
-          title: "Arrival mode",
+          title: "Arrival mode (new students)",
           shots: [
-            { ...arrivalToday, caption: "Today switches to arrival mode" },
             phone(
               "34-arrival-checklist-phone",
-              900,
-              1948,
               "Arrival mode two days out: documents to keep in hand at the border, each with a Mark ready button",
               "At the border: keep these in hand",
             ),
             phone(
               "43-landing-check-phone",
-              900,
-              1948,
               "Landing-day card: Did you make it to Chapel Hill? with Yes, I landed, On a different day, and Not yet, my trip moved",
               "On landing day, Reloco asks",
             ),
           ],
-          what: 'Two days before landing, Today switches to a landing-day checklist: documents to keep in hand at the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On landing day it asks "Did you make it?" before clearing the travel tasks.',
-          why: "The border is the highest-stakes moment of a freshman's first year, and flights move. Reloco asks instead of assuming.",
-          note: 'Answering "Yes" clears the travel-only tasks and switches the app to life on the ground. "On a different day" fixes the date and reschedules everything.',
+          what: 'Two days before landing, Today becomes a landing-day checklist: the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On the day it asks "Did you make it?"',
+          why: 'The border is the highest-stakes moment of year one, and flights move. "Yes" clears the travel tasks; "On a different day" fixes the date and reschedules everything.',
+        },
+        {
+          id: "yearly",
+          title: "Every year, on schedule (current students)",
+          shots: [
+            phone(
+              "54-travel-signature-phone",
+              "Task: Going home for winter 2026? Get a travel signature first, linked to ISSS travel and re-entry",
+              "Going home for winter? Travel signature first",
+            ),
+            phone(
+              "51-tax-forms-phone",
+              "Task: File your 2026 tax forms, Form 8843 plus a 1040-NR if you had US income",
+              "Tax season, every February",
+            ),
+          ],
+          what: 'Yearly tasks come back as dated copies: winter travel signature, tax forms (Form 8843, and a 1040-NR if there was US income), CPT for each summer, summer address and full-time enrollment. Optional ones, like a trip home or a summer move, close as "Not needed" if their date passes untouched, instead of sitting overdue. Tax tasks add treaty notes for the student\'s passport country.',
+          why: "Upperclassmen don't need onboarding; they need the recurring deadlines they forget.",
+          how: "A task can declare the years it repeats; the engine creates one copy per year (like tax-forms-2027) and places each in the right class-year chapter.",
+        },
+        {
+          id: "opt",
+          title: "OPT and STEM OPT (graduating students)",
+          shots: [
+            phone(
+              "55-journey-after-graduation-phone",
+              "Journey: Senior year and After graduation, with tax forms, the STEM OPT extension and OPT reporting tasks",
+              "Senior year and After graduation",
+            ),
+          ],
+          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and watch the unemployment limit, then the STEM extension for eligible majors.",
+          why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
+          how: "OPT tasks are anchored to the graduation date, with requires chains so each step unlocks the next.",
         },
         {
           id: "sources",
-          title: "Sourced and current",
+          title: "Sourced, current, and yours to share",
           shots: [
             phone(
               "10-task-rule-30-days-phone",
-              900,
-              1948,
               "Ziad's task Book a flight inside your entry window: you can enter the US no earlier than 30 days before your I-20 start date",
               "The 30-day entry rule, sourced to UNC ISSS",
             ),
             phone(
-              "35-catch-up-journey-phone",
-              900,
-              1948,
-              "Journey screen with a rules update about the 2026 DHS duration-of-status rule and its court pause, above the Pre-flight chapter",
-              "A rule change, and what still applies",
+              "16-wallet-ready-phone",
+              "Wallet with nine of nine documents ready and their key dates",
+              "Wallet: dates, not documents",
             ),
           ],
-          what: "44 tasks built from 34 official pages (UNC ISSS, the IRS, USCIS, CBP, the SSA). Rules that change get a notice in the app, like the 2026 DHS duration-of-status rule and its court pause, which says what still applies.",
-          why: "In compliance, being current is the product. Students told me chatbots were often wrong but their sources were right.",
-          how: "A typed task library, where every task carries its sources, and a rules notice shown on Journey.",
-        },
-        {
-          id: "degree",
-          title: "The whole degree",
-          shots: [
-            phone(
-              "18-journey-whole-degree-phone",
-              900,
-              1948,
-              "Journey screen listing chapters from Settling in and First spring through Sophomore, Junior and Senior year and After graduation",
-              "Nine chapters, arrival to OPT",
-            ),
-            phone(
-              "20-passport-phone",
-              900,
-              1948,
-              "Aisha's profile: a passport with six of nine chapter stamps and her trip dates",
-              "A stamp for each chapter",
-            ),
+          what: [
+            "44 tasks built from 34 official pages.",
+            "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
+            "The wallet keeps only document dates (passport, visa, I-20, I-94), which drive reminders like passport renewal.",
+            "Deadlines sync to Google, Apple or Outlook.",
+            "A read-only share page lets family follow along.",
           ],
-          what: "9 chapters. Five cover the first year (Pre-flight, Touchdown, First month, Settling in, First spring), then Sophomore, Junior and Senior years, and After graduation. Yearly tasks repeat: enrollment, summer address, travel signature, taxes, CPT. Chapters earn passport stamps.",
-          why: "The costly mistakes in later years (CPT timing, the OPT filing window) show up years early.",
-          how: "Class year is computed from the start and graduation dates. Repeating tasks expand into one instance per year.",
-          more: [
-            phone(
-              "41-reward-miles-phone",
-              900,
-              1948,
-              "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal",
-              "Every task earns miles and counts toward the weekly goal",
-            ),
-            phone(
-              "42-reward-stamp-phone",
-              900,
-              1948,
-              "Chapter complete: Pre-flight stamped, plus 50 miles",
-              "Finishing a chapter earns its stamp",
-            ),
-          ],
+          why: "In compliance, being current and precise is the product. Students told me chatbots were often wrong but their sources were right.",
         },
       ],
-      alsoInV1: [
-        {
-          icon: "wallet",
-          title: "Wallet, dates only",
-          text: "Passport, visa, I-20 and I-94 dates drive the plan. No copies, no ID numbers.",
-        },
-        {
-          icon: "calendar",
-          title: "Calendar sync",
-          text: "One tap for Google, Apple or Outlook. It updates as the plan changes.",
-        },
-        {
-          icon: "share",
-          title: "Family share page",
-          text: "Read-only progress for a parent or sponsor.",
-        },
-        {
-          icon: "stamp",
-          title: "Miles, stamps and a certificate",
-          text: "Miles, stamps, weekly streaks and a first-year certificate.",
-        },
-        {
-          icon: "google",
-          title: "Google sign-in",
-          text: "One tap, no password, and your plan follows you to any device.",
-        },
-        {
-          icon: "lock",
-          title: "Privacy",
-          text: "Row-level security, and delete everything anytime.",
-        },
-        {
-          icon: "notNeeded",
-          title: "Not needed",
-          text: 'Optional tasks whose date passes, like a summer internship or a trip home, close as "Not needed" instead of sitting overdue.',
-        },
-        {
-          icon: "notes",
-          title: "Personal notes (AI)",
-          text: "Where enabled, a short note tailored to the student sits on the task. It can't add, move or remove tasks.",
-        },
-        {
-          icon: "reschedule",
-          title: "Change a date, everything moves",
-          text: "Editing arrival, start or graduation dates in Profile reschedules the whole plan and keeps progress.",
-        },
-      ],
-      alsoShots: [
-        phone(
-          "16-wallet-ready-phone",
-          900,
-          1948,
-          "Wallet with nine of nine documents ready and their key dates",
-          "Wallet: dates only, 9 of 9 ready",
-        ),
-        phone(
-          "23-family-share-phone",
-          900,
-          1948,
-          "Read-only share page showing a student's first-year certificate and stamps",
-          "Share page: read-only progress for family",
-        ),
-        phone(
-          "22-certificate-phone",
-          900,
-          1948,
-          "First-year certificate listing tasks, miles and the finish date",
-          "The first-year certificate",
-        ),
-      ],
-      decisions: [
-        {
-          decision: "Freshmen first, one school",
-          rejected: "All students everywhere",
-          why: "Precision is the product in compliance, and freshmen have the most at stake.",
-        },
-        {
-          decision: "Accounts from day one, with Google sign-in",
-          rejected: "A guest mode that stores the plan in one browser",
-          why: "Reloco holds a four-year record. It has to survive a new phone, sync to a calendar and be there at OPT time. One tap with Google, no password to create.",
-        },
-        {
-          decision: "Weekly streaks",
-          rejected: "Daily streaks",
-          why: "Visa work comes in bursts.",
-        },
-        {
-          decision: "Rules decide, AI assists",
-          rejected: "An AI-generated plan",
-          why: "Deadlines must be deterministic and cited.",
-        },
-        {
-          decision: "Ask whether they landed",
-          rejected: "Assuming the flight date",
-          why: "Flights move.",
-        },
-        {
-          decision: "Hid email reminders until sending is live",
-          rejected: "A setting that does nothing",
-          why: "A control that does nothing breaks trust.",
-        },
-      ],
-      decisionsShot: phone(
-        "36-sign-in-phone",
-        900,
-        1948,
-        "Sign-in screen over a painting of the Old Well, with one Continue with Google button",
-        "Sign-in: one Google button, no password",
-      ),
-      story: {
-        title: "Catching a day-one problem",
-        paragraphs: [
-          "I built a screenshot crawler that walks the app as different students. Running it as Mei, a freshman landing in two days, showed a problem: her first screen said three tasks were overdue, because their dates had passed before she signed up.",
-          'Red "Overdue" on day one tells a new student they\'re already failing. Now Reloco records the day a student joins. Anything due before that says "From before you joined · done?" and ranks after this week\'s real deadlines. Her Today now leads with the ride from RDU, packing her entry documents and a US phone number.',
-        ],
+      progress: {
+        title: "Progress that motivates",
+        text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts.",
         shots: [
-          phone(
-            "35-catch-up-journey-phone",
-            900,
-            1948,
-            "Journey screen where Pre-flight tasks due before the student joined read From before you joined, done?",
-            "Before she joined: a question, not an alarm",
-          ),
-          { ...arrivalToday, caption: "Her Today leads with what's next" },
+          phone("41-reward-miles-phone", "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal", "Miles for every task"),
+          phone("42-reward-stamp-phone", "Chapter complete: Pre-flight stamped, plus 50 miles", "A stamp for every chapter"),
+          phone("20-passport-phone", "Aisha's profile: a passport with six of nine chapter stamps and her trip dates", "The passport"),
+          phone("22-certificate-phone", "First-year certificate listing tasks, miles and the finish date", "The first-year certificate"),
+        ],
+      },
+      design: {
+        intro:
+          "I design in loops: interview, build, walk the app as real students, change what doesn't hold up. The walkthroughs use scripted personas: a freshman months out, a freshman landing in two days, a junior, a student landing today.",
+        principles: [
+          { title: "One next step (Hick's Law)", text: "Today shows 1 focus task and at most 2 more." },
+          {
+            title: "The system carries the complexity (Tesler's Law)",
+            text: "Dependencies and dates live in the engine, not in the student's head.",
+          },
+          {
+            title: "Calm urgency",
+            text: "Red only for real overdue deadlines. Due-soon is blue, and missed-before-joining is a question, not an alarm.",
+          },
+          { title: "Progressive disclosure", text: "Chapters collapse, and each task opens to steps, then sources." },
+          { title: "Mobile-first, light and dark, accessible", text: "Built at 375px first, with visible focus and reduced motion." },
+        ],
+        iterations: [
+          {
+            title: "Late joiners saw failure on day one.",
+            text: 'A freshman signing up two days before landing saw three red "Overdue" tasks. Now Reloco records the day a student joins, and anything due before that asks "From before you joined · done?" and ranks after this week\'s real deadlines.',
+            shots: [
+              phone(
+                "35-catch-up-journey-phone",
+                "Journey screen where Pre-flight tasks due before the student joined read From before you joined, done?",
+                "After: tasks from before joining ask, not alarm",
+              ),
+              { ...arrivalToday, caption: "Her Today leads with what's next" },
+            ],
+          },
+          {
+            title: "Copy assumed everyone was arriving.",
+            text: '"Let\'s get you to Chapel Hill" and a "Certificate of Arrival" read wrong for a junior. Now the copy follows the stage: "You\'re all set", "First year complete".',
+          },
+          {
+            title: "Seniors couldn't enter their real dates.",
+            text: "The wallet only accepted I-20 and I-94 dates from the last two years. It now matches the six-year range current students need.",
+          },
+          {
+            title: "A setting that did nothing.",
+            text: "Email reminders showed a toggle before sending was live. It stays hidden until it works.",
+          },
+          {
+            title: "A plan that lived in one browser.",
+            text: "The app first let students try it without an account. A four-year record has to survive a new phone and sync to a calendar, so Reloco now starts with an account.",
+          },
         ],
       },
       engineering: {
-        highlights: [
-          "A deterministic engine with 103 Vitest tests on invariants.",
-          "One Store interface: Postgres in production, a cookie store for local development and visual QA.",
-          "Row-level security on every table. Zod validation on every server action.",
-          "An RFC 5545 calendar feed behind a revocable token.",
-          "Revocable share links read through a narrow database function.",
-          "Visual QA: a Puppeteer crawler I wrote walks onboarding as scripted personas (a freshman months out, a freshman landing in two days, a junior) and captures every screen on phone and desktop.",
+        layers: [
+          {
+            name: "Content",
+            parts: [
+              {
+                title: "Task library",
+                text: "44 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard requirements, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
+              },
+              { title: "School pack", text: "UNC's offices, links and airport, kept separate from the engine." },
+              { title: "Country data", text: "Tax treaties and passport-validity rules." },
+            ],
+          },
+          {
+            name: "Engine",
+            note: "Pure and deterministic. Streams each stage to the setup screen as NDJSON progress events.",
+            parts: [
+              { title: "Profile" },
+              { title: "Filter by conditions" },
+              { title: "Resolve date anchors" },
+              { title: "Expand repeating tasks" },
+              { title: "Order by dependencies" },
+              { title: "Place in chapters by class year" },
+              { title: "AI notes (optional)", text: "Can only write notes, never add, move or remove tasks." },
+            ],
+          },
+          {
+            name: "Runtime rules",
+            parts: [
+              { title: "Not needed", text: "Closes optional tasks whose date passed." },
+              { title: "Catch-up", text: "Marks tasks due before the join date." },
+              { title: "Cascades", text: "Applies skip and reopen cascades." },
+              { title: "Resync by slug", text: "Progress survives library updates." },
+            ],
+          },
+          {
+            name: "Data",
+            parts: [
+              {
+                title: "Store interface → Supabase Postgres",
+                text: "Row-level security on every table, 7 migrations, and security-definer functions that serve the share page and calendar feed by revocable token.",
+              },
+              { title: "Google OAuth", text: "Session refreshed in the request proxy." },
+              { title: "Cookie store", text: "Runs the app with no database, for local development and visual QA." },
+            ],
+          },
+          {
+            name: "Surfaces",
+            parts: [
+              { title: "Today" },
+              { title: "Journey" },
+              { title: "Task pages" },
+              { title: "Wallet" },
+              { title: "RFC 5545 calendar feed" },
+              { title: "Family share page" },
+              { title: "Email reminders", text: "Built, off until sending is live." },
+            ],
+          },
+        ],
+        pipeline: [
+          "Answers are validated with Zod.",
+          "44 tasks are filtered to the ones that apply (35 for a sample freshman, 46 for a sample junior).",
+          "Anchors become real dates.",
+          "Yearly tasks become one copy per year.",
+          "Tasks are ordered by dependencies.",
+          "Tasks are grouped into 9 chapters.",
+          "The plan is saved, and each step streams to the screen.",
+        ],
+        quality: [
+          "103 Vitest tests on engine invariants (never opens a task before its prerequisites, windows never invert).",
+          "A Puppeteer crawler I wrote walks onboarding as scripted personas and captures every screen.",
+          "Deployed on Vercel.",
         ],
         ai: {
-          built:
-            "Personal task notes that can't change the schedule, and a document scanner that returns dates only.",
+          built: "Personal task notes that can't change the schedule, and a document scanner that returns dates only.",
           next: 'Ask Reloco (answers only from sourced tasks, with citations) and "What does this mean?" for official emails.',
           cost: "A small model, per-student limits and a hard monthly cap.",
         },
@@ -653,7 +576,7 @@ export const projects: Project[] = [
           {
             label: "Frontend",
             items: [
-              { name: "Next.js 16", icon: siNextdotjs },
+              { name: "Next.js 16 (App Router, server actions)", icon: siNextdotjs },
               { name: "React 19", icon: siReact },
               { name: "TypeScript", icon: siTypescript },
               { name: "Tailwind v4", icon: siTailwindcss },
@@ -679,57 +602,32 @@ export const projects: Project[] = [
           },
         ],
       },
-      design: [
-        {
-          title: "One next step (Hick's Law)",
-          text: "Today shows 1 focus task and at most 2 more.",
-        },
-        {
-          title: "The system carries the complexity (Tesler's Law)",
-          text: "Dependencies and dates live in the engine, not in the student's head.",
-        },
-        {
-          title: "Calm urgency",
-          text: "Red only for real overdue deadlines. Due-soon is blue, and missed-before-joining is a question, not an alarm.",
-        },
-        {
-          title: "Progressive disclosure",
-          text: "Chapters collapse, and each task opens to steps, then sources.",
-        },
-        {
-          title: "Mobile-first, both themes, accessible",
-          text: "Built at 375px first, light and dark, with visible focus and reduced motion.",
-        },
-      ],
       metrics: {
         note: "Baselines come from the first tester cohort.",
         rows: [
           {
             metric: "On-time rate (north star)",
-            definition:
-              "Completed tasks finished by their due date ÷ all completed tasks",
+            definition: "Completed tasks finished by their due date ÷ all completed tasks",
             why: "The core promise: no missed deadlines",
             source: "Completion date vs due date, Postgres",
           },
           {
             metric: "Pre-arrival readiness",
-            definition:
-              "Share of a freshman's Pre-flight tasks done before landing day",
+            definition: "Share of a freshman's Pre-flight tasks done before landing day",
             why: "Freshmen are the focus, and the border is the highest-stakes moment",
             source: "Task status vs arrival date",
+          },
+          {
+            metric: "OPT filed in window",
+            definition: 'Graduating students who complete "File your I-765" before its window closes',
+            why: "The highest-stakes deadline for upperclassmen",
+            source: "Task completion vs window end",
           },
           {
             metric: "Activation",
             definition: "Visitors who finish onboarding and get a plan",
             why: "Tests whether onboarding is short and clear enough",
             source: "Plans created vs visits",
-          },
-          {
-            metric: "Sign-in drop-off",
-            definition:
-              "Visitors who reach the sign-in screen but don't continue",
-            why: "Tests whether requiring an account costs too many students",
-            source: "Sign-in page visits vs new accounts",
           },
           {
             metric: "Week-4 retention",
@@ -746,36 +644,18 @@ export const projects: Project[] = [
         ],
       },
       timeline: [
-        {
-          phase: "v0",
-          status: "Completed",
-          date: "[Month Year]",
-          text: "Interviews, personas, journey map, first concept.",
-        },
-        {
-          phase: "v1",
-          status: "Completed",
-          date: "September 2026",
-          text: "Live at reloco.app with everything above.",
-        },
+        { phase: "v0", status: "Completed", date: "[Month Year]", text: "Interviews, personas, journey map, first concept." },
+        { phase: "v1", status: "Completed", date: "September 2026", text: "Live at reloco.app with everything above." },
         {
           phase: "v1.1",
           status: "In progress",
           text: 'Ask Reloco, "What does this mean?" for official emails, and the document scanner going live.',
         },
-        {
-          phase: "v2",
-          status: "Planned",
-          text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS.",
-        },
-        {
-          phase: "Later",
-          status: "Planned",
-          text: "More schools on the school-pack layer.",
-        },
+        { phase: "v2", status: "Planned", text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS." },
+        { phase: "Later", status: "Planned", text: "More schools on the school-pack layer." },
       ],
       tryIt: {
-        text: "Sign in with Google and set up Reloco as a freshman landing next month. It takes about two minutes.",
+        text: "Set it up as a freshman landing next month or a junior planning a summer internship. It takes about two minutes.",
         button: "Open reloco.app",
         url: "https://reloco.app",
       },
@@ -783,5 +663,4 @@ export const projects: Project[] = [
   },
 ];
 
-export const projectsIntro =
-  "Things I build when nobody's assigning homework 🛠️";
+export const projectsIntro = "Things I build when nobody's assigning homework 🛠️";
