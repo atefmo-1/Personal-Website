@@ -1027,35 +1027,38 @@ export function CaseStudy({
             {/* 08 Timeline */}
             <section id="timeline" className={section}>
               <Head n={num("timeline")} title="Timeline" />
-              <ol className="grid gap-4">
+              {/* A compact vertical timeline: one thin line, a dot per phase, no cards.
+                  Filled dot = completed, ring = in progress, hollow grey = planned. */}
+              <ol className={`relative border-l border-line ${measure}`}>
                 {cs.timeline.map((t) => (
-                  <li
-                    key={t.phase}
-                    className={`grid gap-3 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 ${card}`}
-                  >
-                    <p className="font-display text-3xl font-bold tracking-tight">
-                      {t.phase}
-                    </p>
-                    <div>
+                  <li key={t.phase} className="relative pb-8 pl-7 last:pb-0">
+                    <span
+                      aria-hidden
+                      className={`absolute -left-[6.5px] top-[7px] h-3 w-3 rounded-full border-2 ${
+                        t.status === "Completed"
+                          ? "border-fg bg-fg"
+                          : t.status === "In progress"
+                            ? "border-fg bg-bg"
+                            : "border-muted bg-bg"
+                      }`}
+                    />
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <h3 className="font-display text-xl font-bold tracking-tight">
+                        {t.phase}
+                      </h3>
                       <span
-                        className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-[13px] uppercase tracking-label ${
-                          t.status === "Completed"
-                            ? "border-fg bg-fg text-bg"
-                            : t.status === "In progress"
-                              ? "border-fg"
-                              : "border-dashed border-muted text-muted"
-                        }`}
+                        className={`${cap} ${t.status === "Planned" ? "" : "text-fg"}`}
                       >
                         {t.status}
                       </span>
-                      <p
-                        className={`mt-3 text-[16px] leading-relaxed ${measure}`}
-                      >
-                        {t.text}
-                      </p>
+                      {t.date && (
+                        <span className="text-[14px] text-muted">
+                          · {t.date}
+                        </span>
+                      )}
                     </div>
-                    <p className="font-mono text-[13px] uppercase tracking-label text-muted sm:text-right">
-                      {t.date ?? ""}
+                    <p className="mt-1.5 text-[16px] leading-relaxed text-muted">
+                      {t.text}
                     </p>
                   </li>
                 ))}
@@ -1089,7 +1092,7 @@ export function CaseStudy({
                   href="/contact"
                   className="text-[15px] underline underline-offset-4 opacity-80 hover:opacity-100"
                 >
-                  Say hello
+                  Share feedback or get in touch
                 </Link>
               </div>
             </section>
