@@ -33,7 +33,7 @@ export function CaseStudyToc({ items, start = 1 }: { items: { id: string; label:
                 active === item.id ? "border-fg text-fg" : "border-transparent text-muted"
               }`}
             >
-              <span className="font-mono text-xs tabular-nums opacity-60">{String(i + start).padStart(2, "0")}</span>
+              <span className="font-mono text-[13px] tabular-nums opacity-60">{String(i + start).padStart(2, "0")}</span>
               {item.label}
             </a>
           </li>

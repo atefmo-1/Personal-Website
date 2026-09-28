@@ -1,5 +1,6 @@
 import {
   siClaude,
+  siGithub,
   siNextdotjs,
   siPuppeteer,
   siReact,
@@ -28,10 +29,16 @@ export type Shot = {
 
 export type Persona = {
   name: string;
+  initials: string;
   archetype: string;
-  basedOn: string;
-  summary: string;
-  tags: string[];
+  background: string;
+  quote: string;
+  how: string;
+  goals: string[];
+  frustrations: string[];
+  // 0 = left pole, 1 = right pole, one value per trait scale.
+  traits: number[];
+  gives: string;
 };
 
 export type Feature = {
@@ -43,10 +50,14 @@ export type Feature = {
   how?: string;
 };
 
+// Engineering layer: a label and purpose on the left, plain-text parts on the right. Text in
+// `backticks` renders in monospace. The Engine layer draws its pipeline as pills instead.
 export type Layer = {
   name: string;
-  note?: string;
-  parts: { title: string; text?: string }[];
+  purpose: string;
+  parts?: string[];
+  pipeline?: string[];
+  aside?: string;
 };
 
 export type CaseStudy = {
@@ -66,9 +77,16 @@ export type CaseStudy = {
     intro: string;
     insights: { insight: string; quote: string; who: string; today: string }[];
     personas: [Persona, Persona];
+    traitScales: { left: string; right: string }[];
     concept: {
       summary: string;
-      stages: { name: string; doing: string; level: number }[];
+      stages: {
+        name: string;
+        doing: string;
+        feeling: string;
+        level: number;
+        turningPoint?: string;
+      }[];
       flow: { steps: string[]; decision: string; yes: string[]; no: string[] };
     };
   };
@@ -78,13 +96,11 @@ export type CaseStudy = {
   design: {
     intro: string;
     principles: { title: string; text: string }[];
-    iterations: { title: string; text: string; shots?: Shot[] }[];
   };
   engineering: {
     layers: Layer[];
     pipeline: string[];
-    quality: string[];
-    ai: { built: string; next: string; cost: string };
+    quality: { value: string; label: string }[];
     stack: { label: string; items: Skill[] }[];
   };
   metrics: {
@@ -161,10 +177,10 @@ export const projects: Project[] = [
         caption: "Your co-pilot for life on an F-1 visa.",
       },
       numbers: [
-        { value: "44", label: "sourced tasks" },
+        { value: "44", label: "tasks" },
+        { value: "9", label: "life areas" },
         { value: "34", label: "trusted sources" },
-        { value: "9", label: "chapters" },
-        { value: "103", label: "tests" },
+        { value: "4", label: "years covered" },
       ],
       glance: [
         {
@@ -181,7 +197,7 @@ export const projects: Project[] = [
         },
         {
           label: "Role",
-          text: "Solo. User interviews, product strategy, UX and visual design, full-stack engineering, launch.",
+          text: "Solo: user interviews, product strategy, UX and visual design, full-stack engineering and launch, with Claude Code as my AI pair programmer.",
         },
         { label: "Status", text: "v1 live at reloco.app, September 2026." },
       ],
@@ -274,20 +290,52 @@ export const projects: Project[] = [
         personas: [
           {
             name: "Connected Khoa",
+            initials: "K",
             archetype: "The community learner",
-            basedOn: "From the interview with a junior from Vietnam",
-            summary:
-              "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
-            tags: ["Peer-dependent", "Guided by others"],
+            background: "Junior at UNC, from Vietnam.",
+            quote: "The people before me passed the knowledge to me.",
+            how: "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
+            goals: [
+              "Handle each system as it comes up, without stress",
+              "Build credit gradually",
+              "Help younger international students settle in",
+            ],
+            frustrations: [
+              "Doesn't know what he doesn't know until it's urgent",
+              "Depends on who happens to be around",
+              "Stuck when nobody he knows has done it before",
+            ],
+            traits: [0.22, 0.18, 0.25, 0.2, 0.22],
+            gives:
+              "The guidance his network gave him, without depending on luck.",
           },
           {
             name: "Independent Amara",
+            initials: "A",
             archetype: "The self-driven researcher",
-            basedOn: "From the interview with a junior from London",
-            summary:
-              "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
-            tags: ["Self-reliant", "High frustration"],
+            background: "Junior at UNC, from London.",
+            quote: "It's all out there, but it's, like, all fragmented.",
+            how: "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
+            goals: [
+              "Master every system before it catches her off guard",
+              "Land an employer willing to sponsor her visa",
+              "Create the guide she wished she had",
+            ],
+            frustrations: [
+              "Information is spread across dozens of sources",
+              "Advisors are slow and miss the details of her case",
+              "Chatbots give partly wrong answers she has to verify",
+            ],
+            traits: [0.85, 0.8, 0.8, 0.82, 0.85],
+            gives: "Sources she can check, without the hours of research.",
           },
+        ],
+        traitScales: [
+          { left: "Reactive", right: "Proactive" },
+          { left: "Peer-dependent", right: "Self-reliant" },
+          { left: "Informal", right: "Official sources" },
+          { left: "Guided", right: "Trial and error" },
+          { left: "Low frustration", right: "High frustration" },
         ],
         concept: {
           summary:
@@ -296,32 +344,40 @@ export const projects: Project[] = [
             {
               name: "Discovery",
               doing: "Finds Reloco through a peer tip in a WhatsApp group",
-              level: 0.08,
+              feeling: "Overwhelmed",
+              level: 0.04,
             },
             {
               name: "Onboarding",
               doing: "Answers a few questions",
+              feeling: "Relieved",
               level: 0.45,
             },
             {
               name: "Plan",
               doing: "Sees tasks by phase and taps Build credit",
-              level: 0.56,
+              feeling: "Excited",
+              level: 0.66,
             },
             {
               name: "Blocked task",
               doing: "Hits a lock: complete your SSN first",
-              level: 0.3,
+              feeling: "Briefly frustrated",
+              level: 0.42,
+              turningPoint:
+                "The moment that shaped dependencies: a clear 'do this first' instead of a dead end.",
             },
             {
               name: "SSN first",
               doing: "Follows the guide to the SSA office",
-              level: 0.72,
+              feeling: "Confident",
+              level: 0.8,
             },
             {
               name: "Credit card",
               doing: "Returns to the unlocked task and applies",
-              level: 0.94,
+              feeling: "Accomplished",
+              level: 0.97,
             },
           ],
           flow: {
@@ -360,7 +416,7 @@ export const projects: Project[] = [
             ),
           ],
           what: "About 10 questions: the stage (still at home, just arrived, already studying), country, arrival, start and graduation dates, housing, funding, SSN and bank, and plans (campus job, internship, STEM major, driving). A boarding pass fills in as you answer.",
-          why: "A freshman two days from landing and a junior planning CPT need completely different plans. New students can tick off prep they've already done; current students start with year one behind them.",
+          why: "A freshman two days from landing and a junior planning CPT need completely different plans. New students can tick off prep they've already done; current students start with year one behind them. The copy follows the stage too, so a junior never reads 'get ready to fly'.",
           how: "Date ranges are validated per stage, and answers are validated on the server with Zod.",
         },
         {
@@ -380,7 +436,7 @@ export const projects: Project[] = [
           ],
           what: "Nine areas: immigration, taxes, work, banking, IDs, housing, health, campus and tech. A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
           why: "A generic checklist buries what matters to you.",
-          how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer.",
+          how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer. An optional AI step (Claude) writes a short personal note on each task. It can't add, move or remove anything, so every date stays deterministic and sourced.",
         },
         {
           id: "today",
@@ -393,7 +449,7 @@ export const projects: Project[] = [
             ),
           ],
           what: "One focus task and at most two more this week. Blocked tasks say what comes first.",
-          why: "Hick's Law. One clear action beats a list of 40.",
+          why: "Hick's Law. One clear action beats a list of 40. Calm urgency: red means a real missed deadline. Anything due before a student joined asks 'done?' instead, so a late joiner doesn't start the app already failing.",
           how: "A planner ranks by urgency and dependencies. Skipping cascades to the tasks that depend on it, and reopening restores them.",
         },
         {
@@ -450,7 +506,7 @@ export const projects: Project[] = [
           ],
           what: 'Yearly tasks come back as dated copies: winter travel signature, tax forms (Form 8843, and a 1040-NR if there was US income), CPT for each summer, summer address and full-time enrollment. Optional ones, like a trip home or a summer move, close as "Not needed" if their date passes untouched, instead of sitting overdue. Tax tasks add treaty notes for the student\'s passport country.',
           why: "Upperclassmen don't need onboarding; they need the recurring deadlines they forget.",
-          how: "A task can declare the years it repeats; the engine creates one copy per year (like tax-forms-2027) and places each in the right class-year chapter.",
+          how: "A task can declare the years it repeats; the engine creates one copy per year (like `tax-forms-2027`) and places each in the right class-year chapter.",
         },
         {
           id: "opt",
@@ -464,7 +520,7 @@ export const projects: Project[] = [
           ],
           what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and watch the unemployment limit, then the STEM extension for eligible majors.",
           why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
-          how: "OPT tasks are anchored to the graduation date, with requires chains so each step unlocks the next.",
+          how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next.",
         },
         {
           id: "sources",
@@ -524,7 +580,7 @@ export const projects: Project[] = [
         principles: [
           {
             title: "One next step (Hick's Law)",
-            text: "Today shows 1 focus task and at most 2 more.",
+            text: "Today shows one focus task and at most two more.",
           },
           {
             title: "The system carries the complexity (Tesler's Law)",
@@ -532,7 +588,7 @@ export const projects: Project[] = [
           },
           {
             title: "Calm urgency",
-            text: "Red only for real overdue deadlines. Due-soon is blue, and missed-before-joining is a question, not an alarm.",
+            text: "Red only for real overdue deadlines; due-soon is blue; missed-before-joining is a question.",
           },
           {
             title: "Progressive disclosure",
@@ -543,120 +599,63 @@ export const projects: Project[] = [
             text: "Built at 375px first, then scaled up for laptops, in light and dark, with visible focus and reduced motion.",
           },
         ],
-        iterations: [
-          {
-            title: "Late joiners saw failure on day one.",
-            text: 'A freshman signing up two days before landing saw three red "Overdue" tasks. Now Reloco records the day a student joins, and anything due before that asks "From before you joined · done?" and ranks after this week\'s real deadlines.',
-            shots: [
-              phone(
-                "35-catch-up-journey-phone",
-                "Journey screen where Pre-flight tasks due before the student joined read From before you joined, done?",
-                "After: tasks from before joining ask, not alarm",
-              ),
-              { ...arrivalToday, caption: "Her Today leads with what's next" },
-            ],
-          },
-          {
-            title: "Copy assumed everyone was arriving.",
-            text: '"Let\'s get you to Chapel Hill" and a "Certificate of Arrival" read wrong for a junior. Now the copy follows the stage: "You\'re all set", "First year complete".',
-          },
-          {
-            title: "Seniors couldn't enter their real dates.",
-            text: "The wallet only accepted I-20 and I-94 dates from the last two years. It now matches the six-year range current students need.",
-          },
-          {
-            title: "A setting that did nothing.",
-            text: "Email reminders showed a toggle before sending was live. It stays hidden until it works.",
-          },
-          {
-            title: "A plan that lived in one browser.",
-            text: "The app first let students try it without an account. A four-year record has to survive a new phone and sync to a calendar, so Reloco now starts with an account.",
-          },
-        ],
       },
       engineering: {
         layers: [
           {
             name: "Content",
+            purpose: "What Reloco knows",
             parts: [
-              {
-                title: "Task library",
-                text: "44 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard requirements, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
-              },
-              {
-                title: "School pack",
-                text: "UNC's offices, links and airport, kept separate from the engine.",
-              },
-              {
-                title: "Country data",
-                text: "Tax treaties and passport-validity rules.",
-              },
+              "Task library: 44 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
+              "School pack: UNC's offices, links and airport, kept separate from the engine.",
+              "Country data: tax treaties and passport-validity rules.",
             ],
           },
           {
             name: "Engine",
-            note: "Pure and deterministic. Streams each stage to the setup screen as NDJSON progress events.",
-            parts: [
-              { title: "Profile" },
-              { title: "Filter by conditions" },
-              { title: "Resolve date anchors" },
-              { title: "Expand repeating tasks" },
-              { title: "Order by dependencies" },
-              { title: "Place in chapters by class year" },
-              {
-                title: "AI notes (optional)",
-                text: "Can only write notes, never add, move or remove tasks.",
-              },
+            purpose:
+              "Pure and deterministic. Streams each stage to the setup screen as NDJSON.",
+            pipeline: [
+              "Profile",
+              "Filter",
+              "Resolve dates",
+              "Expand yearly",
+              "Order by dependencies",
+              "Chapters",
             ],
+            aside: "AI notes",
           },
           {
             name: "Runtime rules",
+            purpose: "Keep a plan honest over time",
             parts: [
-              {
-                title: "Not needed",
-                text: "Closes optional tasks whose date passed.",
-              },
-              {
-                title: "Catch-up",
-                text: "Marks tasks due before the join date.",
-              },
-              { title: "Cascades", text: "Applies skip and reopen cascades." },
-              {
-                title: "Resync by slug",
-                text: "Progress survives library updates.",
-              },
+              "Not needed: closes optional tasks whose date passed.",
+              "Catch-up: marks tasks due before the join date.",
+              "Skip and reopen cascades.",
+              "Resync by `slug`, so progress survives library updates.",
             ],
           },
           {
             name: "Data",
+            purpose: "One Store interface",
             parts: [
-              {
-                title: "Store interface → Supabase Postgres",
-                text: "Row-level security on every table, 7 migrations, and security-definer functions that serve the share page and calendar feed by revocable token.",
-              },
-              {
-                title: "Google OAuth",
-                text: "Session refreshed in the request proxy.",
-              },
-              {
-                title: "Cookie store",
-                text: "Runs the app with no database, for local development and visual QA.",
-              },
+              "Supabase Postgres with row-level security on every table and 7 migrations.",
+              "Security-definer functions serve the share page and calendar feed by revocable token.",
+              "Google OAuth, with the session refreshed in the request proxy.",
+              "A cookie store runs the app with no database, for local development and visual QA.",
             ],
           },
           {
             name: "Surfaces",
+            purpose: "What students use",
             parts: [
-              { title: "Today" },
-              { title: "Journey" },
-              { title: "Task pages" },
-              { title: "Wallet" },
-              { title: "RFC 5545 calendar feed" },
-              { title: "Family share page" },
-              {
-                title: "Email reminders",
-                text: "Built, off until sending is live.",
-              },
+              "Today",
+              "Journey",
+              "Task pages",
+              "Wallet",
+              "RFC 5545 calendar feed",
+              "Family share page",
+              "Email reminders (built, off until sending is live)",
             ],
           },
         ],
@@ -670,16 +669,10 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality: [
-          "103 Vitest tests on engine invariants (never opens a task before its prerequisites, windows never invert).",
-          "A Puppeteer crawler I wrote walks onboarding as scripted personas and captures every screen.",
-          "Deployed on Vercel.",
+          { value: "103", label: "tests on engine invariants" },
+          { value: "4", label: "scripted personas for visual QA" },
+          { value: "7", label: "database migrations" },
         ],
-        ai: {
-          built:
-            "Personal task notes that can't change the schedule, and a document scanner that returns dates only.",
-          next: 'Ask Reloco (answers only from sourced tasks, with citations) and "What does this mean?" for official emails.',
-          cost: "A small model, per-student limits and a hard monthly cap.",
-        },
         stack: [
           {
             label: "Frontend",
@@ -709,6 +702,16 @@ export const projects: Project[] = [
               { name: "Vitest", icon: siVitest },
               { name: "Puppeteer", icon: siPuppeteer },
               { name: "Vercel", icon: siVercel },
+            ],
+          },
+          {
+            label: "Built with",
+            items: [
+              {
+                name: "Claude Code (AI pair programming for building, refactoring and testing)",
+                icon: siClaude,
+              },
+              { name: "GitHub", icon: siGithub },
             ],
           },
         ],
