@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CaseStudyToc } from "./CaseStudyToc";
 import { PhoneFrame } from "./PhoneFrame";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
@@ -173,14 +172,14 @@ function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
   return (
     <Reveal as="article" id={`f-${f.id}`} className="scroll-mt-24">
       <div
-        className={`grid items-center gap-10 2xl:gap-14 ${
+        className={`grid items-center gap-10 lg:gap-14 ${
           i % 2
-            ? "2xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]"
-            : "2xl:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
+            ? "lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)]"
+            : "lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
         }`}
       >
         <div
-          className={`order-last ${i % 2 ? "2xl:order-last" : "2xl:order-first"}`}
+          className={`order-last ${i % 2 ? "lg:order-last" : "lg:order-first"}`}
         >
           {phones}
         </div>
@@ -282,7 +281,8 @@ function PersonaCard({
 function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
   const n = c.stages.length;
   const x = (i: number) => ((i + 0.5) / n) * 100;
-  const y = (l: number) => (1 - l) * 100;
+  // Keep points 15% away from the top and bottom edges so their labels have room.
+  const y = (l: number) => 85 - l * 70;
   const chip = "rounded-full border border-line px-3 py-1 text-[14px]";
   const dip = c.stages.find((s) => s.turningPoint);
   const Arrow = () => (
@@ -299,7 +299,10 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
       <div>
         <ol className="grid gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-0">
           {c.stages.map((s, i) => (
-            <li key={s.name} className="border-t border-line pt-3 lg:px-2 lg:text-center">
+            <li
+              key={s.name}
+              className="border-t border-line pt-3 lg:px-2 lg:text-center"
+            >
               <p className="font-mono text-[13px] text-muted">{two(i + 1)}</p>
               <p className="mt-1 font-medium">{s.name}</p>
               <p className="mt-1 text-[14px] leading-snug text-muted">
@@ -356,8 +359,12 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
                   )}
                 </span>
                 <span
-                  className={`absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[13px] font-medium sm:block ${
-                    s.turningPoint ? "top-5" : "bottom-5"
+                  className={`absolute hidden whitespace-nowrap text-[13px] font-medium sm:block ${
+                    i === 0
+                      ? "left-3 top-4"
+                      : s.turningPoint
+                        ? "left-1/2 top-6 -translate-x-1/2"
+                        : "bottom-6 left-1/2 -translate-x-1/2"
                   }`}
                   style={s.turningPoint ? { color: accent } : undefined}
                 >
@@ -607,12 +614,7 @@ export function CaseStudy({
         </div>
       </header>
 
-      {/* From "At a glance" on: a sticky "On this page" sidebar on desktop; phones read top to bottom */}
-      <div className="mt-28 grid gap-12 sm:mt-36 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
-        <aside className="hidden lg:block">
-          <CaseStudyToc items={sections} />
-        </aside>
-
+      <div className="mt-28 sm:mt-36">
         <div className="min-w-0">
           <div className="space-y-28 sm:space-y-[140px]">
             {/* 01 At a glance: two big statements, then a thin meta row */}
@@ -788,9 +790,7 @@ export function CaseStudy({
                   >
                     <p className="text-[15px] text-muted">
                       <span className={`${cap} mr-2 md:hidden`}>v0</span>
-                      <span className="line-through decoration-line">
-                        {r.v0}
-                      </span>
+                      {r.v0}
                     </p>
                     <p className="text-[16px] font-medium">
                       <span className={`${cap} mr-2 md:hidden`}>v1</span>
@@ -828,7 +828,7 @@ export function CaseStudy({
                 >
                   {cs.progress.text}
                 </p>
-                <div className="mt-10 grid grid-cols-2 items-start gap-5 2xl:grid-cols-4">
+                <div className="mt-10 grid grid-cols-2 items-start gap-5 lg:grid-cols-4">
                   {cs.progress.shots.map((s) => (
                     <div key={s.src} className="mx-auto w-full max-w-[270px]">
                       <ShotFig s={s} sizes="(min-width: 768px) 270px, 45vw" />
