@@ -21,9 +21,20 @@ import type { Skill } from "./skills";
 //   the calls I made and why (decisions.product, decisions.engineering), and where AI fits
 //   what it's built with (stack) and what's next
 // Keep every number and quote checkable against the project's code, data or interview notes.
-// Optional sections (research, gallery, ai) are skipped on the page when a project leaves them out.
+// Optional sections (framing, research, personas, journey, gallery, ai) are skipped on the page
+// when a project leaves them out.
 type Titled = { title: string; text: string };
 type Shot = { src: string; alt: string; caption: string; width: number; height: number };
+
+export type Persona = {
+  name: string;
+  archetype: string;
+  basedOn: string;
+  summary: string;
+  tags: string[];
+  goals: string[];
+  frustrations: string[];
+};
 
 export type CaseStudy = {
   tagline: string;
@@ -32,9 +43,26 @@ export type CaseStudy = {
   meta: { label: string; value: string }[];
   numbers: { value: string; label: string }[];
   problem: string[];
+  // The design question and user story that framed the work.
+  framing?: { hmw: string; story: string };
   research?: {
     intro: string;
     insights: { title: string; quote: string; who: string; finding: string; response: string }[];
+  };
+  personas?: {
+    intro: string;
+    people: [Persona, Persona];
+    // Where each persona sits between two poles, 0 (left) to 1 (right): [first, second].
+    spectrum: { left: string; right: string; values: [number, number] }[];
+    takeaway: string;
+  };
+  journey?: {
+    intro: string;
+    // Each stage's feeling, 0 (low) to 1 (high), drives the emotional curve.
+    stages: { name: string; doing: string; thinking: string; feeling: string; level: number }[];
+    quote: string;
+    flow: { title: string; steps: string[]; decision: string; yes: string[]; no: string[] };
+    principles: Titled[];
   };
   process: Titled[];
   features: Titled[];
@@ -103,6 +131,10 @@ export const projects: Project[] = [
         "F-1 students juggle dozens of visa, tax, travel and work rules over four years: SEVIS, I-94, travel signatures, CPT, OPT, STEM OPT, Form 8843. The answers are spread across UNC, IRS, USCIS and CBP pages, and missing one deadline can put a student's status at risk.",
         "As an international student at UNC myself, I heard the same story in every interview: the information exists, but finding it, in the right order, depends on who you happen to know.",
       ],
+      framing: {
+        hmw: "How might we help international students find trusted information about immigration, banking, healthcare and daily life, all in one place and in the right order?",
+        story: "As an international student, I want to find all information in one place, so that I save time.",
+      },
       research: {
         intro:
           "Before writing any code, I interviewed international students at UNC about their first weeks in the US: getting an SSN, banking and credit, taxes, and work rules. Four patterns came up, and each one became a product decision.",
@@ -140,6 +172,126 @@ export const projects: Project[] = [
           },
         ],
       },
+      // From "Persona Posters" and "User stories, user journeys, user flows" in Figma. Personas are
+      // built from the two real interviews; the simulated third persona is left out.
+      personas: {
+        intro:
+          "I turned the interviews into two personas. They sit at opposite ends of almost every scale, which made them a useful test: a design has to work for both.",
+        people: [
+          {
+            name: "Connected Khoa",
+            archetype: "The community learner",
+            basedOn: "Built from the interview with a junior from Vietnam",
+            summary:
+              "Learned most of what he knows about US systems from upperclassmen and WhatsApp groups. Goes in person instead of researching online, and passes what he learns down to newer students.",
+            tags: ["Peer-dependent", "Guided by others", "Low frustration"],
+            goals: [
+              "Handle each system as it comes up, without stress",
+              "Build credit gradually",
+              "Help younger international students settle in",
+            ],
+            frustrations: [
+              "Doesn't know what he doesn't know until it's urgent",
+              "Depends on who happens to be around to help",
+              "Stuck when nobody he knows has done it before",
+            ],
+          },
+          {
+            name: "Independent Amara",
+            archetype: "The self-driven researcher",
+            basedOn: "Built from the interview with a junior from London",
+            summary:
+              "Built her own roadmap from DHS pages, ISSS documents and AI chatbots, then checked every answer against the source. Understands CPT and OPT better than most advisors.",
+            tags: ["Proactive", "Self-reliant", "High frustration"],
+            goals: [
+              "Master every system before it catches her off guard",
+              "Land a top employer willing to sponsor her visa",
+              "Create the central guide she wished she had",
+            ],
+            frustrations: [
+              "Information is fragmented across dozens of sources",
+              "Advisors are slow and miss the nuance of her situation",
+              "Chatbots give partly wrong answers she has to verify",
+            ],
+          },
+        ],
+        spectrum: [
+          { left: "Reactive", right: "Proactive", values: [0.28, 0.87] },
+          { left: "Peer-dependent", right: "Self-reliant", values: [0.17, 0.75] },
+          { left: "Official sources", right: "Informal sources", values: [0.8, 0.29] },
+          { left: "Trial and error", right: "Guided by others", values: [0.8, 0.16] },
+          { left: "Low frustration", right: "High frustration", values: [0.26, 0.83] },
+        ],
+        takeaway:
+          "Two very different students, one missing piece: a trusted path through the system, in the right order. Khoa needs the guidance his network gave him without depending on luck. Amara needs sources she can verify without the hours of research.",
+      },
+      journey: {
+        intro:
+          "Before designing screens, I mapped Amara's first week with the product. She tries to apply for her first credit card and learns she needs an SSN first. This early map shaped the dependency system that ships today.",
+        stages: [
+          {
+            name: "Discovery",
+            doing: "Finds Reloco through a peer tip in a WhatsApp group",
+            thinking: "There has to be a better way to figure all of this out.",
+            feeling: "Overwhelmed",
+            level: 0.08,
+          },
+          {
+            name: "Onboarding",
+            doing: "Signs up with Google and answers a few questions about her situation",
+            thinking: "Finally! Something that asks me what visa I'm on.",
+            feeling: "Relieved",
+            level: 0.45,
+          },
+          {
+            name: "Roadmap",
+            doing: "Sees her tasks by phase and taps Build Credit",
+            thinking: "Everything in one place, in order.",
+            feeling: "Excited",
+            level: 0.56,
+          },
+          {
+            name: "Blocked task",
+            doing: "Sees a lock: complete your SSN first, with a link to that task",
+            thinking: "Why can't I start this? Oh, I need my SSN first. That makes sense.",
+            feeling: "Briefly frustrated",
+            level: 0.3,
+          },
+          {
+            name: "SSN first",
+            doing: "Follows the guide and document checklist to the SSA office",
+            thinking: "The guide is clear. I know exactly what to bring.",
+            feeling: "Confident",
+            level: 0.72,
+          },
+          {
+            name: "Credit card",
+            doing: "Returns to the unlocked task, goes to the bank, gets approved",
+            thinking: "I didn't have to figure this out alone.",
+            feeling: "Accomplished",
+            level: 0.94,
+          },
+        ],
+        quote:
+          "The moment a user sees ‘complete SSN first’ instead of hitting a dead end with no explanation is the moment Reloco earns trust.",
+        flow: {
+          title: "Task flow: a first task, with a dependency block",
+          steps: ["Land on Reloco", "Sign up with Google", "Onboarding", "Roadmap generated", "Open a task"],
+          decision: "Has an unfinished prerequisite?",
+          yes: ["Blocked: complete SSN first", "Do the SSN task", "Return, now unlocked"],
+          no: ["Read the guide", "Mark complete", "Celebrate", "Next task suggested"],
+        },
+        principles: [
+          {
+            title: "Hick's Law",
+            text: "More choices mean slower decisions, so Today shows one clear next step instead of the whole list.",
+          },
+          {
+            title: "Tesler's Law",
+            text: "The complexity of immigration doesn't disappear. The system absorbs it through dependencies and dates, so the student doesn't have to.",
+          },
+        ],
+      },
       process: [
         {
           title: "Listen",
@@ -147,7 +299,7 @@ export const projects: Project[] = [
         },
         {
           title: "Define",
-          text: "Synthesized the interviews into four insights and one problem: the information exists, but it's fragmented and out of order.",
+          text: "Synthesized the interviews into four insights, two personas, a journey map and a task flow, around one problem: the information exists, but it's fragmented and out of order.",
         },
         {
           title: "Map the rules",

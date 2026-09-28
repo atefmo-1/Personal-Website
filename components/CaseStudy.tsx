@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./Button";
 import { CaseStudyToc } from "./CaseStudyToc";
+import { Journey, Personas } from "./CaseStudyUx";
 import { CountText } from "./CountText";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
@@ -42,7 +43,8 @@ function Shots({ shots, aspect }: { shots: CS["screens"]; aspect: string }) {
 }
 
 // A project page, in the order a recruiter reads: what it is, the numbers, the problem, what users
-// said, how I worked, what it does, the product and engineering calls, AI, the stack, what's next.
+// said, personas and the journey map, how I worked, what it does, the product and engineering
+// calls, AI, the stack, what's next.
 export function CaseStudy({ project }: { project: Project & { caseStudy: CS } }) {
   const cs = project.caseStudy;
 
@@ -50,6 +52,8 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
   const sections = [
     { id: "problem", label: "Problem" },
     ...(cs.research ? [{ id: "research", label: "Research" }] : []),
+    ...(cs.personas ? [{ id: "personas", label: "Personas" }] : []),
+    ...(cs.journey ? [{ id: "journey", label: "Journey map" }] : []),
     { id: "process", label: "How I worked" },
     { id: "product", label: "What it does" },
     { id: "decisions", label: "Decisions" },
@@ -133,6 +137,18 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 </p>
               ))}
             </div>
+            {cs.framing && (
+              <div className="mt-8 grid gap-4 md:grid-cols-[3fr_2fr]">
+                <div className={`p-6 sm:p-7 ${card}`}>
+                  <p className="label">How might we</p>
+                  <p className="mt-3 font-display text-xl font-bold leading-snug tracking-tight sm:text-2xl">{cs.framing.hmw}</p>
+                </div>
+                <div className={`p-6 sm:p-7 ${card}`}>
+                  <p className="label">User story</p>
+                  <p className="mt-3 text-lg italic leading-snug">&ldquo;{cs.framing.story}&rdquo;</p>
+                </div>
+              </div>
+            )}
           </Reveal>
 
           {cs.research && (
@@ -147,8 +163,8 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                       <p className="font-display text-lg leading-snug">&ldquo;{ins.quote}&rdquo;</p>
                       <footer className="mt-2 text-xs text-muted">{ins.who}</footer>
                     </blockquote>
-                    <p className="mt-4 text-[15px] leading-relaxed text-muted">{ins.finding}</p>
-                    <p className="mt-auto flex gap-2 border-t border-line pt-4 text-[15px] leading-relaxed [margin-top:1.25rem]">
+                    <p className="mb-5 mt-4 text-[15px] leading-relaxed text-muted">{ins.finding}</p>
+                    <p className="mt-auto flex gap-2 border-t border-line pt-4 text-[15px] leading-relaxed">
                       <span aria-hidden className="shrink-0">→</span>
                       <span>
                         <span className="sr-only">So Reloco: </span>
@@ -158,6 +174,20 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                   </Reveal>
                 ))}
               </ol>
+            </section>
+          )}
+
+          {cs.personas && (
+            <section id="personas" className={section}>
+              <Head n={num("personas")} title="Who I designed for" lead={cs.personas.intro} />
+              <Personas data={cs.personas} />
+            </section>
+          )}
+
+          {cs.journey && (
+            <section id="journey" className={section}>
+              <Head n={num("journey")} title="Mapping the journey" lead={cs.journey.intro} />
+              <Journey data={cs.journey} />
             </section>
           )}
 
