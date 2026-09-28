@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 // "On this page" links for a case study, with the section being read highlighted.
-export function CaseStudyToc({ items }: { items: { id: string; label: string }[] }) {
+export function CaseStudyToc({ items, start = 1 }: { items: { id: string; label: string }[]; start?: number }) {
   const [active, setActive] = useState(items[0]?.id);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export function CaseStudyToc({ items }: { items: { id: string; label: string }[]
                 active === item.id ? "border-fg text-fg" : "border-transparent text-muted"
               }`}
             >
-              <span className="font-mono text-xs tabular-nums opacity-60">{String(i + 1).padStart(2, "0")}</span>
+              <span className="font-mono text-xs tabular-nums opacity-60">{String(i + start).padStart(2, "0")}</span>
               {item.label}
             </a>
           </li>

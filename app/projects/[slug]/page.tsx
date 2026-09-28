@@ -20,8 +20,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!project) return {};
   return {
     title: project.name,
-    description: project.caseStudy.tagline,
-    openGraph: { images: [project.caseStudy.cover.src] },
+    description: project.caseStudy.oneLiner,
+    openGraph: { images: [project.caseStudy.hero.src] },
   };
 }
 

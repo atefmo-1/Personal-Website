@@ -1,6 +1,5 @@
 import {
   siClaude,
-  siGoogle,
   siNextdotjs,
   siReact,
   siSupabase,
@@ -12,72 +11,51 @@ import {
 } from "simple-icons";
 import type { Skill } from "./skills";
 
-// Every project page is written for a recruiter skimming for product judgment and engineering
-// depth. Each case study answers, in order:
-//   what it is and where to try it (tagline, glance, links, cover, meta, numbers)
-//   why it matters (problem, framing)
-//   where it started (v0: research, personas, journey)
-//   how it works today (today), what it does with real screens (features, screens)
-//   the calls I made (decisions), where AI fits (ai), what it's built with (stack)
-//   where it's been and where it's going (timeline)
-// Voice: first person, short sentences, specific. No em dashes. Keep every number and quote
-// checkable against the project's code, data or interview notes.
-// Optional sections are skipped on the page when a project leaves them out.
-type Titled = { title: string; text: string };
-type Shot = { src: string; alt: string; caption: string; width: number; height: number };
+// Project pages show PM, design and engineering depth through what the product actually does.
+// Every feature says what it does, why it matters and how I built it. Metrics live only in the
+// Metrics section, each with a definition and a source. No em dashes, no invented numbers.
+// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_BRIEF.md.
 
-export type Persona = {
-  name: string;
-  archetype: string;
-  basedOn: string;
-  summary: string;
-  tags: string[];
-  goals: string[];
-  frustrations: string[];
+export type Shot = {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+  kind: "phone" | "desktop";
 };
 
+export type Persona = { name: string; archetype: string; basedOn: string; summary: string; tags: string[] };
+
+export type Feature = { id: string; title: string; shots: Shot[]; what: string; why?: string; how?: string };
+
 export type CaseStudy = {
-  tagline: string;
-  // One-line summary under the hero, shown as separate segments.
-  glance?: string[];
-  links: { label: string; url: string }[];
-  cover: { src: string; alt: string; width: number; height: number };
-  meta: { label: string; value: string }[];
+  oneLiner: string;
+  metaLine: string[];
+  cta: { label: string; url: string };
+  hero: Shot;
   numbers: { value: string; label: string }[];
-  problem: string[];
-  // The design question and user story that framed the work.
-  framing?: { hmw: string; story: string };
-  // Where the product started: research that shaped the first concept.
-  v0?: {
+  overview: { problem: string; built: string };
+  v0: {
     intro: string;
-    insights: { title: string; quote: string; who: string; finding: string; response: string }[];
-    personas: {
-      intro: string;
-      people: [Persona, Persona];
-      // Where each persona sits between two poles, 0 (left) to 1 (right): [first, second].
-      spectrum: { left: string; right: string; values: [number, number] }[];
-      takeaway: string;
-    };
-    journey: {
-      intro: string;
-      // Each stage's feeling, 0 (low) to 1 (high), drives the emotional curve.
-      stages: { name: string; doing: string; thinking: string; feeling: string; level: number }[];
-      quote: string;
-      flow: { title: string; steps: string[]; decision: string; yes: string[]; no: string[] };
-      note: string;
+    insights: { insight: string; quote: string; who: string; today: string }[];
+    personas: [Persona, Persona];
+    concept: {
+      summary: string;
+      stages: { name: string; doing: string; feeling: string; level: number }[];
+      flow: { steps: string[]; decision: string; yes: string[]; no: string[] };
     };
   };
-  // The product as it ships: the main flow, with branches, and the principles behind it.
-  today?: { intro: string; steps: { text: string; branch?: string }[]; principles: Titled[] };
-  features: Titled[];
-  // Full phone screens, shown uncropped in a phone frame.
-  screens: Shot[];
-  decisions: { product: Titled[]; engineering: Titled[] };
-  ai?: { intro: string; built: Titled[]; next: Titled[] };
-  stack: { label: string; items: Skill[] }[];
-  // Oldest first. Leave `date` out until it's known; the page hides a missing date.
+  features: Feature[];
+  landingStrip?: { caption: string; shots: Shot[] };
+  decisions: { decision: string; rejected: string; why: string }[];
+  engineering: {
+    bullets: string[];
+    stack: Skill[];
+    ai: { built: string[]; next: string[]; cost: string };
+  };
+  metrics: { note: string; rows: { metric: string; definition: string; why: string; source: string }[] };
   timeline: { phase: string; status: "Completed" | "In progress" | "Planned"; date?: string; text: string }[];
-  closing?: string;
 };
 
 export type Project = {
@@ -87,13 +65,25 @@ export type Project = {
   status: string;
   blurb: string;
   tags: string[];
-  // Live product, shown as its own link on the card.
   live?: { label: string; url: string };
   // Card image, shown on the left of the Projects card.
   image: string;
-  // Projects with a case study get their own page, and their card links to it.
   caseStudy?: CaseStudy;
 };
+
+const dir = "/projects/reloco/cs/";
+const phone = (file: string, width: number, height: number, alt: string, caption: string): Shot => ({
+  src: `${dir}${file}.webp`,
+  width,
+  height,
+  alt,
+  caption,
+  kind: "phone",
+});
+const desktop = (file: string, width: number, height: number, alt: string, caption: string): Shot => ({
+  ...phone(file, width, height, alt, caption),
+  kind: "desktop",
+});
 
 export const projects: Project[] = [
   {
@@ -101,422 +91,319 @@ export const projects: Project[] = [
     name: "Reloco",
     status: "Live",
     blurb:
-      "A gamified roadmap that guides F-1 international students at UNC from their first flight to their first job. I researched, designed, built and shipped it on my own.",
+      "An F-1 roadmap for UNC undergrads that covers every year, from arrival to OPT. I researched, designed, built and shipped it on my own.",
     tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
     live: { label: "reloco.app", url: "https://reloco.app" },
-    // One of Reloco's own paintings (public/art/campus-golden.jpg in the app).
     image: "/projects/reloco/card-painting.webp",
-    // Sources: /Users/atefmo/reloco/RELOCO_PROJECT_BRIEF.md, the app's README and code (44 tasks and
-    // 34 official links in src/lib/library/tasks.ts, 101 Vitest tests, repeating tasks under
-    // "Every year", "After [task]" in components/today/focus-card.tsx), the interviews doc
-    // "Atef - 3 interviews" and the Figma persona and journey files. Quotes are verbatim from the
-    // two real interviews (Giang, Nana); interview 3 there is simulated, so it isn't used.
-    // Screens: the live landing page, and 3x captures of the app in its local demo mode.
     caseStudy: {
-      tagline: "A gamified roadmap that takes F-1 students at UNC from their first flight to their first job.",
-      glance: [
-        "Research: 2 student interviews, 2 personas",
-        "Build: solo, full stack, live at reloco.app",
-        "44 sourced tasks, 101 tests",
-      ],
-      links: [{ label: "Try it at reloco.app", url: "https://reloco.app" }],
-      cover: {
-        src: "/projects/reloco/landing.webp",
-        alt: "Reloco's landing page: a painting of UNC's Old Well at sunset with the headline From your first flight to your first job",
-        width: 2000,
-        height: 1157,
-      },
-      meta: [
-        { label: "Role", value: "Solo: research, product, design, engineering" },
-        { label: "Status", value: "Live at reloco.app" },
-        { label: "Platform", value: "Mobile-first web app, light and dark" },
-        { label: "For", value: "F-1 undergrads at UNC-Chapel Hill" },
-      ],
+      oneLiner: "An F-1 roadmap for UNC undergrads that covers every year, from arrival to OPT.",
+      metaLine: ["Solo", "Research, product, design, engineering", "Live at reloco.app", "2026"],
+      cta: { label: "Try reloco.app", url: "https://reloco.app" },
+      hero: desktop(
+        "00-hero-landing-desktop",
+        2000,
+        1250,
+        "Reloco's landing page: an oil painting of UNC's Old Well at sunset, with a button to build a roadmap",
+        "reloco.app",
+      ),
       numbers: [
         { value: "44", label: "tasks in a researched rules library" },
-        { value: "34", label: "official sources linked, from ISSS to the IRS" },
-        { value: "9", label: "chapters, from Pre-flight to After graduation" },
-        { value: "101", label: "automated tests on the roadmap engine" },
+        { value: "34", label: "official sources linked" },
+        { value: "9", label: "chapters across the degree" },
+        { value: "101", label: "automated tests on the engine" },
       ],
-      problem: [
-        "F-1 students manage dozens of rules over four years: SEVIS, the I-94, travel signatures, CPT, OPT, STEM OPT, Form 8843. The answers sit on separate UNC, IRS, USCIS and CBP pages. Miss one deadline and your status is at risk.",
-        "I'm an international student at UNC. Every student I interviewed said the same thing: the information exists, but getting it in the right order depends on who you know.",
-      ],
-      framing: {
-        hmw: "How might we help international students find trusted information about immigration, banking, healthcare and daily life, in one place and in the right order?",
-        story: "As an international student, I want to find all information in one place, so that I save time.",
+      overview: {
+        problem:
+          "F-1 rules span four years and five agencies (UNC ISSS, IRS, USCIS, CBP, SSA), on separate pages, and one missed deadline can put a student's status at risk. I'm an international student at UNC, and the students I interviewed learned the order from whoever they happened to know.",
+        built:
+          "A rules engine that turns about 10 answers into a dated roadmap for the whole degree, with every step linked to its official source. It's live at reloco.app, with guest mode, Google sign-in and calendar sync.",
       },
       v0: {
-        intro:
-          "Reloco started with student interviews. I asked international students at UNC about their first weeks in the US: the SSN, banking and credit, taxes, work rules. These findings shaped the first concept.",
+        intro: "Reloco started with student interviews. These findings shaped the first concept; the product has changed since.",
+        // Quotes are verbatim from the two real interviews ("Atef - 3 interviews"); the third,
+        // simulated interview is not used. Interviewees are described, not named.
         insights: [
           {
-            title: "Order is the hard part",
+            insight: "Order is the hard part",
             quote: "I first had to find a job on campus.",
             who: "Junior from Vietnam, on getting an SSN",
-            finding:
-              "Her SSN took a campus job, then a letter from the employer, then a bus to the Social Security office in Durham. Nobody gave her the sequence.",
-            response: "Tasks know their dependencies. A task that needs another first says \"After\" that task and links to it.",
+            today: "Tasks know their dependencies. A card that needs another task first says \"After\" that task and links to it.",
           },
           {
-            title: "It's out there, but scattered",
+            insight: "The information is scattered",
             quote: "It's all out there, but it's, like, all fragmented.",
             who: "Junior from London",
-            finding:
-              "She pieced it together by trial and error from ISSS pages, government sites and chatbots. The chatbots were often wrong. The sources they cited were right.",
-            response: "Every step links to its official source: UNC ISSS, the IRS, USCIS or the SSA.",
+            today: "Every step links to its official source at UNC ISSS, the IRS, USCIS, CBP or the SSA.",
           },
           {
-            title: "Know-how travels by word of mouth",
+            insight: "Know-how travels by word of mouth",
             quote: "The people before me passed the knowledge to me.",
             who: "Junior from Vietnam",
-            finding:
-              "SSN steps, credit cards and driving tips came from upperclassmen and one patient banker. Students without that network were on their own.",
-            response: "About 10 questions build the plan an upperclassman would give you, starting before the flight.",
+            today: "About 10 questions build the plan an upperclassman would give you.",
           },
           {
-            title: "Deadlines hide years ahead",
+            insight: "Deadlines hide years ahead",
             quote: "You should be meeting with them like eight to twelve months in advance.",
             who: "Junior from London, on CPT approval",
-            finding: "Internship work authorization needs the advisor involved months early. Most students learn that too late.",
-            response: "The roadmap runs by class year through After graduation, and CPT comes back every spring.",
+            today: "The roadmap runs by class year through After graduation, and CPT comes back every spring.",
           },
         ],
-        personas: {
-          intro: "I turned the interviews into two personas. They sit at opposite ends of most scales, so a design had to work for both.",
-          people: [
-            {
-              name: "Connected Khoa",
-              archetype: "The community learner",
-              basedOn: "Built from the interview with a junior from Vietnam",
-              summary:
-                "Learned US systems from upperclassmen and WhatsApp groups. Goes in person instead of searching online, and passes what he learns to newer students.",
-              tags: ["Peer-dependent", "Guided by others", "Low frustration"],
-              goals: [
-                "Handle each system as it comes up, without stress",
-                "Build credit gradually",
-                "Help younger international students settle in",
-              ],
-              frustrations: [
-                "Doesn't know what he doesn't know until it's urgent",
-                "Depends on who happens to be around",
-                "Stuck when nobody he knows has done it before",
-              ],
-            },
-            {
-              name: "Independent Amara",
-              archetype: "The self-driven researcher",
-              basedOn: "Built from the interview with a junior from London",
-              summary:
-                "Built her own plan from DHS pages, ISSS documents and AI chatbots, then checked each answer against the source. Knows the CPT and OPT rules in detail, and still double-checks everything.",
-              tags: ["Proactive", "Self-reliant", "High frustration"],
-              goals: [
-                "Master every system before it catches her off guard",
-                "Land an employer willing to sponsor her visa",
-                "Create the guide she wished she had",
-              ],
-              frustrations: [
-                "Information is spread across dozens of sources",
-                "Advisors are slow and miss the details of her case",
-                "Chatbots give partly wrong answers she has to verify",
-              ],
-            },
-          ],
-          spectrum: [
-            { left: "Reactive", right: "Proactive", values: [0.28, 0.87] },
-            { left: "Peer-dependent", right: "Self-reliant", values: [0.17, 0.75] },
-            { left: "Official sources", right: "Informal sources", values: [0.8, 0.29] },
-            { left: "Trial and error", right: "Guided by others", values: [0.8, 0.16] },
-            { left: "Low frustration", right: "High frustration", values: [0.26, 0.83] },
-          ],
-          takeaway:
-            "Neither had a trusted path in the right order. Khoa needed the guidance his network gave him, without depending on luck. Amara needed sources she could check, without the hours of research.",
-        },
-        journey: {
-          intro:
-            "I mapped Amara's first week with the v0 concept. She tries to get her first credit card and learns she needs an SSN first.",
+        personas: [
+          {
+            name: "Connected Khoa",
+            archetype: "The community learner",
+            basedOn: "From the interview with a junior from Vietnam",
+            summary: "Learns US systems from upperclassmen and WhatsApp groups, and goes in person instead of searching online.",
+            tags: ["Peer-dependent", "Guided by others"],
+          },
+          {
+            name: "Independent Amara",
+            archetype: "The self-driven researcher",
+            basedOn: "From the interview with a junior from London",
+            summary: "Builds her own plan from DHS and ISSS pages, and checks every chatbot answer against the source.",
+            tags: ["Self-reliant", "High frustration"],
+          },
+        ],
+        concept: {
+          summary:
+            "The v0 concept organized tasks by phase, used a \"Build credit\" task and blocked tasks behind a lock screen. None of these ship today.",
           stages: [
-            {
-              name: "Discovery",
-              doing: "Finds Reloco through a peer tip in a WhatsApp group",
-              thinking: "There has to be a better way to figure all of this out.",
-              feeling: "Overwhelmed",
-              level: 0.08,
-            },
-            {
-              name: "Onboarding",
-              doing: "Signs up and answers a few questions about her situation",
-              thinking: "Finally! Something that asks me what visa I'm on.",
-              feeling: "Relieved",
-              level: 0.45,
-            },
-            {
-              name: "Roadmap",
-              doing: "Sees her tasks by phase and taps Build Credit",
-              thinking: "Everything in one place, in order.",
-              feeling: "Excited",
-              level: 0.56,
-            },
-            {
-              name: "Blocked task",
-              doing: "Sees a lock: complete your SSN first, with a link to that task",
-              thinking: "Why can't I start this? Oh, I need my SSN first. That makes sense.",
-              feeling: "Briefly frustrated",
-              level: 0.3,
-            },
-            {
-              name: "SSN first",
-              doing: "Follows the guide and document checklist to the SSA office",
-              thinking: "The guide is clear. I know exactly what to bring.",
-              feeling: "Confident",
-              level: 0.72,
-            },
-            {
-              name: "Credit card",
-              doing: "Returns to the unlocked task, goes to the bank, gets approved",
-              thinking: "I didn't have to figure this out alone.",
-              feeling: "Accomplished",
-              level: 0.94,
-            },
+            { name: "Discovery", doing: "Finds Reloco through a peer tip in a WhatsApp group", feeling: "Overwhelmed", level: 0.08 },
+            { name: "Onboarding", doing: "Signs up and answers a few questions", feeling: "Relieved", level: 0.45 },
+            { name: "Roadmap", doing: "Sees tasks by phase and taps Build credit", feeling: "Excited", level: 0.56 },
+            { name: "Blocked task", doing: "Hits a lock: complete your SSN first", feeling: "Frustrated", level: 0.3 },
+            { name: "SSN first", doing: "Follows the guide to the SSA office", feeling: "Confident", level: 0.72 },
+            { name: "Credit card", doing: "Returns to the unlocked task and applies", feeling: "Accomplished", level: 0.94 },
           ],
-          quote:
-            "The moment a user sees ‘complete SSN first’ instead of hitting a dead end with no explanation is the moment Reloco earns trust.",
           flow: {
-            title: "v0 concept: the first task flow",
             steps: ["Land on Reloco", "Sign up with Google", "Onboarding", "Roadmap generated", "Open a task"],
             decision: "Has an unfinished prerequisite?",
             yes: ["Locked: complete SSN first", "Do the SSN task", "Return, now unlocked"],
-            no: ["Read the guide", "Mark complete", "Celebrate", "Next task suggested"],
+            no: ["Read the guide", "Mark complete", "Next task suggested"],
           },
-          note:
-            "The v0 concept used phases, a Build credit task and a lock screen. The product has changed since. The next section shows how it works today.",
         },
-      },
-      today: {
-        intro: "Guest mode comes first. You get a full roadmap before any sign-up.",
-        steps: [
-          { text: "Land on reloco.app and tap Get started" },
-          { text: "Continue with Google, or try it without an account" },
-          {
-            text: "Answer about 10 questions: where you are (still at home, just arrived or already studying), home country, arrival, start and graduation dates, housing, funding, whether you have an SSN or bank account, and plans like an internship, a STEM major or driving",
-          },
-          { text: "Get a roadmap across 9 chapters, from Pre-flight to After graduation, organized by class year" },
-          { text: "Today shows one next task", branch: "Current students start with their past tasks already checked off" },
-          {
-            text: "Work through the steps, each linked to its official source",
-            branch: "If the task depends on another, the card says \"After\" that task and links to it",
-          },
-          { text: "Mark it complete, earn miles and fill a stamp" },
-          { text: "The next task appears" },
-        ],
-        principles: [
-          {
-            title: "Hick's Law",
-            text: "More choices slow people down. Today shows one next task instead of the whole list.",
-          },
-          {
-            title: "Tesler's Law",
-            text: "Immigration rules stay complex. The engine carries that complexity in dependencies and dates, so the student doesn't have to.",
-          },
-        ],
       },
       features: [
         {
-          title: "One next task",
-          text: "Today shows the one thing to do now. If it depends on another task, the card says so and links to it.",
+          id: "onboarding",
+          title: "Onboarding that reads your situation",
+          shots: [
+            phone("05-onboarding-stage-phone", 900, 1296, "Onboarding question: where are you right now? Still at home, just arrived, or already studying at UNC, with a boarding pass above", "Stage first: home, just arrived, or already studying"),
+            phone("06-onboarding-plans-phone", 900, 1948, "Onboarding question about plans, with an off-campus internship and a STEM major selected", "Plans decide which tasks apply"),
+          ],
+          what:
+            "About 10 questions: still at home, just arrived, or already studying; home country; arrival, program start and graduation dates; housing; funding; SSN and bank account; plans (on-campus job, internship, STEM major, driving). A boarding pass fills in as you answer.",
+          why: "A sophomore and a new arrival need different roadmaps. Asking for the stage first means nobody wades through tasks that don't apply.",
+          how: "Dates are validated against realistic ranges for each stage. Current students' past tasks are checked off automatically, and past optional ones are marked \"Not needed\".",
         },
         {
-          title: "Every step has a source",
-          text: "Steps come with a time estimate, what to bring, and a link to the exact page at UNC ISSS, the IRS, USCIS or the SSA.",
+          id: "engine",
+          title: "A personalized roadmap engine",
+          shots: [phone("04-onboarding-built-phone", 900, 1449, "Roadmap built screen: tasks counted by area, such as immigration, banking, housing and taxes, with a checklist of build steps", "The plan, grouped by area")],
+          what: "Builds the dated plan, grouped by area: immigration, banking, housing, work, taxes and more.",
+          why: "Tasks show up only when they apply. The campus job appears only if you plan to work, STEM OPT only for STEM majors, a driver's license only if you'll drive.",
+          how: "A pure, deterministic function from profile to roadmap. It filters by conditions, schedules from the student's dates and orders by dependency. 101 Vitest tests check invariants, like \"never opens a task before its prerequisites\". Modeling dependencies exposed a real cycle: the campus job needed an SSN, but the SSN needs a job offer. I fixed the order in the library.",
         },
         {
+          id: "today",
+          title: "Today: one next move",
+          shots: [
+            phone("07-today-junior-phone", 900, 1948, "Today screen for a junior: boarding pass at 64% progress and one next task, a travel signature before winter break", "A junior's Today screen"),
+            desktop("24-today-desktop", 1544, 1692, "Today screen on desktop: boarding pass, the next task and this week's tasks", "Today on desktop"),
+          ],
+          what: "A boarding pass with progress, one focus task, and at most two more this week. If the task depends on another, the card says \"After [task]\" and links to it.",
+          why: "Hick's Law. Fewer choices, faster action. The full list lives in Journey.",
+          how: "A planner picks the focus task by due date and dependencies. Skipping a task cascades to the tasks that depend on it, and reopening it restores them.",
+        },
+        {
+          id: "sources",
+          title: "Every step sourced",
+          shots: [
+            phone("09-task-steps-sources-phone", 900, 1766, "Task page for activating the Onyen: four steps, each with a link to a UNC ITS page", "Steps with official links"),
+            phone("10-task-rule-30-days-phone", 900, 1550, "Task page explaining you can enter the US no earlier than 30 days before your program start date", "The 30-day entry rule, sourced to UNC ISSS"),
+          ],
+          what:
+            "Each task has tickable steps, a time estimate, what to bring, and a link to the exact official page. Example: \"You can enter the US no earlier than 30 days before the program start date on your I-20\", linked to UNC ISSS.",
+          why: "Students told me chatbots were often wrong, but the sources they cited were right. Reloco leads with the source.",
+          how: "A typed library of 44 tasks and 34 official sources, with a \"guidance, not legal advice\" line on every task.",
+        },
+        {
+          id: "degree",
           title: "The whole degree, by class year",
-          text: "Nine chapters from Pre-flight to After graduation. Yearly tasks come back on schedule: full-time enrollment, summer address, the winter travel signature, tax forms, and CPT each spring.",
+          shots: [
+            phone("18-journey-whole-degree-phone", 900, 1575, "Journey screen listing chapters from Settling in and First spring through Sophomore, Junior and Senior year and After graduation", "Nine chapters, arrival to OPT"),
+            phone("19-journey-junior-phone", 900, 1948, "Journey screen for a junior with six stamped chapters", "A junior's Journey"),
+          ],
+          what:
+            "9 chapters: Pre-flight, Touchdown, First month, Settling in, First spring, then Sophomore, Junior and Senior years, and After graduation. Yearly tasks come back: full-time enrollment, summer address, the winter travel signature, tax forms, and CPT each spring.",
+          why: "The expensive mistakes come in later years. CPT needs the advisor months early, and OPT has a filing window. Reloco surfaces them early.",
+          how: "Class year is computed from the program start and graduation dates, and the last year is always Senior. Repeating tasks expand into one instance per year, and skipping one year doesn't skip the others.",
         },
         {
-          title: "Calendar and sharing",
-          text: "One tap adds the roadmap to Google, Apple or Outlook, and the calendar updates on its own when the roadmap changes. A read-only link lets family or a sponsor follow along.",
+          id: "rules",
+          title: "Rule-change notices",
+          shots: [phone("17-journey-rule-update-phone", 900, 1587, "Rules update card about the DHS duration of status rule and its court pause", "A rules update in Journey")],
+          what: "Tells students what changed and what still applies. Example: the 2026 DHS duration-of-status rule, published July 17 and paused by a court on Sept 14.",
+          why: "In compliance, being current is the product. Stale advice is worse than none.",
         },
         {
-          title: "Rule changes",
-          text: "Reloco tracks rule changes and says what still applies, like the 2026 DHS duration-of-status rule and its court pause.",
+          id: "arrival",
+          title: "Arrival mode",
+          shots: [
+            phone("26-today-arrival-mode-phone", 900, 1626, "Today screen switched to the landing-day checklist two days before arrival", "Today switches to arrival mode"),
+            phone("13-arrival-border-phone", 900, 1783, "Arrival mode: the documents to keep in hand at the border", "At the border"),
+            phone("14-arrival-first-72h-phone", 900, 1608, "Arrival mode: getting to Chapel Hill, the first 72 hours, and what to do if something goes wrong", "The first 72 hours"),
+          ],
+          what:
+            "Around landing day, Today switches to a landing-day checklist: documents to keep in hand at the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On the day, it asks \"Did you make it?\" before clearing the travel tasks.",
+          why: "Flights move. Reloco asks instead of assuming.",
         },
         {
-          title: "Miles and stamps",
-          text: "Tasks earn miles, chapters fill passport stamps, and finishing earns a certificate. Change a date and the roadmap reschedules.",
+          id: "wallet",
+          title: "Wallet: dates, not documents",
+          shots: [
+            phone("15-wallet-empty-phone", 900, 1579, "Empty document wallet, with a note that Reloco never keeps copies of documents", "Nothing stored yet"),
+            phone("16-wallet-ready-phone", 900, 1594, "Wallet with nine of nine documents ready and their key dates", "All documents ready"),
+            desktop("25-wallet-desktop", 1542, 1688, "Document wallet on desktop", "The wallet on desktop"),
+          ],
+          what: "Stores only the key dates from a passport, visa, I-20 and I-94, and the roadmap plans around them (for example, a heads-up when a passport needs renewing).",
+          why: "The most useful data is also the least sensitive. No copies, no ID numbers.",
+          how: "Validation ranges for each document. The AI scanner (built, launching in v1.1) returns date fields only and never stores the image.",
+        },
+        {
+          id: "progress",
+          title: "Progress that motivates",
+          shots: [
+            phone("11-reward-miles-phone", 900, 1460, "Task complete: plus 50 miles", "Miles for each task"),
+            phone("12-reward-stamp-phone", 900, 1599, "Chapter complete: Pre-flight stamped, plus 80 miles", "A stamp for each chapter"),
+            phone("20-passport-phone", 780, 1120, "Passport page with six of nine chapter stamps", "The passport"),
+            phone("22-certificate-phone", 900, 1948, "First-year certificate listing tasks, miles and the finish date", "The first-year certificate"),
+          ],
+          what: "Miles for each task, a passport stamp for each chapter, weekly streaks, and a first-year certificate.",
+          why: "Streaks are weekly, not daily. Visa work comes in bursts, and a quiet week shouldn't break a streak.",
+        },
+        {
+          id: "calendar",
+          title: "Calendar sync",
+          shots: [phone("08-today-calendar-prompt-phone", 900, 1785, "Today screen with a prompt to put deadlines in Google, Apple or Outlook calendar", "The calendar prompt on Today")],
+          what: "One tap adds every deadline to Google, Apple or Outlook, with a reminder the day before, and it updates as the roadmap changes. Suggested on Today, managed in Profile.",
+          why: "Students live in their calendar, not in one more app.",
+          how: "An RFC 5545 iCal feed behind a private, revocable token.",
+        },
+        {
+          id: "share",
+          title: "Share with family",
+          shots: [phone("23-family-share-phone", 900, 1948, "Read-only share page showing a student's first-year certificate and stamps", "What a parent or sponsor sees")],
+          what: "A read-only page for a parent or sponsor showing progress, stamps and the certificate, never documents.",
+          how: "Accounts get a live, revocable link read through a narrow database function. Guests get an encrypted snapshot link.",
+        },
+        {
+          id: "guest",
+          title: "Try first, sign in later",
+          shots: [phone("21-profile-your-trip-phone", 900, 1578, "Profile screen with passport stamps and editable trip dates under Your trip", "Your trip: change a date, the roadmap reschedules")],
+          what: "The full product works without an account. Continue with Google and the progress moves into the account. Change any date in \"Your trip\" and the whole roadmap reschedules.",
+          how: "One Store interface with a cookie implementation and a Supabase Postgres implementation, plus an import on sign-in.",
         },
       ],
-      // Clean 3x captures from Reloco's local demo mode (a sample junior; arrival mode from a
-      // student landing in January), shown uncropped in a phone frame.
-      screens: [
-        {
-          src: "/projects/reloco/screen-today.webp",
-          alt: "Reloco's Today screen for a junior: day 780 in Chapel Hill, a boarding pass at 68% progress, and the next task, get a travel signature before going home for winter",
-          caption: "Today: one next task and a boarding pass",
-          width: 1170,
-          height: 2532,
-        },
-        {
-          src: "/projects/reloco/screen-journey.webp",
-          alt: "Reloco's Journey screen: a rules update about the DHS duration-of-status rule above the stamped Pre-flight, Touchdown and First month chapters",
-          caption: "Journey: the whole degree in chapters",
-          width: 1170,
-          height: 2532,
-        },
-        {
-          src: "/projects/reloco/screen-passport.webp",
-          alt: "Reloco's passport page with six of nine chapter stamps collected and a certificate ready",
-          caption: "Passport: a stamp for every chapter",
-          width: 1170,
-          height: 2532,
-        },
-        {
-          src: "/projects/reloco/screen-task.webp",
-          alt: "A Reloco task page for a winter travel signature: two steps, each linked to ISSS or Study in the States",
-          caption: "A task: steps linked to official sources",
-          width: 1170,
-          height: 2532,
-        },
-        {
-          src: "/projects/reloco/screen-wallet.webp",
-          alt: "Reloco's document wallet: it never keeps copies of documents, only key dates for the passport and visa",
-          caption: "Wallet: dates, not documents",
-          width: 1170,
-          height: 2532,
-        },
-        {
-          src: "/projects/reloco/screen-arrival.webp",
-          alt: "Reloco's arrival mode 98 days before landing: the documents to keep in hand at the border",
-          caption: "Arrival mode: the landing-day checklist",
-          width: 1170,
-          height: 2532,
-        },
-      ],
-      decisions: {
-        product: [
-          {
-            title: "Narrow on purpose",
-            text: "v1 serves F-1 undergrads at UNC. In compliance, precision is the product, so I picked one school and got every office and deadline right.",
-          },
-          {
-            title: "Guest mode first",
-            text: "Students get a full roadmap before any sign-up. Google sign-in is optional and carries their progress over.",
-          },
-          {
-            title: "Weekly streaks, not daily",
-            text: "Visa and tax work comes in bursts. A daily streak would punish students with nothing due, so streaks are weekly and quiet weeks don't break them.",
-          },
-          {
-            title: "Rules decide, AI assists",
-            text: "Every date and task comes from a rule with a cited source. AI can explain, but it can't add, remove or move a task.",
-          },
+      landingStrip: {
+        caption: "The landing page speaks to every year, not just arrival.",
+        shots: [
+          desktop("01-landing-every-year-desktop", 2000, 1262, "Landing page section: wherever you are in your degree, with cards for each stage", "Every year"),
+          desktop("02-landing-chapters-desktop", 2000, 926, "Landing page section: your whole degree, chapter by chapter", "Chapter by chapter"),
+          desktop("03-landing-sourced-desktop", 2000, 670, "Landing page section: every step, sourced", "Every step sourced"),
         ],
-        engineering: [
+      },
+      decisions: [
+        { decision: "Narrow wedge: F-1 undergrads at UNC only", rejected: "All schools", why: "In compliance, precision is the product." },
+        { decision: "Guest mode first", rejected: "A sign-up wall", why: "Students see value before committing." },
+        { decision: "Weekly streaks", rejected: "Daily streaks", why: "Visa work comes in bursts." },
+        { decision: "Rules decide, AI assists", rejected: "An AI-generated plan", why: "Deadlines need to be deterministic and cited." },
+        { decision: "Hide email reminders until sending is live", rejected: "Showing a setting that does nothing", why: "A control that does nothing breaks trust." },
+        { decision: "Ask whether the student has landed", rejected: "Assuming the flight date", why: "Flights move." },
+      ],
+      engineering: {
+        bullets: [
+          "Row-level security on every table.",
+          "Zod validation on every server action.",
+          "Google OAuth.",
+          "\"Delete everything\" for accounts.",
+          "101 Vitest tests on the engine.",
+          "Deployed on Vercel.",
+          "Email reminders built on a daily cron with one-click unsubscribe, ready to switch on.",
+        ],
+        stack: [
+          { name: "Next.js 16", icon: siNextdotjs },
+          { name: "React 19", icon: siReact },
+          { name: "TypeScript", icon: siTypescript },
+          { name: "Tailwind v4", icon: siTailwindcss },
+          { name: "Motion" },
+          { name: "Supabase", icon: siSupabase },
+          { name: "Zod", icon: siZod },
+          { name: "Vitest", icon: siVitest },
+          { name: "Claude API", icon: siClaude },
+          { name: "Vercel", icon: siVercel },
+        ],
+        ai: {
+          built: ["Personal task notes. They can't change the schedule.", "The document scanner. It returns date fields only."],
+          next: [
+            "Ask Reloco: answers only from sourced tasks and UNC ISSS pages, with a citation.",
+            "\"What does this mean?\" for emails from ISSS, the IRS or a landlord.",
+          ],
+          cost: "A small model, per-student daily limits, and a hard monthly cap.",
+        },
+      },
+      metrics: {
+        note: "Baselines come from the first tester cohort.",
+        rows: [
           {
-            title: "A deterministic roadmap engine",
-            text: "A pure function turns a profile into a scheduled, dependency-ordered roadmap. 101 Vitest tests check invariants across student profiles, like never opening a task before its prerequisites. Modeling dependencies exposed a cycle: the campus job task required an SSN, but the SSN needs a job offer. I fixed the order in the library.",
+            metric: "On-time rate (north star)",
+            definition: "Completed tasks finished by their due date ÷ all completed tasks",
+            why: "Measures the core promise: no missed deadlines",
+            source: "Task completion date vs due date, Postgres",
           },
           {
-            title: "Two stores, one interface",
-            text: "Guests run on a cookie store with no database. When they sign in, the same Store interface moves their progress into Supabase Postgres.",
+            metric: "Activation",
+            definition: "Visitors who finish onboarding and get a roadmap",
+            why: "Tests whether onboarding is short and clear enough",
+            source: "Roadmaps created vs landing visits",
           },
           {
-            title: "Privacy in the schema",
-            text: "Row-level security on every table. The document scanner's output schema only has date fields, images are never stored, and students can delete everything.",
+            metric: "Guest-to-account",
+            definition: "Guests who continue with Google",
+            why: "Tests whether the product earns trust before asking for it",
+            source: "Accounts with imported guest progress",
           },
           {
-            title: "A calendar that stays current",
-            text: "A live iCal feed for Google, Apple and Outlook that changes when the roadmap does. Email reminders run on a daily cron with one-click unsubscribe. They're built and ready to switch on.",
+            metric: "Week-4 retention",
+            definition: "Students who complete a task in their 4th week",
+            why: "A degree lasts years, so habit matters",
+            source: "Task completions by week",
+          },
+          {
+            metric: "Calendar connection",
+            definition: "Students who add the calendar feed",
+            why: "Reminders outside the app protect deadlines",
+            source: "Accounts with a calendar feed",
+          },
+          {
+            metric: "\"Not needed\" rate by task",
+            definition: "How often each task is marked not needed",
+            why: "A content-quality signal: a high rate means it's shown to the wrong students",
+            source: "Task statuses",
           },
         ],
       },
-      ai: {
-        intro:
-          "In a high-stakes space, AI should explain and assist, never decide. The rules engine owns every date and task. AI works around it.",
-        built: [
-          {
-            title: "Personal notes",
-            text: "An optional Claude pass writes a short note for each task based on the student's situation. It can't add, remove or reschedule anything.",
-          },
-          {
-            title: "Document scanner",
-            text: "A photo of a passport, visa, I-20 or I-94 becomes key dates in the wallet. The output schema only allows date fields, and images are never stored.",
-          },
-        ],
-        next: [
-          {
-            title: "Ask Reloco",
-            text: "Answers F-1 questions using only Reloco's sourced tasks and UNC ISSS pages, cites its source, and says \"ask ISSS\" when it isn't sure.",
-          },
-          {
-            title: "\"What does this mean?\"",
-            text: "Paste an email from ISSS, the IRS or a landlord and get a plain-English explanation linked to the right task.",
-          },
-          {
-            title: "Cost by design",
-            text: "A small, fast model, per-student daily limits and a hard monthly spending cap.",
-          },
-        ],
-      },
-      stack: [
-        {
-          label: "Frontend",
-          items: [
-            { name: "Next.js 16 (App Router)", icon: siNextdotjs },
-            { name: "React 19", icon: siReact },
-            { name: "TypeScript", icon: siTypescript },
-            { name: "Tailwind CSS v4", icon: siTailwindcss },
-            { name: "Motion" },
-          ],
-        },
-        {
-          label: "Backend",
-          items: [
-            { name: "Supabase Postgres + RLS", icon: siSupabase },
-            { name: "Google sign-in", icon: siGoogle },
-            { name: "Zod", icon: siZod },
-            { name: "Claude API", icon: siClaude },
-          ],
-        },
-        {
-          label: "Ship",
-          items: [
-            { name: "Vitest, 101 tests", icon: siVitest },
-            { name: "Vercel", icon: siVercel },
-            { name: "iCal feeds" },
-          ],
-        },
-      ],
       timeline: [
-        {
-          phase: "v0",
-          status: "Completed",
-          // TODO(Atef): add the month, e.g. "March 2026" (the interview recordings are dated March 13 to 14, 2026).
-          text: "Research and concept: student interviews, personas, a journey map and the first task flow.",
-        },
-        {
-          phase: "v1",
-          status: "Completed",
-          date: "September 2026",
-          text: "Live at reloco.app. The rules engine with 44 sourced tasks across the whole degree, organized by class year. Guest mode, Google sign-in, calendar sync, share links, arrival mode and rule-change notices.",
-        },
-        {
-          phase: "v1.1",
-          status: "In progress",
-          text: "AI that explains, never decides: Ask Reloco, which answers only from sourced tasks and UNC ISSS pages with a citation, and \"What does this mean?\" for emails from ISSS, the IRS or a landlord. The document scanner goes live.",
-        },
-        {
-          phase: "v2",
-          status: "Planned",
-          text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS.",
-        },
+        { phase: "v0", status: "Completed", date: "[Month Year]", text: "Interviews, personas, journey map, first concept." },
+        { phase: "v1", status: "Completed", date: "September 2026", text: "Live at reloco.app with everything in The product today." },
+        { phase: "v1.1", status: "In progress", text: "Ask Reloco, \"What does this mean?\", and the document scanner going live." },
+        { phase: "v2", status: "Planned", text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS." },
         {
           phase: "Later",
           status: "Planned",
-          text: "More schools on top of the school-pack layer, which keeps each school's offices and deadlines separate from the core engine.",
+          text: "More schools on the school-pack layer, which keeps each school's offices and deadlines separate from the core engine.",
         },
       ],
-      closing: "The number I'm watching: how many students finish Pre-flight before they land.",
     },
   },
 ];
