@@ -1,5 +1,6 @@
 import {
   siClaude,
+  siFigma,
   siGithub,
   siNextdotjs,
   siPuppeteer,
@@ -67,7 +68,6 @@ export type CaseStudy = {
   metaLine: string[];
   cta: { label: string; url: string };
   hero: Shot;
-  numbers: { value: string; label: string }[];
   glance: { label: string; text: string }[];
   audience: {
     intro: string;
@@ -90,6 +90,8 @@ export type CaseStudy = {
       flow: { steps: string[]; decision: string; yes: string[]; no: string[] };
     };
   };
+  // v0 to v1: what changed and why.
+  shifts: { intro: string; rows: { v0: string; v1: string; why: string }[] };
   productIntro: string;
   features: Feature[];
   progress: { title: string; text: string; shots: Shot[] };
@@ -100,7 +102,8 @@ export type CaseStudy = {
   engineering: {
     layers: Layer[];
     pipeline: string[];
-    quality: { value: string; label: string }[];
+    // Text with **bold** numbers.
+    quality: string;
     stack: { label: string; items: Skill[] }[];
   };
   metrics: {
@@ -176,12 +179,6 @@ export const projects: Project[] = [
         alt: "Oil painting of UNC's Old Well and campus at golden hour, with a plane crossing the sky",
         caption: "Your co-pilot for life on an F-1 visa.",
       },
-      numbers: [
-        { value: "44", label: "tasks" },
-        { value: "9", label: "life areas" },
-        { value: "34", label: "trusted sources" },
-        { value: "4", label: "years covered" },
-      ],
       glance: [
         {
           label: "Problem",
@@ -189,7 +186,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them, one at a time, for the whole degree.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them, one at a time, for the whole degree. Reloco picks from a library of **44** tasks across **9** areas, from visas and taxes to banking and housing, each built from **34** trusted sources.",
         },
         {
           label: "Scope",
@@ -197,7 +194,7 @@ export const projects: Project[] = [
         },
         {
           label: "Role",
-          text: "Solo: user interviews, product strategy, UX and visual design, full-stack engineering and launch, with Claude Code as my AI pair programmer.",
+          text: "Solo: user interviews, product strategy, UX and visual design, full-stack engineering, launch.",
         },
         { label: "Status", text: "v1 live at reloco.app, September 2026." },
       ],
@@ -207,7 +204,7 @@ export const projects: Project[] = [
         groups: [
           {
             title: "Arriving: new students",
-            text: "The heaviest stretch. For a sample freshman, 16 tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan, a lease and health insurance. Reloco counts down to landing, then switches to arrival mode.",
+            text: "The heaviest stretch. For a sample freshman, **16** tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan, a lease and health insurance. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
                 "31-freshman-today-countdown-phone",
@@ -397,6 +394,37 @@ export const projects: Project[] = [
           },
         },
       },
+      shifts: {
+        intro:
+          "Building it and walking it as real students changed most of the v0 concept. Five shifts:",
+        rows: [
+          {
+            v0: "Tasks grouped by phase",
+            v1: "9 chapters: five for year one, then class years through OPT",
+            why: "Students think in semesters and years, and the costly deadlines (CPT, OPT) come later",
+          },
+          {
+            v0: "A lock screen on blocked tasks",
+            v1: '"Do first" and "After" links; tasks stay open to read',
+            why: "A lock stops a student cold. A pointer tells them what to do next",
+          },
+          {
+            v0: "A few onboarding questions",
+            v1: "The stage comes first: still at home, just arrived, or already studying",
+            why: "A freshman and a junior need different plans from the first screen",
+          },
+          {
+            v0: "One first-week journey",
+            v1: "Every year, repeating tasks, and arrival mode for the landing window",
+            why: "Freshmen need the most help, but upperclassmen still miss yearly deadlines",
+          },
+          {
+            v0: "Overdue in red for everything past due",
+            v1: '"From before you joined · done?" for anything due before sign-up',
+            why: "A late joiner shouldn't start the app already failing",
+          },
+        ],
+      },
       productIntro:
         "One job: get a student through the US system without missing a step.",
       features: [
@@ -413,6 +441,11 @@ export const projects: Project[] = [
               "06-onboarding-plans-phone",
               "Onboarding question about plans, with an off-campus internship and a STEM major selected",
               "Plans decide which tasks apply",
+            ),
+            phone(
+              "37-onboarding-done-already-phone",
+              "Last onboarding question: Done any of these already? Pre-flight tasks such as booking a flight and signing a lease, each with a tick box",
+              "New students tick off prep they've already done",
             ),
           ],
           what: "About 10 questions: the stage (still at home, just arrived, already studying), country, arrival, start and graduation dates, housing, funding, SSN and bank, and plans (campus job, internship, STEM major, driving). A boarding pass fills in as you answer.",
@@ -535,6 +568,11 @@ export const projects: Project[] = [
               "16-wallet-ready-phone",
               "Wallet with nine of nine documents ready and their key dates",
               "Wallet: dates, not documents",
+            ),
+            phone(
+              "23-family-share-phone",
+              "Read-only share page showing a student's first-year certificate and stamps",
+              "A read-only page for family",
             ),
           ],
           what: [
@@ -668,11 +706,8 @@ export const projects: Project[] = [
           "Tasks are grouped into 9 chapters.",
           "The plan is saved, and each step streams to the screen.",
         ],
-        quality: [
-          { value: "103", label: "tests on engine invariants" },
-          { value: "4", label: "scripted personas for visual QA" },
-          { value: "7", label: "database migrations" },
-        ],
+        quality:
+          "**103** tests guard the engine's invariants, like never opening a task before its prerequisites. A crawler I wrote walks the app as **4** scripted students and captures every screen. The database has grown through **7** migrations, each with row-level security.",
         stack: [
           {
             label: "Frontend",
@@ -683,35 +718,35 @@ export const projects: Project[] = [
               },
               { name: "React 19", icon: siReact },
               { name: "TypeScript", icon: siTypescript },
-              { name: "Tailwind v4", icon: siTailwindcss },
+              { name: "Tailwind CSS v4", icon: siTailwindcss },
               { name: "Motion" },
             ],
           },
           {
-            label: "Backend",
+            label: "Backend and data",
             items: [
-              { name: "Supabase Postgres + RLS", icon: siSupabase },
-              { name: "Google OAuth" },
+              {
+                name: "Supabase (Postgres, row-level security, Google OAuth)",
+                icon: siSupabase,
+              },
               { name: "Zod", icon: siZod },
               { name: "Claude API", icon: siClaude },
             ],
           },
           {
-            label: "Quality and ship",
+            label: "Quality and delivery",
             items: [
               { name: "Vitest", icon: siVitest },
               { name: "Puppeteer", icon: siPuppeteer },
               { name: "Vercel", icon: siVercel },
+              { name: "GitHub", icon: siGithub },
             ],
           },
           {
-            label: "Built with",
+            label: "Tools",
             items: [
-              {
-                name: "Claude Code (AI pair programming for building, refactoring and testing)",
-                icon: siClaude,
-              },
-              { name: "GitHub", icon: siGithub },
+              { name: "Figma", icon: siFigma },
+              { name: "Claude Code", icon: siClaude },
             ],
           },
         ],

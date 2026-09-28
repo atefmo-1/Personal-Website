@@ -1,12 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CaseStudyToc } from "./CaseStudyToc";
-import { CountText } from "./CountText";
 import { PhoneFrame } from "./PhoneFrame";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
 import { relocoDisplay, relocoSans } from "@/lib/relocoFonts";
-import type { CaseStudy as CS, Feature, Layer, Persona, Project, Shot } from "@/lib/projects";
+import type {
+  CaseStudy as CS,
+  Feature,
+  Layer,
+  Persona,
+  Project,
+  Shot,
+} from "@/lib/projects";
 
 // A project page: hero, then nine numbered sections: at a glance, who it's for, research (v0),
 // the product, design, engineering, what I'm measuring, timeline, try it.
@@ -20,15 +26,22 @@ const two = (n: number) => String(n).padStart(2, "0");
 // Reloco's brand blue, used only for the one turning point on the journey curve.
 const accent = "#4B9CD3";
 
-// Renders `code` spans in monospace.
+// Renders `code` in monospace and **numbers** in bold, so figures live inside sentences.
 function Rich({ text }: { text: string }) {
   return (
     <>
-      {text.split(/(`[^`]+`)/).map((part, i) =>
+      {text.split(/(`[^`]+`|\*\*[^*]+\*\*)/).map((part, i) =>
         part.startsWith("`") ? (
-          <code key={i} className="rounded bg-line/40 px-1 py-0.5 font-mono text-[0.9em]">
+          <code
+            key={i}
+            className="rounded bg-line/40 px-1 py-0.5 font-mono text-[0.9em]"
+          >
             {part.slice(1, -1)}
           </code>
+        ) : part.startsWith("**") ? (
+          <strong key={i} className="font-semibold">
+            {part.slice(2, -2)}
+          </strong>
         ) : (
           part
         ),
@@ -37,12 +50,26 @@ function Rich({ text }: { text: string }) {
   );
 }
 
-function Head({ n, title, intro }: { n: number; title: string; intro?: string }) {
+function Head({
+  n,
+  title,
+  intro,
+}: {
+  n: number;
+  title: string;
+  intro?: string;
+}) {
   return (
     <div className="mb-10">
       <p className="font-mono text-[13px] text-muted">{two(n)}</p>
-      <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-      {intro && <p className={`mt-3 text-[17px] leading-relaxed text-muted ${measure}`}>{intro}</p>}
+      <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+        {title}
+      </h2>
+      {intro && (
+        <p className={`mt-3 text-[17px] leading-relaxed text-muted ${measure}`}>
+          {intro}
+        </p>
+      )}
     </div>
   );
 }
@@ -51,26 +78,17 @@ function Head({ n, title, intro }: { n: number; title: string; intro?: string })
 function ShotFig({ s, sizes }: { s: Shot; sizes: string }) {
   return (
     <figure className="min-w-0">
-      <PhoneFrame src={s.src} alt={s.alt} width={s.width} height={s.height} sizes={sizes} />
-      <figcaption className="mt-3 text-center text-[14px] leading-snug text-muted">{s.caption}</figcaption>
+      <PhoneFrame
+        src={s.src}
+        alt={s.alt}
+        width={s.width}
+        height={s.height}
+        sizes={sizes}
+      />
+      <figcaption className="mt-3 text-center text-[14px] leading-snug text-muted">
+        {s.caption}
+      </figcaption>
     </figure>
-  );
-}
-
-// A row of big stat numerals with thin dividers; a 2x2 grid with no borders on phones.
-function StatLine({ items, className = "" }: { items: { value: string; label: string }[]; className?: string }) {
-  return (
-    <ul className={`grid grid-cols-2 gap-y-6 sm:flex sm:flex-wrap sm:gap-y-4 ${className}`}>
-      {items.map((n, i) => (
-        <li key={n.label} className={`pr-6 sm:pr-8 ${i > 0 ? "sm:border-l sm:border-line sm:pl-8" : ""}`}>
-          <span className="sr-only">{`${n.value} ${n.label}`}</span>
-          <span aria-hidden>
-            <CountText text={n.value} className="block font-display text-[32px] font-bold leading-none tracking-tight sm:text-[40px]" />
-            <span className="mt-2 block text-[15px] text-muted">{n.label}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -83,7 +101,9 @@ function FeatureText({ f, n }: { f: Feature; n: string }) {
   return (
     <div className="max-w-[460px]">
       <p className="font-mono text-[13px] text-muted">{n}</p>
-      <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h3>
+      <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+        {f.title}
+      </h3>
       <dl className="mt-7 space-y-6">
         {lines.map(([label, text]) => (
           <div key={label}>
@@ -113,22 +133,56 @@ function FeatureText({ f, n }: { f: Feature; n: string }) {
   );
 }
 
-// Text column (max 460px) against phones about 300px wide; sides alternate on desktop.
+// One or two phones beside the text (max 460px) on wide screens, alternating sides. Below that,
+// and for three phones, the text sits above a row of phones so each keeps a readable size.
+// On phones, a three-screen row scrolls sideways with snap points; captions stay whole.
 function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
-  const one = f.shots.length === 1;
+  const count = f.shots.length;
+  const phones =
+    count >= 3 ? (
+      <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
+        {f.shots.map((s) => (
+          <div
+            key={s.src + s.caption}
+            className="w-[240px] shrink-0 snap-center md:mx-auto md:w-full md:max-w-[290px]"
+          >
+            <ShotFig s={s} sizes="(min-width: 768px) 290px, 240px" />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div
+        className={`mx-auto grid w-full items-start gap-5 ${count === 1 ? "max-w-[300px] grid-cols-1" : "max-w-[620px] grid-cols-2"}`}
+      >
+        {f.shots.map((s) => (
+          <ShotFig
+            key={s.src + s.caption}
+            s={s}
+            sizes="(min-width: 1024px) 300px, 45vw"
+          />
+        ))}
+      </div>
+    );
+  if (count >= 3)
+    return (
+      <Reveal as="article" id={`f-${f.id}`} className="scroll-mt-24">
+        <FeatureText f={f} n={n} />
+        <div className="mt-10">{phones}</div>
+      </Reveal>
+    );
   return (
     <Reveal as="article" id={`f-${f.id}`} className="scroll-mt-24">
       <div
-        className={`grid items-center gap-10 lg:gap-14 ${
-          i % 2 ? "lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
+        className={`grid items-center gap-10 2xl:gap-14 ${
+          i % 2
+            ? "2xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]"
+            : "2xl:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
         }`}
       >
-        <div className={i % 2 ? "lg:order-last" : ""}>
-          <div className={`mx-auto grid w-full items-start gap-5 ${one ? "max-w-[300px] grid-cols-1" : "max-w-[620px] grid-cols-2"}`}>
-            {f.shots.map((s) => (
-              <ShotFig key={s.src + s.caption} s={s} sizes="(min-width: 1024px) 300px, 45vw" />
-            ))}
-          </div>
+        <div
+          className={`order-last ${i % 2 ? "2xl:order-last" : "2xl:order-first"}`}
+        >
+          {phones}
         </div>
         <FeatureText f={f} n={n} />
       </div>
@@ -136,20 +190,33 @@ function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
   );
 }
 
-function PersonaCard({ p, scales }: { p: Persona; scales: CS["v0"]["traitScales"] }) {
+function PersonaCard({
+  p,
+  scales,
+}: {
+  p: Persona;
+  scales: CS["v0"]["traitScales"];
+}) {
   return (
     <li className={`flex flex-col ${card}`}>
       <div className="flex items-center gap-4">
-        <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-fg font-display text-xl font-bold text-bg">
+        <span
+          aria-hidden
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-fg font-display text-xl font-bold text-bg"
+        >
           {p.initials}
         </span>
         <div>
-          <p className="font-display text-xl font-bold tracking-tight">{p.name}</p>
+          <p className="font-display text-xl font-bold tracking-tight">
+            {p.name}
+          </p>
           <p className={cap}>{p.archetype}</p>
         </div>
       </div>
       <p className="mt-4 text-[15px] text-muted">{p.background}</p>
-      <blockquote className="mt-5 font-display text-xl italic leading-snug">&ldquo;{p.quote}&rdquo;</blockquote>
+      <blockquote className="mt-5 font-display text-xl italic leading-snug">
+        &ldquo;{p.quote}&rdquo;
+      </blockquote>
       <p className="mt-4 text-[16px] leading-relaxed">{p.how}</p>
 
       <div className="mt-6 grid gap-6 border-t border-line pt-6 sm:grid-cols-2">
@@ -192,7 +259,9 @@ function PersonaCard({ p, scales }: { p: Persona; scales: CS["v0"]["traitScales"
                 />
               </div>
               <span className="sr-only">
-                {p.traits[i] < 0.5 ? `Leans ${sc.left.toLowerCase()}` : `Leans ${sc.right.toLowerCase()}`}
+                {p.traits[i] < 0.5
+                  ? `Leans ${sc.left.toLowerCase()}`
+                  : `Leans ${sc.right.toLowerCase()}`}
               </span>
             </li>
           ))}
@@ -223,29 +292,45 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
   );
   return (
     <div className="space-y-12">
-      <p className={`text-[16px] leading-relaxed text-muted ${measure}`}>{c.summary}</p>
+      <p className={`text-[16px] leading-relaxed text-muted ${measure}`}>
+        {c.summary}
+      </p>
 
       <div>
-        <ol className="grid gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
+        <ol className="grid gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-0">
           {c.stages.map((s, i) => (
-            <li key={s.name} className="border-t border-line pt-3">
+            <li key={s.name} className="border-t border-line pt-3 lg:px-2 lg:text-center">
               <p className="font-mono text-[13px] text-muted">{two(i + 1)}</p>
               <p className="mt-1 font-medium">{s.name}</p>
-              <p className="mt-1 text-[14px] leading-snug text-muted">{s.doing}</p>
+              <p className="mt-1 text-[14px] leading-snug text-muted">
+                {s.doing}
+              </p>
             </li>
           ))}
         </ol>
 
         <p className={`${cap} mt-10`}>How Amara felt at each stage</p>
-        <div className="mt-4 grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3">
-          <div className="flex flex-col justify-between py-1 text-[13px] text-muted" aria-hidden>
-            <span>Confident</span>
-            <span>Frustrated</span>
-          </div>
-          <div className="relative h-56 border-b border-l border-line sm:h-64" aria-hidden>
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+        <div className="mt-4">
+          {/* Same width as the stage columns above, so each point sits under its stage */}
+          <div
+            className="relative h-56 border-b border-l border-line sm:h-64"
+            aria-hidden
+          >
+            <span className="absolute left-2 top-0 text-[13px] text-muted">
+              Confident
+            </span>
+            <span className="absolute bottom-1 left-2 text-[13px] text-muted">
+              Frustrated
+            </span>
+            <svg
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              className="absolute inset-0 h-full w-full overflow-visible"
+            >
               <polyline
-                points={c.stages.map((s, i) => `${x(i)},${y(s.level)}`).join(" ")}
+                points={c.stages
+                  .map((s, i) => `${x(i)},${y(s.level)}`)
+                  .join(" ")}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -253,16 +338,26 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
               />
             </svg>
             {c.stages.map((s, i) => (
-              <div key={s.name} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${x(i)}%`, top: `${y(s.level)}%` }}>
+              <div
+                key={s.name}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${x(i)}%`, top: `${y(s.level)}%` }}
+              >
                 <span
                   className="block h-3.5 w-3.5 rounded-full border-2"
-                  style={s.turningPoint ? { background: accent, borderColor: accent } : undefined}
+                  style={
+                    s.turningPoint
+                      ? { background: accent, borderColor: accent }
+                      : undefined
+                  }
                 >
-                  {!s.turningPoint && <span className="block h-full w-full rounded-full bg-fg" />}
+                  {!s.turningPoint && (
+                    <span className="block h-full w-full rounded-full bg-fg" />
+                  )}
                 </span>
                 <span
                   className={`absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[13px] font-medium sm:block ${
-                    i === 0 || s.turningPoint ? "top-5" : "bottom-5"
+                    s.turningPoint ? "top-5" : "bottom-5"
                   }`}
                   style={s.turningPoint ? { color: accent } : undefined}
                 >
@@ -275,7 +370,10 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
         {/* On phones the emotion words sit in a list under the chart */}
         <ol className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-[14px] sm:hidden">
           {c.stages.map((s) => (
-            <li key={s.name} style={s.turningPoint ? { color: accent } : undefined}>
+            <li
+              key={s.name}
+              style={s.turningPoint ? { color: accent } : undefined}
+            >
               {s.name}: {s.feeling}
             </li>
           ))}
@@ -284,10 +382,17 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
           {c.stages.map((s) => `${s.name}: ${s.feeling}`).join(", ")}.
         </p>
         {dip && (
-          <p className={`mt-6 flex gap-3 text-[15px] leading-relaxed ${measure}`}>
-            <span aria-hidden className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: accent }} />
+          <p
+            className={`mt-6 flex gap-3 text-[15px] leading-relaxed ${measure}`}
+          >
+            <span
+              aria-hidden
+              className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: accent }}
+            />
             <span>
-              <span className="font-medium">{dip.name}.</span> {dip.turningPoint}
+              <span className="font-medium">{dip.name}.</span>{" "}
+              {dip.turningPoint}
             </span>
           </p>
         )}
@@ -303,7 +408,9 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
             </li>
           ))}
         </ol>
-        <p className="mt-3 inline-block rounded-md border border-dashed border-fg px-3 py-1 text-[14px]">{c.flow.decision}</p>
+        <p className="mt-3 inline-block rounded-md border border-dashed border-fg px-3 py-1 text-[14px]">
+          {c.flow.decision}
+        </p>
         {(
           [
             ["Yes", c.flow.yes],
@@ -337,15 +444,21 @@ function Architecture({ layers }: { layers: Layer[] }) {
             <div className="grid gap-4 border-b border-line py-6 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-8">
               <div>
                 <p className="font-mono text-[13px] text-muted">L{li + 1}</p>
-                <p className="font-display text-xl font-bold tracking-tight">{layer.name}</p>
-                <p className="mt-1 text-[14px] leading-snug text-muted">{layer.purpose}</p>
+                <p className="font-display text-xl font-bold tracking-tight">
+                  {layer.name}
+                </p>
+                <p className="mt-1 text-[14px] leading-snug text-muted">
+                  {layer.purpose}
+                </p>
               </div>
               <div className="min-w-0 text-[15px] leading-relaxed">
                 {layer.pipeline ? (
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-3">
                     {layer.pipeline.map((step, i) => (
                       <span key={step} className="flex items-center gap-2">
-                        <span className="rounded-full border border-fg/60 px-3.5 py-1.5 text-[14px] font-medium">{step}</span>
+                        <span className="rounded-full border border-fg/60 px-3.5 py-1.5 text-[14px] font-medium">
+                          {step}
+                        </span>
                         {i < layer.pipeline!.length - 1 && (
                           <span aria-hidden className="text-muted">
                             →
@@ -359,7 +472,10 @@ function Architecture({ layers }: { layers: Layer[] }) {
                           +
                         </span>
                         <span className="rounded-full border border-dashed border-line px-3.5 py-1.5 text-[14px]">
-                          {layer.aside} <span className="text-muted">(optional, notes only)</span>
+                          {layer.aside}{" "}
+                          <span className="text-muted">
+                            (optional, notes only)
+                          </span>
                         </span>
                       </span>
                     )}
@@ -389,7 +505,10 @@ function Architecture({ layers }: { layers: Layer[] }) {
               </div>
             </div>
             {li < layers.length - 1 && (
-              <div aria-hidden className="flex flex-col items-center py-1 text-muted">
+              <div
+                aria-hidden
+                className="flex flex-col items-center py-1 text-muted"
+              >
                 <span className="h-3 w-px bg-line" />
                 <span className="text-[13px] leading-none">↓</span>
               </div>
@@ -401,12 +520,17 @@ function Architecture({ layers }: { layers: Layer[] }) {
   );
 }
 
-export function CaseStudy({ project }: { project: Project & { caseStudy: CS } }) {
+export function CaseStudy({
+  project,
+}: {
+  project: Project & { caseStudy: CS };
+}) {
   const cs = project.caseStudy;
   const sections = [
     { id: "glance", label: "At a glance" },
     { id: "audience", label: "Who it's for" },
     { id: "research", label: "Research (v0)" },
+    { id: "shifts", label: "From concept to v1" },
     { id: "product", label: "The product" },
     { id: "design", label: "Design" },
     { id: "engineering", label: "Engineering" },
@@ -422,7 +546,10 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
 
   return (
     <article className="container-x pb-24 pt-28 sm:pb-32 sm:pt-36">
-      <Link href="/projects" className={`${cap} transition-colors hover:text-fg`}>
+      <Link
+        href="/projects"
+        className={`${cap} transition-colors hover:text-fg`}
+      >
         <span aria-hidden>← </span>All projects
       </Link>
 
@@ -439,17 +566,28 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             className="block aspect-[4/5] h-full w-full object-cover sm:aspect-[16/9]"
           />
           {/* Darken toward the middle so the white type reads on any part of the painting */}
-          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45),rgba(0,0,0,0.15)_70%)]" />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45),rgba(0,0,0,0.15)_70%)]"
+          />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
-            <h1 className={`${relocoDisplay.className} text-7xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-9xl lg:text-[10rem]`}>
+            <h1
+              className={`${relocoDisplay.className} text-7xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-9xl lg:text-[10rem]`}
+            >
               {/* Reloco's wordmark is lowercase */}
               <span className="lowercase">{project.name}</span>
             </h1>
-            <p className={`${relocoSans.className} mt-3 text-[15px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-lg`}>{cs.hero.caption}</p>
+            <p
+              className={`${relocoSans.className} mt-3 text-[15px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] sm:text-lg`}
+            >
+              {cs.hero.caption}
+            </p>
           </div>
         </div>
 
-        <p className="mt-8 max-w-[60ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
+        <p className="mt-8 max-w-[60ch] text-xl leading-snug sm:text-2xl">
+          {cs.oneLiner}
+        </p>
         <p className="mt-4 text-[15px] text-muted">{cs.metaLine.join(" · ")}</p>
         <div className="mt-7 flex flex-wrap gap-3">
           <a
@@ -467,30 +605,15 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             Read the case study <span aria-hidden>↓</span>
           </a>
         </div>
-        <StatLine items={cs.numbers} className="mt-10" />
       </header>
 
-      <div className="mt-28 grid gap-12 sm:mt-36 2xl:grid-cols-[11rem_minmax(0,1fr)] 2xl:gap-16">
-        {/* The sidebar needs room; below 1536px the phones get that width instead */}
-        <aside className="hidden 2xl:block">
+      {/* From "At a glance" on: a sticky "On this page" sidebar on desktop; phones read top to bottom */}
+      <div className="mt-28 grid gap-12 sm:mt-36 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
+        <aside className="hidden lg:block">
           <CaseStudyToc items={sections} />
         </aside>
 
         <div className="min-w-0">
-          <details className="mb-12 rounded-xl border border-line 2xl:hidden">
-            <summary className="cursor-pointer px-4 py-3 text-[15px] font-medium">Jump to</summary>
-            <ol className="border-t border-line px-4 py-2">
-              {sections.map((s, i) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`} className="flex gap-3 py-1.5 text-[15px] text-muted hover:text-fg">
-                    <span className="font-mono text-[13px]">{two(i + 1)}</span>
-                    {s.label}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </details>
-
           <div className="space-y-28 sm:space-y-[140px]">
             {/* 01 At a glance: two big statements, then a thin meta row */}
             <section id="glance" className={section}>
@@ -499,7 +622,9 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 {[problem, solution].map((g) => (
                   <div key={g.label}>
                     <dt className={cap}>{g.label}</dt>
-                    <dd className="mt-3 text-[20px] leading-snug sm:text-[22px]">{g.text}</dd>
+                    <dd className="mt-3 text-[20px] leading-snug sm:text-[22px]">
+                      <Rich text={g.text} />
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -507,7 +632,9 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 {meta.map((g) => (
                   <div key={g.label}>
                     <dt className={cap}>{g.label}</dt>
-                    <dd className="mt-2 text-[15px] leading-relaxed">{g.text}</dd>
+                    <dd className="mt-2 text-[15px] leading-relaxed">
+                      {g.text}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -516,16 +643,30 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
             {/* 02 Who it's for: three stretches of the degree, one large phone each. On desktop the
                 text and the phones sit on shared rows (subgrid) so the phones line up. */}
             <section id="audience" className={section}>
-              <Head n={num("audience")} title="Who it's for" intro={cs.audience.intro} />
+              <Head
+                n={num("audience")}
+                title="Who it's for"
+                intro={cs.audience.intro}
+              />
               <div className="grid gap-16 lg:grid-cols-3 lg:grid-rows-[auto_auto] lg:gap-x-10 lg:gap-y-8">
                 {cs.audience.groups.map((g) => (
-                  <Reveal key={g.title} className="grid gap-7 lg:row-span-2 lg:grid-rows-subgrid">
+                  <Reveal
+                    key={g.title}
+                    className="grid gap-7 lg:row-span-2 lg:grid-rows-subgrid"
+                  >
                     <div>
-                      <h3 className="font-display text-xl font-bold tracking-tight">{g.title}</h3>
-                      <p className="mt-2 text-[16px] leading-relaxed">{g.text}</p>
+                      <h3 className="font-display text-xl font-bold tracking-tight">
+                        {g.title}
+                      </h3>
+                      <p className="mt-2 text-[16px] leading-relaxed">
+                        <Rich text={g.text} />
+                      </p>
                     </div>
                     <div className="mx-auto w-full max-w-[290px]">
-                      <ShotFig s={g.shots[0]} sizes="(min-width: 1024px) 290px, 80vw" />
+                      <ShotFig
+                        s={g.shots[0]}
+                        sizes="(min-width: 1024px) 290px, 80vw"
+                      />
                     </div>
                   </Reveal>
                 ))}
@@ -534,16 +675,27 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
 
             {/* 03 Research (v0) */}
             <section id="research" className={section}>
-              <Head n={num("research")} title="Research (v0)" intro={cs.v0.intro} />
+              <Head
+                n={num("research")}
+                title="Research (v0)"
+                intro={cs.v0.intro}
+              />
 
               {/* Insights: stacked on phones, a table from tablet up */}
               <ul className="border-t border-line md:hidden">
                 {cs.v0.insights.map((r) => (
-                  <li key={r.insight} className="space-y-2 border-b border-line py-4 text-[15px]">
+                  <li
+                    key={r.insight}
+                    className="space-y-2 border-b border-line py-4 text-[15px]"
+                  >
                     <p className="text-[16px] font-medium">{r.insight}</p>
                     <p>
-                      <span className="font-display">&ldquo;{r.quote}&rdquo;</span>
-                      <span className="mt-1 block text-[13px] text-muted">{r.who}</span>
+                      <span className="font-display">
+                        &ldquo;{r.quote}&rdquo;
+                      </span>
+                      <span className="mt-1 block text-[13px] text-muted">
+                        {r.who}
+                      </span>
                     </p>
                     <p className="text-muted">
                       <span className={`${cap} mr-2`}>Ships today</span>
@@ -554,11 +706,17 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               </ul>
               <div className="hidden md:block">
                 <table className="w-full border-collapse text-left text-[15px]">
-                  <caption className="sr-only">Interview insights, the evidence and what ships today</caption>
+                  <caption className="sr-only">
+                    Interview insights, the evidence and what ships today
+                  </caption>
                   <thead>
                     <tr className="border-b border-fg">
                       {["Insight", "Evidence", "What ships today"].map((h) => (
-                        <th key={h} scope="col" className={`${cap} py-3 pr-6 font-normal`}>
+                        <th
+                          key={h}
+                          scope="col"
+                          className={`${cap} py-3 pr-6 font-normal`}
+                        >
                           {h}
                         </th>
                       ))}
@@ -566,13 +724,23 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                   </thead>
                   <tbody>
                     {cs.v0.insights.map((r) => (
-                      <tr key={r.insight} className="border-b border-line align-top">
-                        <th scope="row" className="w-[22%] py-4 pr-6 text-[16px] font-medium">
+                      <tr
+                        key={r.insight}
+                        className="border-b border-line align-top"
+                      >
+                        <th
+                          scope="row"
+                          className="w-[22%] py-4 pr-6 text-[16px] font-medium"
+                        >
                           {r.insight}
                         </th>
                         <td className="w-[38%] py-4 pr-6">
-                          <span className="font-display">&ldquo;{r.quote}&rdquo;</span>
-                          <span className="mt-1 block text-[13px] text-muted">{r.who}</span>
+                          <span className="font-display">
+                            &ldquo;{r.quote}&rdquo;
+                          </span>
+                          <span className="mt-1 block text-[13px] text-muted">
+                            {r.who}
+                          </span>
                         </td>
                         <td className="py-4 text-muted">{r.today}</td>
                       </tr>
@@ -581,17 +749,60 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 </table>
               </div>
 
-              <h3 className="mt-16 font-display text-2xl font-bold tracking-tight">Personas</h3>
+              <h3 className="mt-16 font-display text-2xl font-bold tracking-tight">
+                Personas
+              </h3>
               <ul className="mt-6 grid items-stretch gap-6 lg:grid-cols-2">
                 {cs.v0.personas.map((p) => (
                   <PersonaCard key={p.name} p={p} scales={cs.v0.traitScales} />
                 ))}
               </ul>
 
-              <h3 className="mt-16 font-display text-2xl font-bold tracking-tight">v0 concept: Amara&apos;s first week</h3>
+              <h3 className="mt-16 font-display text-2xl font-bold tracking-tight">
+                v0 concept: Amara&apos;s first week
+              </h3>
               <div className="mt-6">
                 <ConceptMap c={cs.v0.concept} />
               </div>
+            </section>
+
+            {/* From concept to v1: the bridge between the research and the product */}
+            <section id="shifts" className={section}>
+              <Head
+                n={num("shifts")}
+                title="From concept to v1"
+                intro={cs.shifts.intro}
+              />
+              <div className="hidden border-t border-fg md:grid md:grid-cols-[1fr_1.2fr_1.3fr] md:gap-8">
+                {["v0", "v1", "Why"].map((h) => (
+                  <p key={h} className={`${cap} py-3`}>
+                    {h}
+                  </p>
+                ))}
+              </div>
+              <ol className="border-t border-line md:border-t-0">
+                {cs.shifts.rows.map((r) => (
+                  <li
+                    key={r.v0}
+                    className="grid gap-2 border-b border-line py-5 md:grid-cols-[1fr_1.2fr_1.3fr] md:gap-8"
+                  >
+                    <p className="text-[15px] text-muted">
+                      <span className={`${cap} mr-2 md:hidden`}>v0</span>
+                      <span className="line-through decoration-line">
+                        {r.v0}
+                      </span>
+                    </p>
+                    <p className="text-[16px] font-medium">
+                      <span className={`${cap} mr-2 md:hidden`}>v1</span>
+                      {r.v1}
+                    </p>
+                    <p className="text-[15px] leading-relaxed text-muted">
+                      <span className={`${cap} mr-2 md:hidden`}>Why</span>
+                      {r.why}
+                    </p>
+                  </li>
+                ))}
+              </ol>
             </section>
 
             {/* 04 The product */}
@@ -599,14 +810,25 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <Head n={productN} title="The product" intro={cs.productIntro} />
               <div className="space-y-28 sm:space-y-36">
                 {cs.features.map((f, i) => (
-                  <FeatureBlock key={f.id} f={f} i={i} n={`${productN}.${i + 1}`} />
+                  <FeatureBlock
+                    key={f.id}
+                    f={f}
+                    i={i}
+                    n={`${productN}.${i + 1}`}
+                  />
                 ))}
               </div>
 
               <div className="mt-28 border-t border-line pt-12">
-                <h3 className="font-display text-2xl font-bold tracking-tight">{cs.progress.title}</h3>
-                <p className={`mt-2 text-[16px] leading-relaxed text-muted ${measure}`}>{cs.progress.text}</p>
-                <div className="mt-10 grid grid-cols-2 items-start gap-5 md:grid-cols-4">
+                <h3 className="font-display text-2xl font-bold tracking-tight">
+                  {cs.progress.title}
+                </h3>
+                <p
+                  className={`mt-2 text-[16px] leading-relaxed text-muted ${measure}`}
+                >
+                  {cs.progress.text}
+                </p>
+                <div className="mt-10 grid grid-cols-2 items-start gap-5 2xl:grid-cols-4">
                   {cs.progress.shots.map((s) => (
                     <div key={s.src} className="mx-auto w-full max-w-[270px]">
                       <ShotFig s={s} sizes="(min-width: 768px) 270px, 45vw" />
@@ -621,12 +843,19 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <Head n={num("design")} title="Design" intro={cs.design.intro} />
               <dl className="border-t border-line">
                 {cs.design.principles.map((d, i) => (
-                  <div key={d.title} className="grid gap-2 border-b border-line py-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10">
+                  <div
+                    key={d.title}
+                    className="grid gap-2 border-b border-line py-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10"
+                  >
                     <dt className="flex gap-4 text-[17px] font-medium">
-                      <span className="font-mono text-[13px] font-normal text-muted">{two(i + 1)}</span>
+                      <span className="font-mono text-[13px] font-normal text-muted">
+                        {two(i + 1)}
+                      </span>
                       {d.title}
                     </dt>
-                    <dd className="text-[15px] leading-relaxed text-muted md:pl-0">{d.text}</dd>
+                    <dd className="text-[15px] leading-relaxed text-muted md:pl-0">
+                      {d.text}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -637,32 +866,47 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <Head n={num("engineering")} title="Engineering" />
               <Architecture layers={eng.layers} />
               <p className="sr-only">
-                Five layers, top to bottom: content (the task library, the school pack and country data); the engine, a pure
-                pipeline from profile to chapters; runtime rules; data (a Store interface over Supabase Postgres with
-                row-level security, plus a cookie store for development); and the surfaces students use.
+                Five layers, top to bottom: content (the task library, the
+                school pack and country data); the engine, a pure pipeline from
+                profile to chapters; runtime rules; data (a Store interface over
+                Supabase Postgres with row-level security, plus a cookie store
+                for development); and the surfaces students use.
               </p>
 
-              <div className="mt-10">
-                <p className={cap}>Quality</p>
-                <StatLine items={eng.quality} className="mt-4" />
+              <div className={`mt-12 ${measure}`}>
+                <h3 className="font-display text-2xl font-bold tracking-tight">
+                  Quality
+                </h3>
+                <p className="mt-3 text-[16px] leading-relaxed">
+                  <Rich text={eng.quality} />
+                </p>
               </div>
 
               <div className={`mt-14 ${measure}`}>
-                <h3 className="font-display text-2xl font-bold tracking-tight">How a plan gets built</h3>
+                <h3 className="font-display text-2xl font-bold tracking-tight">
+                  How a plan gets built
+                </h3>
                 <ol className="mt-5 space-y-2.5 text-[16px] leading-relaxed">
                   {eng.pipeline.map((p, i) => (
                     <li key={p} className="flex gap-4">
-                      <span className="w-5 shrink-0 font-mono text-[13px] leading-[1.7] text-muted">{i + 1}</span>
+                      <span className="w-5 shrink-0 font-mono text-[13px] leading-[1.7] text-muted">
+                        {i + 1}
+                      </span>
                       {p}
                     </li>
                   ))}
                 </ol>
               </div>
 
-              <h3 className="mt-14 font-display text-2xl font-bold tracking-tight">Stack</h3>
+              <h3 className="mt-14 font-display text-2xl font-bold tracking-tight">
+                Stack
+              </h3>
               <dl className="mt-4 border-t border-line">
                 {eng.stack.map((g) => (
-                  <div key={g.label} className="grid gap-3 border-b border-line py-4 sm:grid-cols-[10rem_1fr] sm:items-center sm:gap-6">
+                  <div
+                    key={g.label}
+                    className="grid gap-3 border-b border-line py-4 sm:grid-cols-[10rem_1fr] sm:items-center sm:gap-6"
+                  >
                     <dt className={cap}>{g.label}</dt>
                     <dd>
                       <ul className="flex flex-wrap gap-1.5">
@@ -681,7 +925,10 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <Head n={num("metrics")} title="What I'm measuring" />
               <dl className="border-t border-line md:hidden">
                 {cs.metrics.rows.map((r) => (
-                  <div key={r.metric} className="space-y-1.5 border-b border-line py-4 text-[15px]">
+                  <div
+                    key={r.metric}
+                    className="space-y-1.5 border-b border-line py-4 text-[15px]"
+                  >
                     <dt className="text-[16px] font-medium">{r.metric}</dt>
                     <dd>{r.definition}</dd>
                     <dd className="text-muted">
@@ -699,17 +946,29 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 <table className="w-full border-collapse text-left text-[15px]">
                   <thead>
                     <tr className="border-b border-fg">
-                      {["Metric", "Definition", "Why it matters", "Source"].map((h) => (
-                        <th key={h} scope="col" className={`${cap} py-3 pr-6 font-normal`}>
-                          {h}
-                        </th>
-                      ))}
+                      {["Metric", "Definition", "Why it matters", "Source"].map(
+                        (h) => (
+                          <th
+                            key={h}
+                            scope="col"
+                            className={`${cap} py-3 pr-6 font-normal`}
+                          >
+                            {h}
+                          </th>
+                        ),
+                      )}
                     </tr>
                   </thead>
                   <tbody>
                     {cs.metrics.rows.map((r) => (
-                      <tr key={r.metric} className="border-b border-line align-top">
-                        <th scope="row" className="py-4 pr-6 text-[16px] font-medium">
+                      <tr
+                        key={r.metric}
+                        className="border-b border-line align-top"
+                      >
+                        <th
+                          scope="row"
+                          className="py-4 pr-6 text-[16px] font-medium"
+                        >
                           {r.metric}
                         </th>
                         <td className="py-4 pr-6">{r.definition}</td>
@@ -728,8 +987,13 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <Head n={num("timeline")} title="Timeline" />
               <ol className="grid gap-4">
                 {cs.timeline.map((t) => (
-                  <li key={t.phase} className={`grid gap-3 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 ${card}`}>
-                    <p className="font-display text-xl font-bold">{t.phase}</p>
+                  <li
+                    key={t.phase}
+                    className={`grid gap-3 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 ${card}`}
+                  >
+                    <p className="font-display text-3xl font-bold tracking-tight">
+                      {t.phase}
+                    </p>
                     <div>
                       <span
                         className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-[13px] uppercase tracking-label ${
@@ -742,19 +1006,34 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                       >
                         {t.status}
                       </span>
-                      <p className={`mt-3 text-[16px] leading-relaxed ${measure}`}>{t.text}</p>
+                      <p
+                        className={`mt-3 text-[16px] leading-relaxed ${measure}`}
+                      >
+                        {t.text}
+                      </p>
                     </div>
-                    <p className="font-mono text-[13px] uppercase tracking-label text-muted sm:text-right">{t.date ?? ""}</p>
+                    <p className="font-mono text-[13px] uppercase tracking-label text-muted sm:text-right">
+                      {t.date ?? ""}
+                    </p>
                   </li>
                 ))}
               </ol>
             </section>
 
             {/* 09 Try it */}
-            <section id="try" className={`${section} rounded-[20px] bg-fg p-8 text-bg sm:p-12`}>
-              <p className="font-mono text-[13px] opacity-70">{two(num("try"))}</p>
-              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">Try it</h2>
-              <p className="mt-3 max-w-[52ch] text-lg leading-relaxed opacity-80">{cs.tryIt.text}</p>
+            <section
+              id="try"
+              className={`${section} rounded-[20px] bg-fg p-8 text-bg sm:p-12`}
+            >
+              <p className="font-mono text-[13px] opacity-70">
+                {two(num("try"))}
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                Try it
+              </h2>
+              <p className="mt-3 max-w-[52ch] text-lg leading-relaxed opacity-80">
+                {cs.tryIt.text}
+              </p>
               <div className="mt-7 flex flex-wrap items-center gap-5">
                 <a
                   href={cs.tryIt.url}
@@ -764,7 +1043,10 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                 >
                   {cs.tryIt.button} <span aria-hidden>↗</span>
                 </a>
-                <Link href="/contact" className="text-[15px] underline underline-offset-4 opacity-80 hover:opacity-100">
+                <Link
+                  href="/contact"
+                  className="text-[15px] underline underline-offset-4 opacity-80 hover:opacity-100"
+                >
                   Say hello
                 </Link>
               </div>

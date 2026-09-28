@@ -42,16 +42,6 @@ export function Projects() {
                   </h2>
                   <p className="mt-3 max-w-[56ch] leading-relaxed text-muted">{p.blurb}</p>
 
-                  {cs && (
-                    <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
-                      {cs.numbers.map((n) => (
-                        <li key={n.label} className="text-sm text-muted">
-                          <span className="font-display text-lg font-bold text-fg">{n.value}</span>{" "}
-                          {n.label.split(",")[0]}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
 
                   <ul className="mt-5 flex flex-wrap gap-2">
                     {p.tags.map((t) => (
