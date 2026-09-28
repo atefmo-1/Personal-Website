@@ -1,3 +1,11 @@
+import {
+  IconCalendarEvent,
+  IconDoorEnter,
+  IconLock,
+  IconRosette,
+  IconUsers,
+  IconWallet,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./Button";
@@ -8,17 +16,18 @@ import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
 import type { CaseStudy as CS, Feature, Project, Shot } from "@/lib/projects";
 
-// A project page: hero, overview, v0, the product today (feature by feature: what, why, how),
-// product decisions, engineering, metrics, timeline, contact. Text lines stay under ~72
-// characters; cards only for personas, decisions and the timeline.
+// A project page in 11 sections: hero, at a glance, why freshmen first, research (v0), the
+// product, product thinking, engineering, design, metrics, timeline, try it. Text lines stay
+// under ~72 characters. Cards only for personas, the "Also in v1" grid, decisions and the timeline.
 
 const card = "rounded-2xl border border-line bg-surface";
 const measure = "max-w-[68ch]";
+const two = (n: number) => String(n).padStart(2, "0");
 
 function Head({ n, title, intro }: { n: number; title: string; intro?: string }) {
   return (
     <div className="mb-8">
-      <p className="font-mono text-xs text-muted">{String(n).padStart(2, "0")}</p>
+      <p className="font-mono text-xs text-muted">{two(n)}</p>
       <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
       {intro && <p className={`mt-3 text-lg leading-relaxed text-muted ${measure}`}>{intro}</p>}
     </div>
@@ -41,22 +50,35 @@ function ShotFig({ s, sizes }: { s: Shot; sizes: string }) {
   );
 }
 
-function FeatureBlock({ f, i }: { f: Feature; i: number }) {
+// A row of phones: side by side from tablet up, one under another (narrower) on phones.
+function PhoneRow({ shots, className = "" }: { shots: Shot[]; className?: string }) {
+  const cols = shots.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
+  return (
+    <div className={`grid gap-8 sm:gap-5 ${cols} ${className}`}>
+      {shots.map((s) => (
+        <div key={s.src + s.caption} className="mx-auto w-full max-w-[250px]">
+          <ShotFig s={s} sizes="(min-width: 640px) 250px, 250px" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
   const phones = f.shots.filter((s) => s.kind === "phone");
   const desktops = f.shots.filter((s) => s.kind === "desktop");
-  const cols = phones.length >= 3 ? "grid-cols-2 sm:grid-cols-3" : phones.length === 2 ? "grid-cols-2" : "grid-cols-1";
   const lines = [
     ["What it does", f.what],
     ["Why it matters", f.why],
     ["How I built it", f.how],
   ].filter((l): l is [string, string] => !!l[1]);
   return (
-    <Reveal as="article" id={`f-${f.id}`} className="grid items-start gap-8 lg:grid-cols-2 lg:gap-14">
+    <Reveal as="article" id={`f-${f.id}`} className="grid scroll-mt-24 items-center gap-8 lg:grid-cols-2 lg:gap-14">
       <div className={`grid gap-6 ${i % 2 ? "lg:order-last" : ""}`}>
         {phones.length > 0 && (
-          <div className={`mx-auto grid w-full gap-4 ${cols} ${phones.length === 1 ? "max-w-[260px]" : phones.length === 2 ? "max-w-[480px]" : ""}`}>
+          <div className={`mx-auto grid w-full grid-cols-2 gap-4 ${phones.length === 1 ? "max-w-[250px] !grid-cols-1" : "max-w-[500px]"}`}>
             {phones.map((s) => (
-              <ShotFig key={s.src} s={s} sizes="(min-width: 1024px) 240px, 45vw" />
+              <ShotFig key={s.src + s.caption} s={s} sizes="(min-width: 1024px) 240px, 45vw" />
             ))}
           </div>
         )}
@@ -65,7 +87,7 @@ function FeatureBlock({ f, i }: { f: Feature; i: number }) {
         ))}
       </div>
       <div className={measure}>
-        <p className="font-mono text-xs text-muted">4.{i + 1}</p>
+        <p className="font-mono text-xs text-muted">{n}</p>
         <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h3>
         <dl className="mt-6 space-y-5">
           {lines.map(([label, text]) => (
@@ -86,21 +108,20 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
   const y = (l: number) => (1 - l) * 100;
   const chip = "rounded-full border border-line px-3 py-1 text-sm";
   return (
-    <div className="space-y-8 pt-6">
+    <div className="space-y-8 pt-2">
       <p className={`text-[15px] leading-relaxed text-muted ${measure}`}>{c.summary}</p>
       <div>
-        <p className="label">Journey map: a student&apos;s first week with the v0 concept</p>
+        <p className="label">Journey map</p>
         <ol className="mt-4 grid gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
           {c.stages.map((s, i) => (
             <li key={s.name} className="border-t border-line pt-3">
-              <p className="font-mono text-xs text-muted">{String(i + 1).padStart(2, "0")}</p>
+              <p className="font-mono text-xs text-muted">{two(i + 1)}</p>
               <p className="mt-1 font-medium">{s.name}</p>
               <p className="mt-1 text-sm leading-snug text-muted">{s.doing}</p>
-              <p className="mt-2 text-sm">{s.feeling}</p>
             </li>
           ))}
         </ol>
-        <div className="relative mt-6 hidden h-20 lg:block" aria-hidden>
+        <div className="relative mt-6 hidden h-16 lg:block" aria-hidden>
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
             <polyline
               points={c.stages.map((s, i) => `${x(i)},${y(s.level)}`).join(" ")}
@@ -151,62 +172,76 @@ function ConceptMap({ c }: { c: CS["v0"]["concept"] }) {
   );
 }
 
-// Engineering: how the pieces connect, drawn as boxes and arrows.
+// Engineering: the data flow on top, the storage layer below it.
 function Architecture() {
   const box = "rounded-lg border border-line bg-bg px-3 py-2 text-center text-sm";
-  const arrow = <span aria-hidden className="text-center text-muted">↓</span>;
+  const key = `${box} border-fg font-medium`;
+  const arrow = (
+    <span aria-hidden className="text-center text-muted">
+      ↓
+    </span>
+  );
   return (
-    <figure className={`p-5 sm:p-7 ${card}`}>
+    <figure className="rounded-2xl border border-line p-5 sm:p-7">
       <figcaption className="label">Architecture</figcaption>
-      <div className="mt-5 grid gap-6 md:grid-cols-2 md:gap-10">
-        <div className="grid gap-2">
-          <div className={box}>Profile: about 10 answers</div>
-          {arrow}
-          <div className={`${box} border-fg font-medium`}>Rules engine (pure function)</div>
-          {arrow}
-          <div className={box}>Roadmap</div>
-          {arrow}
-          <div className="grid grid-cols-2 gap-2">
-            {["Today", "Journey", "Calendar feed", "Share page"].map((t) => (
-              <div key={t} className={box}>
-                {t}
-              </div>
-            ))}
-          </div>
+      <div className="mx-auto mt-5 grid max-w-2xl gap-2">
+        <div className={box}>Profile: about 10 answers</div>
+        {arrow}
+        <div className={key}>Rules engine (pure function)</div>
+        {arrow}
+        <div className={box}>Roadmap</div>
+        {arrow}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {["Today", "Journey", "Calendar feed", "Share page"].map((t) => (
+            <div key={t} className={box}>
+              {t}
+            </div>
+          ))}
         </div>
-        <div className="grid content-start gap-2">
-          <div className={`${box} border-fg font-medium`}>Store interface</div>
-          {arrow}
-          <div className="grid grid-cols-2 gap-2">
-            <div className={box}>Cookie store (guests)</div>
-            <div className={box}>Supabase Postgres with RLS (accounts)</div>
-          </div>
-          <p className="mt-2 text-sm leading-snug text-muted">On sign-in, guest progress is imported into the account.</p>
+        <div className="my-4 border-t border-dashed border-line" />
+        <div className={key}>Store interface</div>
+        {arrow}
+        <div className="grid grid-cols-2 gap-2">
+          <div className={box}>Cookie store (guests)</div>
+          <div className={box}>Supabase Postgres with RLS (accounts)</div>
         </div>
+        <p className="mt-1 text-center text-sm text-muted">On sign-in, guest progress is imported into the account.</p>
       </div>
       <p className="sr-only">
         A profile goes into the rules engine, a pure function, which produces the roadmap. The roadmap feeds Today,
-        Journey, the calendar feed and the share page. Data goes through one Store interface, backed by a cookie store for
+        Journey, the calendar feed and the share page. Below that, one Store interface is backed by a cookie store for
         guests or Supabase Postgres with row-level security for accounts.
       </p>
     </figure>
   );
 }
 
+const icons = {
+  wallet: IconWallet,
+  calendar: IconCalendarEvent,
+  share: IconUsers,
+  stamp: IconRosette,
+  guest: IconDoorEnter,
+  lock: IconLock,
+};
+
 export function CaseStudy({ project }: { project: Project & { caseStudy: CS } }) {
   const cs = project.caseStudy;
   const sections = [
-    { id: "overview", label: "Overview" },
-    { id: "v0", label: "v0: Where it started" },
-    { id: "product", label: "The product today" },
-    { id: "decisions", label: "Product decisions" },
+    { id: "glance", label: "At a glance" },
+    { id: "freshmen", label: "Why freshmen first" },
+    { id: "research", label: "Research (v0)" },
+    { id: "product", label: "The product" },
+    { id: "thinking", label: "Product thinking" },
     { id: "engineering", label: "Engineering" },
+    { id: "design", label: "Design" },
     { id: "metrics", label: "Metrics" },
     { id: "timeline", label: "Timeline" },
+    { id: "try", label: "Try it" },
   ];
   const num = (id: string) => sections.findIndex((s) => s.id === id) + 2; // 1 is the hero
   const section = "scroll-mt-24";
-  const [khoa, amara] = cs.v0.personas;
+  const productN = num("product");
 
   return (
     <article className="container-x pb-24 pt-28 sm:pb-32 sm:pt-36">
@@ -217,12 +252,18 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
       {/* 1. Hero */}
       <header className="mt-8">
         <h1 className="font-display text-5xl font-bold tracking-tight sm:text-7xl">{project.name}</h1>
-        <p className="mt-4 max-w-[40ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
+        <p className="mt-4 max-w-[44ch] text-xl leading-snug sm:text-2xl">{cs.oneLiner}</p>
         <p className="mt-4 text-sm text-muted">{cs.metaLine.join(" · ")}</p>
-        <div className="mt-7">
+        <div className="mt-7 flex flex-wrap gap-3">
           <Button href={cs.cta.url} external>
             {cs.cta.label} <span aria-hidden>↗</span>
           </Button>
+          <a
+            href="#glance"
+            className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs uppercase tracking-label transition-colors hover:border-fg"
+          >
+            Read the case study <span aria-hidden>↓</span>
+          </a>
         </div>
       </header>
 
@@ -264,7 +305,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               {sections.map((s, i) => (
                 <li key={s.id}>
                   <a href={`#${s.id}`} className="flex gap-3 py-1.5 text-sm text-muted hover:text-fg">
-                    <span className="font-mono text-xs">{String(i + 2).padStart(2, "0")}</span>
+                    <span className="font-mono text-xs">{two(i + 2)}</span>
                     {s.label}
                   </a>
                 </li>
@@ -273,25 +314,37 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
           </details>
 
           <div className="space-y-28 sm:space-y-36">
-            {/* 2. Overview */}
-            <section id="overview" className={section}>
-              <Head n={num("overview")} title="Overview" />
-              <div className={`space-y-6 ${measure}`}>
-                <div>
-                  <h3 className="label">The problem</h3>
-                  <p className="mt-2 text-lg leading-relaxed">{cs.overview.problem}</p>
-                </div>
-                <div>
-                  <h3 className="label">What I built</h3>
-                  <p className="mt-2 text-lg leading-relaxed">{cs.overview.built}</p>
-                </div>
-              </div>
+            {/* 2. At a glance */}
+            <section id="glance" className={section}>
+              <Head n={num("glance")} title="At a glance" />
+              <dl className="grid border-l border-t border-line sm:grid-cols-2 xl:grid-cols-5">
+                {cs.glance.map((g) => (
+                  <div key={g.label} className="border-b border-r border-line p-5">
+                    <dt className="label">{g.label}</dt>
+                    <dd className="mt-2 text-[15px] leading-relaxed">{g.text}</dd>
+                  </div>
+                ))}
+              </dl>
             </section>
 
-            {/* 3. v0 */}
-            <section id="v0" className={section}>
-              <Head n={num("v0")} title="v0: Where it started" intro={cs.v0.intro} />
+            {/* 3. Why freshmen first */}
+            <section id="freshmen" className={section}>
+              <Head n={num("freshmen")} title="Why freshmen first" />
+              <div className={`space-y-5 ${measure}`}>
+                {cs.freshmen.paragraphs.map((p) => (
+                  <p key={p} className="text-lg leading-relaxed">
+                    {p}
+                  </p>
+                ))}
+              </div>
+              <PhoneRow shots={cs.freshmen.shots} className="mt-12" />
+            </section>
 
+            {/* 4. Research (v0) */}
+            <section id="research" className={section}>
+              <Head n={num("research")} title="Research (v0)" intro={cs.v0.intro} />
+
+              {/* Insights: stacked on phones, a table from tablet up */}
               <ul className="border-t border-line md:hidden">
                 {cs.v0.insights.map((r) => (
                   <li key={r.insight} className="space-y-2 border-b border-line py-4 text-[15px]">
@@ -338,7 +391,7 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
 
               <h3 className="label mt-12">Personas</h3>
               <ul className="mt-4 grid gap-4 md:grid-cols-2">
-                {[khoa, amara].map((p) => (
+                {cs.v0.personas.map((p) => (
                   <li key={p.name} className={`p-5 ${card}`}>
                     <p className="font-display text-xl font-bold tracking-tight">{p.name}</p>
                     <p className="label mt-1">{p.archetype}</p>
@@ -352,8 +405,10 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
 
               <details className="group mt-10 border-y border-line">
                 <summary className="flex cursor-pointer items-center justify-between py-4 font-medium">
-                  v0 concept: journey map and task flow
-                  <span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
+                  v0 concept
+                  <span aria-hidden className="text-muted transition-transform group-open:rotate-45">
+                    +
+                  </span>
                 </summary>
                 <div className="pb-8">
                   <ConceptMap c={cs.v0.concept} />
@@ -361,33 +416,38 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               </details>
             </section>
 
-            {/* 4. The product today */}
+            {/* 5. The product */}
             <section id="product" className={section}>
-              <Head
-                n={num("product")}
-                title="The product today"
-                intro="Each feature: what it does, why it matters, and how I built it."
-              />
+              <Head n={productN} title="The product" intro="Each feature: what it does, why it matters, and how I built it." />
               <div className="space-y-24 sm:space-y-32">
                 {cs.features.map((f, i) => (
-                  <FeatureBlock key={f.id} f={f} i={i} />
+                  <FeatureBlock key={f.id} f={f} i={i} n={`${productN}.${i + 1}`} />
                 ))}
               </div>
-              {cs.landingStrip && (
-                <div className="mt-24 border-t border-line pt-10">
-                  <p className="text-lg">{cs.landingStrip.caption}</p>
-                  <div className="mt-6 grid gap-5 md:grid-cols-3">
-                    {cs.landingStrip.shots.map((s) => (
-                      <ShotFig key={s.src} s={s} sizes="(min-width: 768px) 30vw, 100vw" />
-                    ))}
-                  </div>
-                </div>
-              )}
+
+              <h3 className="mt-24 font-display text-2xl font-bold tracking-tight">Also in v1</h3>
+              <ul className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {cs.alsoInV1.map((a) => {
+                  const Icon = icons[a.icon];
+                  return (
+                    <li key={a.title} className={`flex flex-col p-5 ${card}`}>
+                      <Icon size={22} stroke={1.6} aria-hidden />
+                      <p className="mt-3 font-medium">{a.title}</p>
+                      <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{a.text}</p>
+                      {a.shot && (
+                        <div className="mx-auto mt-5 w-full max-w-[170px]">
+                          <PhoneFrame src={a.shot.src} alt={a.shot.alt} width={a.shot.width} height={a.shot.height} sizes="170px" />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             </section>
 
-            {/* 5. Product decisions */}
-            <section id="decisions" className={section}>
-              <Head n={num("decisions")} title="Product decisions" intro="What I chose, what I turned down, and why." />
+            {/* 6. Product thinking */}
+            <section id="thinking" className={section}>
+              <Head n={num("thinking")} title="Product thinking" intro="What I chose, what I turned down, and why." />
               <ul className="grid gap-4 md:grid-cols-2">
                 {cs.decisions.map((d) => (
                   <li key={d.decision} className={`p-5 ${card}`}>
@@ -405,44 +465,85 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
                   </li>
                 ))}
               </ul>
-            </section>
 
-            {/* 6. Engineering */}
-            <section id="engineering" className={section}>
-              <Head n={num("engineering")} title="Engineering" />
-              <Architecture />
-              <ul className={`mt-8 grid gap-x-8 gap-y-2 text-[15px] sm:grid-cols-2 ${measure}`}>
-                {cs.engineering.bullets.map((b) => (
-                  <li key={b} className="flex gap-2">
-                    <span aria-hidden className="text-muted">+</span>
-                    {b}
-                  </li>
-                ))}
-              </ul>
-              <ul className="mt-6 flex flex-wrap gap-1.5">
-                {cs.engineering.stack.map((s) => (
-                  <SkillPill key={s.name} skill={s} />
-                ))}
-              </ul>
-
-              <h3 className="mt-14 font-display text-2xl font-bold tracking-tight">Where AI fits</h3>
-              <div className={`mt-4 space-y-3 text-[15px] leading-relaxed ${measure}`}>
-                <p>
-                  <span className="label mr-2">Built</span>
-                  {cs.engineering.ai.built.join(" ")}
-                </p>
-                <p>
-                  <span className="label mr-2">Next (v1.1)</span>
-                  {cs.engineering.ai.next.join(" ")}
-                </p>
-                <p>
-                  <span className="label mr-2">Cost control</span>
-                  {cs.engineering.ai.cost}
-                </p>
+              <div className="mt-20 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+                <div className={measure}>
+                  <p className="label">Story</p>
+                  <h3 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">{cs.story.title}</h3>
+                  <div className="mt-5 space-y-4">
+                    {cs.story.paragraphs.map((p) => (
+                      <p key={p} className="text-[16px] leading-relaxed">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+                <PhoneRow shots={cs.story.shots} />
               </div>
             </section>
 
-            {/* 7. Metrics */}
+            {/* 7. Engineering */}
+            <section id="engineering" className={section}>
+              <Head n={num("engineering")} title="Engineering" />
+              <Architecture />
+              <ul className={`mt-8 space-y-2.5 text-[16px] leading-relaxed ${measure}`}>
+                {cs.engineering.highlights.map((h) => (
+                  <li key={h} className="flex gap-3">
+                    <span aria-hidden className="text-muted">
+                      +
+                    </span>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className="mt-12 font-display text-2xl font-bold tracking-tight">Where AI fits</h3>
+              <dl className={`mt-4 space-y-3 text-[15px] leading-relaxed ${measure}`}>
+                {(
+                  [
+                    ["Built", cs.engineering.ai.built],
+                    ["Next", cs.engineering.ai.next],
+                    ["Cost control", cs.engineering.ai.cost],
+                  ] as const
+                ).map(([label, text]) => (
+                  <div key={label} className="sm:flex sm:gap-4">
+                    <dt className="label w-28 shrink-0 pt-0.5">{label}</dt>
+                    <dd>{text}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <h3 className="mt-12 font-display text-2xl font-bold tracking-tight">Stack</h3>
+              <dl className="mt-4 border-t border-line">
+                {cs.engineering.stack.map((g) => (
+                  <div key={g.label} className="grid gap-3 border-b border-line py-4 sm:grid-cols-[9rem_1fr] sm:items-center sm:gap-6">
+                    <dt className="label">{g.label}</dt>
+                    <dd>
+                      <ul className="flex flex-wrap gap-1.5">
+                        {g.items.map((s) => (
+                          <SkillPill key={s.name} skill={s} />
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            {/* 8. Design */}
+            <section id="design" className={section}>
+              <Head n={num("design")} title="Design" />
+              <dl className={`border-t border-line ${measure}`}>
+                {cs.design.map((d) => (
+                  <div key={d.title} className="border-b border-line py-4">
+                    <dt className="font-medium">{d.title}</dt>
+                    <dd className="mt-1 text-[15px] leading-relaxed text-muted">{d.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            {/* 9. Metrics */}
             <section id="metrics" className={section}>
               <Head n={num("metrics")} title="What I'm measuring" />
               <dl className="border-t border-line md:hidden">
@@ -489,48 +590,60 @@ export function CaseStudy({ project }: { project: Project & { caseStudy: CS } })
               <p className="mt-4 text-sm text-muted">{cs.metrics.note}</p>
             </section>
 
-            {/* 8. Timeline */}
+            {/* 10. Timeline */}
             <section id="timeline" className={section}>
               <Head n={num("timeline")} title="Timeline" />
-              <ol className="grid gap-3">
+              <ol className="relative ml-2 border-l border-line">
                 {cs.timeline.map((t) => (
-                  <li key={t.phase} className={`grid gap-2 p-5 sm:grid-cols-[6rem_1fr] sm:gap-6 ${card}`}>
-                    <p className="font-display text-xl font-bold">{t.phase}</p>
-                    <div>
-                      <p className="flex flex-wrap items-center gap-3">
-                        <span
-                          className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-label ${
-                            t.status === "Completed"
-                              ? "border-fg bg-fg text-bg"
-                              : t.status === "In progress"
-                                ? "border-fg"
-                                : "border-dashed border-muted text-muted"
-                          }`}
-                        >
-                          {t.status}
-                        </span>
-                        {t.date && <span className="font-mono text-xs uppercase tracking-label text-muted">{t.date}</span>}
-                      </p>
-                      <p className={`mt-2 text-[15px] leading-relaxed ${measure}`}>{t.text}</p>
+                  <li key={t.phase} className="relative pb-4 pl-7 last:pb-0">
+                    <span
+                      aria-hidden
+                      className={`absolute -left-[7px] top-6 h-3.5 w-3.5 rounded-full border-2 ${
+                        t.status === "Completed" ? "border-fg bg-fg" : t.status === "In progress" ? "border-fg bg-bg" : "border-muted bg-bg"
+                      }`}
+                    />
+                    <div className={`grid gap-2 p-5 sm:grid-cols-[5rem_1fr] sm:gap-6 ${card}`}>
+                      <p className="font-display text-xl font-bold">{t.phase}</p>
+                      <div>
+                        <p className="flex flex-wrap items-center gap-3">
+                          <span
+                            className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-label ${
+                              t.status === "Completed"
+                                ? "border-fg bg-fg text-bg"
+                                : t.status === "In progress"
+                                  ? "border-fg"
+                                  : "border-dashed border-muted text-muted"
+                            }`}
+                          >
+                            {t.status}
+                          </span>
+                          {t.date && <span className="font-mono text-xs uppercase tracking-label text-muted">{t.date}</span>}
+                        </p>
+                        <p className={`mt-2 text-[15px] leading-relaxed ${measure}`}>{t.text}</p>
+                      </div>
                     </div>
                   </li>
                 ))}
               </ol>
             </section>
 
-            {/* 9. Contact */}
-            <section className={`p-8 sm:p-12 ${card}`}>
-              <h2 className="font-display text-3xl font-bold tracking-tight">Want a walkthrough?</h2>
-              <p className={`mt-3 text-lg text-muted ${measure}`}>
-                I can walk through the research, the rules engine or any decision on this page.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Button href="/contact">
-                  Say hello <span aria-hidden>→</span>
-                </Button>
-                <Button href={cs.cta.url} external variant="ghost">
-                  {cs.cta.label} <span aria-hidden>↗</span>
-                </Button>
+            {/* 11. Try it */}
+            <section id="try" className={`${section} rounded-2xl bg-fg p-8 text-bg sm:p-12`}>
+              <p className="font-mono text-xs opacity-70">{two(num("try"))}</p>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">Try it</h2>
+              <p className="mt-3 max-w-[52ch] text-lg leading-relaxed opacity-80">{cs.tryIt.text}</p>
+              <div className="mt-7 flex flex-wrap items-center gap-5">
+                <a
+                  href={cs.tryIt.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-bg px-5 py-3 font-mono text-xs uppercase tracking-label text-fg transition-opacity hover:opacity-85"
+                >
+                  {cs.tryIt.button} <span aria-hidden>↗</span>
+                </a>
+                <Link href="/contact" className="text-sm underline underline-offset-4 opacity-80 hover:opacity-100">
+                  Say hello
+                </Link>
               </div>
             </section>
           </div>
