@@ -17,8 +17,9 @@ import type { Skill } from "./skills";
 // Project pages show product thinking, design, engineering and shipping, in balance. Every
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
-// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild):
-// Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
+// Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild), updated
+// for v2 (Ask Reloco and Documents, September 2026). Every number is checked against Reloco's code
+// and eval runs. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
 export type Shot = {
   src: string;
@@ -159,7 +160,7 @@ const arrivalToday = phone(
 );
 
 const ONE_LINER =
-  "A web app, on any phone or computer, that knows every task an international student at UNC will face, from visas and taxes to a bank account, an SSN and a first credit card. It puts them in order around their dates and walks them through each one with the right source: from the first flight, through every CPT and tax season, to OPT.";
+  "A web app that gives international students at UNC one calm plan for everything the US asks of them, from visas and taxes to a phone number, a bank account and a driver's license, in the right order around their dates. An AI assistant answers questions about their own situation, and an encrypted vault keeps their documents ready and checked.";
 
 export const projects: Project[] = [
   {
@@ -167,8 +168,8 @@ export const projects: Project[] = [
     name: "Reloco",
     status: "Live",
     blurb:
-      "A web app that walks F-1 students at UNC through everything the US asks of them: visas, taxes, banking, IDs, housing and health, from the first flight through CPT and tax season to OPT. I researched, designed, built and shipped it on my own.",
-    tags: ["Product design", "Full-stack", "Next.js", "Supabase", "EdTech"],
+      "A web app that gives F-1 students at UNC one calm plan for everything, from visas and taxes to a bank account and a driver's license, with an AI assistant that knows their situation and an encrypted vault for their documents. I researched, designed, built and shipped it on my own.",
+    tags: ["Product design", "Full-stack", "Applied AI", "Next.js", "Supabase"],
     live: { label: "reloco.app", url: "https://reloco.app" },
     image: "/projects/reloco/card-painting.webp",
     caseStudy: {
@@ -192,11 +193,11 @@ export const projects: Project[] = [
       glance: [
         {
           label: "Problem",
-          text: "A new F-1 student has to handle immigration rules, taxes, an SSN, a US bank account and credit, housing, health insurance and IDs, each explained on a different site. The order lives in word of mouth, and one missed step can put a student's status at risk.",
+          text: "A new F-1 student has to handle immigration rules, taxes, an SSN, a US bank account and credit, housing, health insurance and IDs, each explained on a different site, on top of classes in a new country. The order lives in word of mouth, and one missed step can put a student's status at risk.",
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first. Then it guides the student through them, one at a time, for the whole degree. Reloco picks from a library of **44** tasks across **9** areas, from visas and taxes to banking and housing, each built from **34** trusted sources.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **48** tasks across **9** areas, linked to **46** official and trusted pages. **Ask Reloco** answers questions about the student's own situation, and **Documents** keeps their papers encrypted and checked.",
         },
         {
           label: "Scope",
@@ -204,9 +205,9 @@ export const projects: Project[] = [
         },
         {
           label: "Role",
-          text: "Solo: user interviews, product strategy, UX and visual design, full-stack engineering, launch.",
+          text: "Solo: user interviews, product strategy, UX and visual design, full-stack and AI engineering, security, launch.",
         },
-        { label: "Status", text: "v1 live at reloco.app, September 2026." },
+        { label: "Status", text: "v2 live at reloco.app, September 2026: the plan, plus Ask Reloco and Documents." },
       ],
       audience: {
         intro:
@@ -214,7 +215,7 @@ export const projects: Project[] = [
         groups: [
           {
             title: "Arriving: new students",
-            text: "The heaviest stretch. For a sample freshman, **16** tasks land before the flight or in the first week: the I-901 fee, the entry window, the I-94, ISSS check-in, an SSN, a bank account, a phone plan, a lease and health insurance. Reloco counts down to landing, then switches to arrival mode.",
+            text: "The heaviest stretch. For a sample freshman, **13** of their **43** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
                 "31-freshman-today-countdown-phone",
@@ -269,14 +270,14 @@ export const projects: Project[] = [
             quote: "I first had to find a job on campus.",
             who: "Junior from Vietnam, on getting an SSN",
             today:
-              'Tasks know their dependencies. A task that needs another first says "Do first" and links to it.',
+              'Tasks know their dependencies. A task that needs another first is locked, with a "Finish this first" link to it.',
           },
           {
             insight: "The information is scattered",
             quote: "It's all out there, but it's, like, all fragmented.",
             who: "Junior from London",
             today:
-              "Every step links to its source: a UNC office, a federal or state agency, or a consumer-protection guide.",
+              "Every rule links to its source: a UNC office, a federal or state agency, or a consumer-protection guide.",
           },
           {
             insight: "Know-how travels by word of mouth",
@@ -334,7 +335,7 @@ export const projects: Project[] = [
               "Chatbots give partly wrong answers she has to verify",
             ],
             traits: [0.85, 0.8, 0.8, 0.82, 0.85],
-            gives: "Sources she can check, without the hours of research.",
+            gives: "Sources she can check, without the hours of research, and an assistant that cites them.",
           },
         ],
         traitScales: [
@@ -436,7 +437,7 @@ export const projects: Project[] = [
         ],
       },
       productIntro:
-        "One job: get a student through the US system without missing a step.",
+        "One job: take the stress out of the US system, so a student always knows what's next and never misses a step.",
       features: [
         {
           id: "onboarding",
@@ -486,14 +487,14 @@ export const projects: Project[] = [
           title: "Today: one next step",
           shots: [
             phone(
-              "44-task-do-first-phone",
-              "Open a US bank account task with a Do first link: Download your I-94 and check it",
-              "A task that needs another first says so",
+              "64-task-locked-phone",
+              "Mei's task Check in with ISSS, marked Locked, with a Finish this first card linking to Download your I-94 and check it",
+              "Locked until the task before it is done",
             ),
           ],
-          what: "One focus task and at most two more this week. Blocked tasks say what comes first.",
+          what: 'One focus task and at most two more this week. A task waiting on another is locked: a "Finish this first" card links to what comes first, and its steps and Complete button stay locked until then.',
           why: "Hick's Law. One clear action beats a list of 40. Calm urgency: red means a real missed deadline. Anything due before a student joined asks 'done?' instead, so a late joiner doesn't start the app already failing.",
-          how: "A planner ranks by urgency and dependencies. Skipping cascades to the tasks that depend on it, and reopening restores them.",
+          how: "A planner ranks by urgency and dependencies. The order is enforced on the server too: completing a task checks its prerequisites, and steps can only be ticked in order. Skipping cascades to the tasks that depend on it, and reopening restores them.",
         },
         {
           id: "task",
@@ -505,14 +506,60 @@ export const projects: Project[] = [
               "Steps, each with its own source. 2 of 4 done.",
             ),
             phone(
-              "40b-task-bring-sources-phone",
-              "The same task further down: a Bring list, Add due date to Google Calendar, sources, and a Mark complete bar",
-              "What to bring, calendar, sources, Mark complete",
+              "65-task-locked-steps-phone",
+              "Check in with ISSS further down: three steps with their ISSS links, a locked Mark complete button, and a Bring list with the I-20 waiting for a check and the I-94 not added",
+              "Steps, sources, and what to bring from Documents",
             ),
           ],
-          what: "A few short steps with tick boxes, and the source link on the step that needs it. Then what to bring (linked to the wallet), add to calendar, the sources (UNC offices, federal and state agencies, and consumer-protection guides), and a fixed Mark complete / Skip bar.",
+          what: "A few short steps with tick boxes, and the source link on the step that needs it. Then what to bring, checked against the student's Documents (on file, needs a check, or missing with an Upload button), add to calendar, the sources, and a fixed Mark complete / Skip bar.",
           why: '"Pack your entry documents" is really four small actions. Broken down, it\'s 20 minutes, not a worry.',
           how: "Steps, sources, documents, time and miles are typed fields in the task library, so every task renders the same way.",
+        },
+        {
+          id: "ask",
+          title: "Ask Reloco: an assistant that knows your plan",
+          shots: [
+            phone(
+              "60-ask-work-phone",
+              "Ask Reloco: Can I work 30 hours a week at my campus job? The answer, marked Confirm with ISSS, explains the 20-hour limit during the semester",
+              "A work question, checked against where she is",
+            ),
+            phone(
+              "61-ask-sources-phone",
+              "The rest of the answer, with its two sources: ISSS on-campus employment and UNC International Student and Scholar Services",
+              "Every answer shows what it relied on",
+            ),
+            phone(
+              "62-ask-email-phone",
+              "Ask Reloco explaining a pasted CPT approval email, with the print-and-sign deadline highlighted and a Mark done suggestion for the CPT task",
+              "A pasted email becomes a deadline and a one-tap update",
+            ),
+          ],
+          what: [
+            "Ask anything, paste an email or attach a letter. Answers come from the student's own plan, dates and documents, and cite the task, checked fact or official page they rely on.",
+            'Work, travel and OPT questions run a check against where the student is: their stage, dates, finished tasks and CPT so far. Anything that affects their status is marked "Confirm with ISSS".',
+            "When a message changes the plan, like a CPT approval, it offers a one-tap update. Nothing changes until the student taps.",
+          ],
+          why: "Students told me chatbots sounded sure and were partly wrong. Here, code checks every answer before the student sees it, and the assistant can't change the plan on its own.",
+          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 7 tools of my own (the plan, a task, their documents, work, travel and OPT checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 49 checked facts, or a page the search actually returned counts. The screenshots show real answers for a sample junior.",
+        },
+        {
+          id: "documents",
+          title: "Documents: an encrypted vault that checks what you upload",
+          shots: [
+            phone(
+              "63-documents-phone",
+              "Documents: a specimen passport on file with its preview, the details read from it, the passport number masked, and the visa and I-20 below",
+              "A specimen passport: read, confirmed and masked",
+            ),
+          ],
+          what: [
+            "12 kinds of documents, from the passport, visa and I-20 to a lease and a job offer. AI reads the key details for the student to confirm, and the plan uses the real dates.",
+            "With the student's OK, AI first checks the upload is the right document. A lease uploaded as a passport is refused before it's stored.",
+            "Tasks that need documents show what's on file, what needs a check and what's missing.",
+          ],
+          why: "A passport and an I-20 are the most sensitive things a student owns, so trust had to be designed in from the first version, not added later.",
+          how: "Names and numbers are encrypted in the app with AES-256-GCM before they reach the database, with separate keys for sensitive and high-risk fields, and each value is bound to its student and field. Files live in a private bucket, served only through Reloco and typed by their real bytes, never their name. Every upload, AI read, view and delete goes into a log students can read but not edit. On invented specimen documents, the reader got 91 of 91 fields right and refused 8 of 8 wrong documents, and code checks official number formats so a misread number is flagged, not saved.",
         },
         {
           id: "arrival",
@@ -561,7 +608,7 @@ export const projects: Project[] = [
               "Senior year and After graduation",
             ),
           ],
-          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and watch the unemployment limit, then the STEM extension for eligible majors.",
+          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and watch the unemployment limit, then the STEM extension for eligible majors. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost.",
           why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
           how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next.",
         },
@@ -575,21 +622,16 @@ export const projects: Project[] = [
               "The 30-day entry rule, sourced to UNC ISSS",
             ),
             phone(
-              "16-wallet-ready-phone",
-              "Wallet with nine of nine documents ready and their key dates",
-              "Wallet: dates, not documents",
-            ),
-            phone(
               "23-family-share-phone",
               "Read-only share page showing a student's first-year certificate and stamps",
               "A read-only page for family",
             ),
           ],
           what: [
-            "44 tasks built from 34 trusted sources: official pages for rules, and guides like the CFPB's for banking and credit.",
+            "Tasks link 46 pages on 20 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
             "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department), North Carolina (the DMV and Department of Revenue), and consumer guides from the CFPB and FTC.",
             "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
-            "The wallet keeps only document dates (passport, visa, I-20, I-94), which drive reminders like passport renewal.",
+            "The dates in Documents (passport, visa, I-20, I-94) drive the plan, like the reminder to renew a passport.",
             "Deadlines sync to Google, Apple or Outlook.",
             "A read-only share page lets family follow along.",
           ],
@@ -598,7 +640,7 @@ export const projects: Project[] = [
       ],
       progress: {
         title: "Progress that motivates",
-        text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts.",
+        text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts. A certificate marks the first year, and another marks graduation.",
         shots: [
           phone(
             "41-reward-miles-phone",
@@ -620,11 +662,16 @@ export const projects: Project[] = [
             "First-year certificate listing tasks, miles and the finish date",
             "The first-year certificate",
           ),
+          phone(
+            "66-certificate-graduation-phone",
+            "Graduation certificate for the class of 2028 with eight chapter stamps, 71 tasks and 22,400 miles",
+            "And one at graduation",
+          ),
         ],
       },
       design: {
         intro:
-          "I design in loops: interview, build, walk the app as real students, change what doesn't hold up. The walkthroughs use scripted personas: a freshman months out, a freshman landing in two days, a junior, a student landing today.",
+          "I design in loops: interview, build, walk the app as real students, change what doesn't hold up. The walkthroughs use scripted personas: a freshman months out, a freshman landing in two days, a junior, a student landing today. The AI gets the same loop, with evals in place of walkthroughs.",
         principles: [
           {
             title: "One next step (Hick's Law)",
@@ -643,6 +690,14 @@ export const projects: Project[] = [
             text: "Chapters collapse, and each task opens to steps, then sources.",
           },
           {
+            title: "AI you can check",
+            text: "Every answer shows what it relied on, code validates each citation, and the assistant suggests changes instead of making them.",
+          },
+          {
+            title: "Private by design",
+            text: "Encryption, an access log and opt-in AI reads were in the first version of Documents, not added later.",
+          },
+          {
             title: "Mobile-first, works everywhere",
             text: "Built at 375px first, then scaled up for laptops, in light and dark, with visible focus and reduced motion.",
           },
@@ -654,9 +709,10 @@ export const projects: Project[] = [
             name: "Content",
             purpose: "What Reloco knows",
             parts: [
-              "Task library: 44 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
+              "Task library: 48 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
               "School pack: UNC's offices, links and airport, kept separate from the engine.",
               "Country data: tax treaties and passport-validity rules.",
+              "49 checked facts for the assistant, each with its source and the date I checked it. Calendar facts expire on their own.",
             ],
           },
           {
@@ -684,10 +740,21 @@ export const projects: Project[] = [
             ],
           },
           {
+            name: "AI",
+            purpose: "Grounded, checked, affordable",
+            parts: [
+              "Ask Reloco: a streaming tool-use loop on Claude Sonnet 5, with prompt caching on the fixed instructions.",
+              "Citations, reply types and plan suggestions are validated in code before anything reaches the student.",
+              "Document reading and checking with structured outputs, plus format checks for official numbers.",
+              "One model everywhere, chosen by evals: moving document reading from Haiku to Sonnet 5 took it from 98.9% to 100% of fields on specimens, and moving the scanner and notes off Opus cut their cost.",
+              "Daily caps per student on every AI feature (40 questions, 30 document checks), counted in a log students can't edit.",
+            ],
+          },
+          {
             name: "Data",
             purpose: "One Store interface",
             parts: [
-              "Supabase Postgres with row-level security on every table and 7 migrations.",
+              "Supabase Postgres with row-level security on every table and 9 migrations, including checks that every link between rows stays inside one account.",
               "Security-definer functions serve the share page and calendar feed by revocable token.",
               "Google OAuth, with the session refreshed in the request proxy.",
               "A cookie store runs the app with no database, for local development and visual QA.",
@@ -700,16 +767,27 @@ export const projects: Project[] = [
               "Today",
               "Journey",
               "Task pages",
-              "Wallet",
+              "Ask Reloco",
+              "Documents",
               "RFC 5545 calendar feed",
               "Family share page",
               "Email reminders (built, off until sending is live)",
             ],
           },
+          {
+            name: "Security",
+            purpose: "Built to hold passports",
+            parts: [
+              "A Content Security Policy with a fresh nonce on every request, so injected scripts can't run.",
+              "Uploads typed by their real bytes: a page renamed passport.jpg is refused, and files only open in the browser if they're a real image or PDF.",
+              "Sign-in cookies unreadable by page scripts, and sign-in only returns to known addresses.",
+              "An independent audit before launch: no cross-account access, no open redirects, and 0 known vulnerabilities in dependencies.",
+            ],
+          },
         ],
         pipeline: [
           "Answers are validated with Zod.",
-          "44 tasks are filtered to the ones that apply (35 for a sample freshman, 46 for a sample junior).",
+          "48 tasks are filtered to the ones that apply (43 for a sample freshman, 48 for a sample junior).",
           "Anchors become real dates.",
           "Yearly tasks become one copy per year.",
           "Tasks are ordered by dependencies.",
@@ -717,7 +795,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**103** tests guard the engine's invariants, like never opening a task before its prerequisites. A crawler I wrote walks the app as **4** scripted students and captures every screen. The database has grown through **7** migrations, each with row-level security.",
+          "**192** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **78** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **91/91** fields and refused **8/8** wrong documents. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
         stack: [
           {
             label: "Frontend",
@@ -740,7 +818,7 @@ export const projects: Project[] = [
                 icon: siSupabase,
               },
               { name: "Zod", icon: siZod },
-              { name: "Claude API", icon: siClaude },
+              { name: "Claude API (tool use, web search, prompt caching)", icon: siClaude },
             ],
           },
           {
@@ -762,7 +840,7 @@ export const projects: Project[] = [
         ],
       },
       metrics: {
-        note: "Baselines come from the first tester cohort.",
+        note: "Baselines come from the first tester cohort. AI numbers come from the eval suites, run before every prompt or model change.",
         groups: [
           {
             title: "Now: is v1 working?",
@@ -799,6 +877,37 @@ export const projects: Project[] = [
                 definition: "How often each task is marked not needed",
                 why: "Content quality: a high rate means a task is shown to the wrong students",
                 source: "Task statuses",
+              },
+            ],
+          },
+          {
+            title: "AI: is it right, safe and affordable?",
+            intro:
+              "Measured on every change, before students see it.",
+            rows: [
+              {
+                metric: "Eval pass rate",
+                definition: "Share of the 78 Ask Reloco cases answered correctly",
+                why: "Catches a worse answer before it ships",
+                source: "Ask eval suite",
+              },
+              {
+                metric: "Safety failures",
+                definition: "Cases where it should refer to ISSS, decline, or flag a scam and doesn't",
+                why: "The one number that has to stay at zero",
+                source: "Safety cases in the Ask eval",
+              },
+              {
+                metric: "Document reading accuracy",
+                definition: "Fields read correctly on specimen documents, and wrong documents refused",
+                why: "A wrong date on a passport moves a whole plan",
+                source: "Document eval suite",
+              },
+              {
+                metric: "Cost per question",
+                definition: "Model cost per answered question",
+                why: "AI has to stay affordable at student scale",
+                source: "Token usage per run",
               },
             ],
           },
@@ -850,17 +959,23 @@ export const projects: Project[] = [
           phase: "v1",
           status: "Completed",
           date: "September 2026",
-          text: "Live at reloco.app with everything above.",
-        },
-        {
-          phase: "v1.1",
-          status: "In progress",
-          text: 'Ask Reloco, "What does this mean?" for official emails, and the document scanner going live.',
+          text: "Live at reloco.app: the plan, tasks, arrival mode, progress, sharing and calendar sync.",
         },
         {
           phase: "v2",
+          status: "Completed",
+          date: "September 2026",
+          text: "Ask Reloco and Documents, after a security audit and eval suites. Live at reloco.app.",
+        },
+        {
+          phase: "v2.1",
           status: "Planned",
-          text: "An OPT unemployment day counter, a travel check before trips home, and a pilot with UNC ISSS.",
+          text: "Help getting things done: an SSN appointment packet filled from Documents, and a travel check before trips home.",
+        },
+        {
+          phase: "v3",
+          status: "Planned",
+          text: "An OPT unemployment day counter, a bank chooser, and a pilot with UNC ISSS.",
         },
         {
           phase: "Later",
@@ -869,7 +984,7 @@ export const projects: Project[] = [
         },
       ],
       tryIt: {
-        text: "Set it up as a freshman landing next month or a junior planning a summer internship. It takes about two minutes.",
+        text: "Set it up as a freshman landing next month or a junior planning a summer internship, then ask it something. It takes about two minutes.",
         button: "Open reloco.app",
         url: "https://reloco.app",
       },
