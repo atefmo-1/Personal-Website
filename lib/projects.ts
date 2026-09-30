@@ -480,12 +480,17 @@ export const projects: Project[] = [
           ],
           what: "Nine areas: immigration, taxes, work, banking, IDs, housing, health, campus and tech. A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
           why: "A generic checklist buries what matters to you.",
-          how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer. An optional AI step (Claude) writes a short personal note on each task. It can't add, move or remove anything, so every date stays deterministic and sourced.",
+          how: "A pure, deterministic pipeline, detailed in Engineering. Modeling dependencies caught a real cycle: the campus job needed an SSN, but the SSN needs a job offer. An optional AI step (Claude) writes short notes on the tasks where the student's situation changes something. It can't add, move or remove anything, so every date stays deterministic and sourced.",
         },
         {
           id: "today",
           title: "Today: one next step",
           shots: [
+            phone(
+              "67-today-next-up-phone",
+              "Mei's Today on day 53: 2 of 3 tasks done this week, one next task, Complete your I-9 and W-4 for payroll, with a Start button, and two more for this week",
+              "One next step, and at most two more",
+            ),
             phone(
               "64-task-locked-phone",
               "Mei's task Check in with ISSS, marked Locked, with a Finish this first card linking to Download your I-94 and check it",
@@ -554,8 +559,8 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "12 kinds of documents, from the passport, visa and I-20 to a lease and a job offer. AI reads the key details for the student to confirm, and the plan uses the real dates.",
-            "With the student's OK, AI first checks the upload is the right document. A lease uploaded as a passport is refused before it's stored.",
+            "12 kinds of documents, from the passport, visa and I-20 to a lease and a job offer.",
+            "With the student's OK, AI reads the key details for them to confirm, and the plan uses the real dates. It checks the upload is the right document first: a lease uploaded as a passport is refused before it's stored.",
             "Tasks that need documents show what's on file, what needs a check and what's missing.",
           ],
           why: "A passport and an I-20 are the most sensitive things a student owns, so trust had to be designed in from the first version, not added later.",
@@ -781,7 +786,7 @@ export const projects: Project[] = [
               "A Content Security Policy with a fresh nonce on every request, so injected scripts can't run.",
               "Uploads typed by their real bytes: a page renamed passport.jpg is refused, and files only open in the browser if they're a real image or PDF.",
               "Sign-in cookies unreadable by page scripts, and sign-in only returns to known addresses.",
-              "An independent audit before launch: no cross-account access, no open redirects, and 0 known vulnerabilities in dependencies.",
+              "A full security review before launch: no cross-account access, no open redirects, and 0 known vulnerabilities in dependencies.",
             ],
           },
         ],
@@ -985,7 +990,7 @@ export const projects: Project[] = [
           phase: "v2",
           status: "Completed",
           date: "September 2026",
-          text: "Ask Reloco and Documents, after a security audit and eval suites. Live at reloco.app.",
+          text: "Ask Reloco and Documents, after a security review and eval suites. Live at reloco.app.",
         },
         {
           phase: "v2.1",
