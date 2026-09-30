@@ -792,6 +792,7 @@ export const projects: Project[] = [
           "Yearly tasks become one copy per year.",
           "Tasks are ordered by dependencies.",
           "Tasks are grouped into 9 chapters.",
+          "Claude adds short notes where the student's profile changes how to do a task. It can't change dates or which tasks exist, and if it fails, the plan is complete without it.",
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
@@ -814,11 +815,18 @@ export const projects: Project[] = [
             label: "Backend and data",
             items: [
               {
-                name: "Supabase (Postgres, row-level security, Google OAuth)",
+                name: "Supabase (Postgres, row-level security, Storage, Google OAuth)",
                 icon: siSupabase,
               },
               { name: "Zod", icon: siZod },
-              { name: "Claude API (tool use, web search, prompt caching)", icon: siClaude },
+              { name: "Node crypto (AES-256-GCM)" },
+            ],
+          },
+          {
+            label: "AI",
+            items: [
+              { name: "Claude API: Sonnet 5 (tool use, web search, structured outputs, prompt caching)", icon: siClaude },
+              { name: "Custom eval suites" },
             ],
           },
           {
@@ -843,7 +851,7 @@ export const projects: Project[] = [
         note: "Baselines come from the first tester cohort. AI numbers come from the eval suites, run before every prompt or model change.",
         groups: [
           {
-            title: "Now: is v1 working?",
+            title: "Now: is it working?",
             intro:
               "Signals that move within weeks, so I can act on them during the first tester cohort.",
             rows: [
@@ -877,6 +885,18 @@ export const projects: Project[] = [
                 definition: "How often each task is marked not needed",
                 why: "Content quality: a high rate means a task is shown to the wrong students",
                 source: "Task statuses",
+              },
+              {
+                metric: "Ask Reloco use",
+                definition: "Students who ask at least one question in their first month",
+                why: "Shows whether answers tied to the plan are worth coming back for",
+                source: "AI usage log",
+              },
+              {
+                metric: "Documents saved",
+                definition: "Students who save at least one document",
+                why: "Trust: people only store a passport somewhere they believe is safe",
+                source: "Documents per account",
               },
             ],
           },
