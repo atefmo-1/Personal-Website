@@ -18,8 +18,9 @@ import type { Skill } from "./skills";
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
 // Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild), updated
-// for v2 (Ask Reloco and Documents, September 2026). Every number is checked against Reloco's code
-// and eval runs. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
+// for v2 (Ask Reloco and Documents, September 2026) and v2.1 (task tools and comparisons, October
+// 2026). Every number is checked against Reloco's code and eval runs. "Pages" means unique URLs listed
+// as a task's sources across the task library. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
 export type Shot = {
   src: string;
@@ -197,7 +198,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **48** tasks across **9** areas, linked to **46** official and trusted pages. **Ask Reloco** answers questions about the student's own situation, and **Documents** keeps their papers encrypted and checked.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **49** tasks across **9** areas, linked to **55** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, and **Documents** keeps their papers encrypted and checked.",
         },
         {
           label: "Scope",
@@ -207,7 +208,7 @@ export const projects: Project[] = [
           label: "Role",
           text: "Solo: user interviews, product strategy, UX and visual design, full-stack and AI engineering, security, launch.",
         },
-        { label: "Status", text: "v2 live at reloco.app, September 2026: the plan, plus Ask Reloco and Documents." },
+        { label: "Status", text: "v2.1 live at reloco.app, October 2026: the plan, task tools, Ask Reloco and Documents." },
       ],
       audience: {
         intro:
@@ -243,7 +244,7 @@ export const projects: Project[] = [
           },
           {
             title: "Graduating: OPT and STEM OPT",
-            text: "The highest-stakes filing of the degree has a strict window. Reloco times it from the graduation date: decide, request the OPT I-20, file the I-765 inside the window, then report the job and watch the unemployment limit. STEM majors get the 24-month extension on the same track.",
+            text: "The highest-stakes filing of the degree has a strict window. Reloco times it from the graduation date: decide, request the OPT I-20, file the I-765 inside the window, then report the job while Reloco counts unemployment days against the limit. STEM majors get the 24-month extension on the same track.",
             shots: [
               phone(
                 "52-opt-request-phone",
@@ -459,7 +460,7 @@ export const projects: Project[] = [
               "New students tick off prep they've already done",
             ),
           ],
-          what: "About 10 questions: the stage (still at home, just arrived, already studying), country, arrival, start and graduation dates, housing, funding, SSN and bank, and plans (campus job, internship, STEM major, driving). A boarding pass fills in as you answer.",
+          what: "About 10 questions: the stage (still at home, just arrived, already studying), country, arrival, start and graduation dates, housing, funding, SSN and bank, and plans (campus job, internship, STEM major, driving). A boarding pass fills in as you answer. With an account, students can upload their I-20, passport and I-94 during signup, and the dates fill themselves in, marked to check.",
           why: "A freshman two days from landing and a junior planning CPT need completely different plans. New students can tick off prep they've already done; current students start with year one behind them. The copy follows the stage too, so a junior never reads 'get ready to fly'.",
           how: "Date ranges are validated per stage, and answers are validated on the server with Zod.",
         },
@@ -521,6 +522,59 @@ export const projects: Project[] = [
           how: "Steps, sources, documents, time and miles are typed fields in the task library, so every task renders the same way.",
         },
         {
+          id: "tools",
+          title: "Tools that do the hard part",
+          shots: [
+            phone(
+              "70-tool-i94-check-phone",
+              "Mei's I-94 check: class of admission, admit until, name and passport number match, the date of birth differs from her passport, with a button to draft the email to ISSS",
+              "The I-94 checked against the passport",
+            ),
+            phone(
+              "71-tool-ssa-visit-phone",
+              "Your SSA visit: what has to be ready first (job offer, ISSS check-in, documents on file), starting the application at ssa.gov, and the Durham office with its phone number",
+              "An SSA visit planned around what's ready",
+            ),
+            phone(
+              "72-tool-trip-check-phone",
+              "Check a trip for a winter break from December 15 to January 10: the travel signature and the visa expire before she's back, and the passport is fine",
+              "A trip home, checked before booking",
+            ),
+          ],
+          what: [
+            "Download your I-94: Reloco compares it with the passport, point by point, and drafts the email to ISSS if something differs.",
+            "Apply for an SSN: an SSA visit plan, from what has to be ready (the job offer, the ISSS check-in, the documents) to the Durham office and its number.",
+            "Before a trip home: the travel signature, passport and visa are checked against the dates of the trip.",
+            "Also: a lease explained in plain words, the major checked against the DHS STEM list, CPT months counted from an offer letter, immunizations checked against UNC's rules, an OPT unemployment counter, help deciding whether to enroll in or waive student health insurance, and a dated task when a student reports a move.",
+          ],
+          why: "Steps say what to do. The hard part is knowing whether your own papers are right: a wrong date of birth on an I-94 or a visa that lapses over winter break can stop a student at the border. Each tool runs that check with the student's own documents and dates.",
+          how: "The checks are plain code, not AI: date math, the STEM list, CPT months, the J-1 insurance minimums. AI only reads documents, and readers that explain an upload (a lease, an insurance policy, an offer) quote the exact words they relied on. A file picked just for that is read once and never stored. Each reader has its own eval: the insurance reader passed 49 of 49 checks on invented policies.",
+        },
+        {
+          id: "compare",
+          title: "Compare before you choose",
+          shots: [
+            phone(
+              "73-compare-banks-phone",
+              "Compare banks: Chase Secure Banking and Truist One Checking side by side, with rows for opening without an SSN and being near campus marked For you, then the monthly fee and how to avoid it",
+              "Banks side by side, what matters to her first",
+            ),
+            phone(
+              "74-compare-bank-details-phone",
+              "Chase Secure Banking's details below the table: each fact with a Source link to Chase's own page",
+              "Details on request, each fact sourced",
+            ),
+          ],
+          what: [
+            "A bank, a first credit card, a phone plan and a way to get money from home, compared side by side on the task where the student needs them.",
+            "Rows are ordered for the student: without an SSN, opening without one and being near campus come first. Short answers show at a glance, and Details opens the full terms, each linked to the provider's own page.",
+            "Money transfers are filtered by home country. Most services can't send from China, Egypt, Ghana, Vietnam or Nigeria, so those students see a bank wire and a note saying why.",
+            "Found another option? Paste its terms or add a screenshot, and it joins the table with the exact words each value came from.",
+          ],
+          why: "Comparison sites are often paid per sign-up, and few say what works without an SSN. Here every fact links to the provider's own page with the date I checked it, options whose key facts I couldn't confirm are left out, and nobody pays to be listed.",
+          how: "The first version stacked one card per bank, which made comparing hard. Walking it, I rebuilt it as a real table: rows that matter first, rows that are the same for every option folded into one line, and details only when asked for. Tests fail on any fact without a source or any link to a review or affiliate site. Reading an added option uses structured outputs, and on invented fee sheets it passed 31 of 31 checks with nothing invented.",
+        },
+        {
           id: "ask",
           title: "Ask Reloco: an assistant that knows your plan",
           shots: [
@@ -546,7 +600,7 @@ export const projects: Project[] = [
             "When a message changes the plan, like a CPT approval, it offers a one-tap update. Nothing changes until the student taps.",
           ],
           why: "Students told me chatbots sounded sure and were partly wrong. Here, code checks every answer before the student sees it, and the assistant can't change the plan on its own.",
-          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 7 tools of my own (the plan, a task, their documents, work, travel and OPT checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 49 checked facts, or a page the search actually returned counts. The screenshots show real answers for a sample junior.",
+          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 9 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM and unemployment checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 53 checked facts, or a page the search actually returned counts. The screenshots show real answers for a sample junior.",
         },
         {
           id: "documents",
@@ -564,7 +618,7 @@ export const projects: Project[] = [
             "Tasks that need documents show what's on file, what needs a check and what's missing.",
           ],
           why: "A passport and an I-20 are the most sensitive things a student owns, so trust had to be designed in from the first version, not added later.",
-          how: "Names and numbers are encrypted in the app with AES-256-GCM before they reach the database, with separate keys for sensitive and high-risk fields, and each value is bound to its student and field. Files live in a private bucket, served only through Reloco and typed by their real bytes, never their name. Every upload, AI read, view and delete goes into a log students can read but not edit. On invented specimen documents, the reader got 91 of 91 fields right and refused 8 of 8 wrong documents, and code checks official number formats so a misread number is flagged, not saved.",
+          how: "Names and numbers are encrypted in the app with AES-256-GCM before they reach the database, with separate keys for sensitive and high-risk fields, and each value is bound to its student and field. Files live in a private bucket, served only through Reloco and typed by their real bytes, never their name. Every upload, AI read, view and delete goes into a log students can read but not edit. On invented specimen documents, the reader got 147 of 147 fields right and refused 8 of 8 wrong documents, and code checks official number formats so a misread number is flagged, not saved.",
         },
         {
           id: "arrival",
@@ -599,9 +653,9 @@ export const projects: Project[] = [
               "Tax season, every February",
             ),
           ],
-          what: 'Yearly tasks come back as dated copies: winter travel signature, tax forms (Form 8843, and a 1040-NR if there was US income), CPT for each summer, summer address and full-time enrollment. Optional ones, like a trip home or a summer move, close as "Not needed" if their date passes untouched, instead of sitting overdue. Tax tasks add treaty notes for the student\'s passport country.',
+          what: 'Yearly tasks come back as dated copies: winter travel signature, tax forms (Form 8843, and a 1040-NR if there was US income), CPT for each summer, summer address and full-time enrollment. Optional ones, like a trip home or a summer move, close as "Not needed" if their date passes untouched, instead of sitting overdue. Tax tasks add treaty notes for the student\'s passport country. When a student reports a move, a dated task covers the 10-day address rule and everything else that needs the new address.',
           why: "Upperclassmen don't need onboarding; they need the recurring deadlines they forget.",
-          how: "A task can declare the years it repeats; the engine creates one copy per year (like `tax-forms-2027`) and places each in the right class-year chapter.",
+          how: "A task can declare the years it repeats, or one copy per event; the engine creates a dated copy for each (like `tax-forms-2027`, or one per reported move) and places it in the right chapter.",
         },
         {
           id: "opt",
@@ -613,7 +667,7 @@ export const projects: Project[] = [
               "Senior year and After graduation",
             ),
           ],
-          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and watch the unemployment limit, then the STEM extension for eligible majors. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost.",
+          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and count unemployment days against the limit (90, or 150 on the STEM extension), then the STEM extension, with the major checked against the DHS STEM list. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost.",
           why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
           how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next.",
         },
@@ -633,8 +687,8 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "Tasks link 46 pages on 20 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
-            "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department), North Carolina (the DMV and Department of Revenue), and consumer guides from the CFPB and FTC.",
+            "Tasks link 55 pages on 25 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
+            "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department, USPS), North Carolina (the DMV and Department of Revenue), and consumer guides from the CFPB and FTC.",
             "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
             "The dates in Documents (passport, visa, I-20, I-94) drive the plan, like the reminder to renew a passport.",
             "Deadlines sync to Google, Apple or Outlook.",
@@ -692,7 +746,7 @@ export const projects: Project[] = [
           },
           {
             title: "Progressive disclosure",
-            text: "Chapters collapse, and each task opens to steps, then sources.",
+            text: "Chapters collapse, each task opens to steps, then sources, and comparisons show the rows that matter first, with details on request.",
           },
           {
             title: "AI you can check",
@@ -714,10 +768,10 @@ export const projects: Project[] = [
             name: "Content",
             purpose: "What Reloco knows",
             parts: [
-              "Task library: 48 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
+              "Task library: 49 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years or per-event copies, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
               "School pack: UNC's offices, links and airport, kept separate from the engine.",
               "Country data: tax treaties and passport-validity rules.",
-              "49 checked facts for the assistant, each with its source and the date I checked it. Calendar facts expire on their own.",
+              "53 checked facts for the assistant, each with its source and the date I checked it. Calendar facts expire on their own.",
             ],
           },
           {
@@ -751,8 +805,9 @@ export const projects: Project[] = [
               "Ask Reloco: a streaming tool-use loop on Claude Sonnet 5, with prompt caching on the fixed instructions.",
               "Citations, reply types and plan suggestions are validated in code before anything reaches the student.",
               "Document reading and checking with structured outputs, plus format checks for official numbers.",
+              "Readers for leases, insurance policies, offer letters and options a student found: structured outputs with quotes, checked word for word in their evals. A file picked just for one of them is read once and never stored.",
               "One model everywhere, chosen by evals: moving document reading from Haiku to Sonnet 5 took it from 98.9% to 100% of fields on specimens, and moving the scanner and notes off Opus cut their cost.",
-              "Daily caps per student on every AI feature (40 questions, 30 document checks), counted in a log students can't edit.",
+              "Daily caps per student on every AI feature (40 questions, 30 document checks, 10 comparisons), counted in a log students can't edit.",
             ],
           },
           {
@@ -760,6 +815,7 @@ export const projects: Project[] = [
             purpose: "One Store interface",
             parts: [
               "Supabase Postgres with row-level security on every table and 9 migrations, including checks that every link between rows stays inside one account.",
+              "Facts that tools need (check results, reported moves, OPT jobs) live in one validated JSON field, so most new features ship without a migration.",
               "Security-definer functions serve the share page and calendar feed by revocable token.",
               "Google OAuth, with the session refreshed in the request proxy.",
               "A cookie store runs the app with no database, for local development and visual QA.",
@@ -792,7 +848,7 @@ export const projects: Project[] = [
         ],
         pipeline: [
           "Answers are validated with Zod.",
-          "48 tasks are filtered to the ones that apply (43 for a sample freshman, 48 for a sample junior).",
+          "49 tasks are filtered to the ones that apply (43 for a sample freshman, 48 for a sample junior).",
           "Anchors become real dates.",
           "Yearly tasks become one copy per year.",
           "Tasks are ordered by dependencies.",
@@ -801,7 +857,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**192** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **78** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **91/91** fields and refused **8/8** wrong documents. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
+          "**263** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **147/147** fields and refused **8/8** wrong documents, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
         stack: [
           {
             label: "Frontend",
@@ -898,6 +954,12 @@ export const projects: Project[] = [
                 source: "AI usage log",
               },
               {
+                metric: "Task tools used",
+                definition: "Students who run a check or a comparison on a task that offers one",
+                why: "Shows whether the tools save real work or get skipped",
+                source: "Tool use per task",
+              },
+              {
                 metric: "Documents saved",
                 definition: "Students who save at least one document",
                 why: "Trust: people only store a passport somewhere they believe is safe",
@@ -912,7 +974,7 @@ export const projects: Project[] = [
             rows: [
               {
                 metric: "Eval pass rate",
-                definition: "Share of the 78 Ask Reloco cases answered correctly",
+                definition: "Share of the 85 Ask Reloco cases answered correctly",
                 why: "Catches a worse answer before it ships",
                 source: "Ask eval suite",
               },
@@ -994,13 +1056,14 @@ export const projects: Project[] = [
         },
         {
           phase: "v2.1",
-          status: "Planned",
-          text: "Help getting things done: an SSN appointment packet filled from Documents, and a travel check before trips home.",
+          status: "Completed",
+          date: "October 2026",
+          text: "Task tools (the I-94, trip, STEM, CPT and immunization checks, the SSA visit plan, a lease explainer, the OPT unemployment counter and a health insurance helper), side-by-side comparisons, document upload at signup, and reporting a move. Live at reloco.app.",
         },
         {
           phase: "v3",
           status: "Planned",
-          text: "An OPT unemployment day counter, a bank chooser, and a pilot with UNC ISSS.",
+          text: "A pilot with UNC ISSS.",
         },
         {
           phase: "Later",
