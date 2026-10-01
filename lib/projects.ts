@@ -13,6 +13,7 @@ import {
   siZod,
 } from "simple-icons";
 import type { Skill } from "./skills";
+import type { MotionId } from "@/components/reloco-motion";
 
 // Project pages show product thinking, design, engineering and shipping, in balance. Every
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
@@ -22,13 +23,9 @@ import type { Skill } from "./skills";
 // 2026). Every number is checked against Reloco's code and eval runs. "Pages" means unique URLs listed
 // as a task's sources across the task library. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
-export type Shot = {
-  src: string;
-  alt: string;
-  caption: string;
-  width: number;
-  height: number;
-};
+export type ImageShot = { src: string; alt: string; caption: string; width: number; height: number; motion?: undefined };
+// A phone screenshot, or one of the motion graphics (components/reloco-motion) drawn at the same size.
+export type Shot = ImageShot | { motion: MotionId; alt: string; caption: string; src?: undefined; width?: undefined; height?: undefined };
 
 export type Persona = {
   name: string;
@@ -69,7 +66,7 @@ export type CaseStudy = {
   oneLiner: string;
   metaLine: string[];
   cta: { label: string; url: string };
-  hero: Shot;
+  hero: ImageShot;
   glance: { label: string; text: string }[];
   audience: {
     intro: string;
@@ -145,7 +142,8 @@ export type Project = {
 };
 
 const dir = "/projects/reloco/cs/";
-// Every screenshot is a 1170x2532 phone capture, converted to 900x1948.
+// Every screenshot is a 1170x2532 phone capture, converted to 900x1948. Each feature leads with a
+// motion graphic of it in action (components/reloco-motion), drawn at the same phone size.
 const phone = (file: string, alt: string, caption: string): Shot => ({
   src: `${dir}${file}.webp`,
   width: 900,
@@ -444,11 +442,7 @@ export const projects: Project[] = [
           id: "onboarding",
           title: "Onboarding that reads your situation",
           shots: [
-            phone(
-              "05-onboarding-stage-phone",
-              "Onboarding question: where are you right now? Still at home, just arrived, or already studying at UNC, with a boarding pass above",
-              "Where are you right now? The first answer shapes everything",
-            ),
+            { motion: "onboarding", alt: "Animation of onboarding: Mei types her name, says she's still at home, then her city and landing date, and each answer fills in the boarding pass above as the plane moves a step closer to RDU", caption: "A boarding pass that fills in as you answer" },
             phone(
               "06-onboarding-plans-phone",
               "Onboarding question about plans, with an off-campus internship and a STEM major selected",
@@ -468,11 +462,7 @@ export const projects: Project[] = [
           id: "engine",
           title: "A rules engine that knows what applies to you",
           shots: [
-            phone(
-              "04-onboarding-built-phone",
-              "Ziad's plan built: Cleared for takeoff, 35 tasks across 9 areas such as immigration, banking and housing",
-              "The plan, grouped by area",
-            ),
+            { motion: "plan-build", alt: "Animation of Ziad's plan being built: four stages tick off one by one while the nine areas pop in with their task counts, then the plane lands at RDU and the screen reads Cleared for takeoff, 35 tasks across 9 areas", caption: "The plan, built stage by stage" },
             phone(
               "18-journey-whole-degree-phone",
               "Journey screen listing chapters from Settling in and First spring through Sophomore, Junior and Senior year and After graduation",
@@ -487,11 +477,7 @@ export const projects: Project[] = [
           id: "today",
           title: "Today: one next step",
           shots: [
-            phone(
-              "67-today-next-up-phone",
-              "Mei's Today on day 53: 2 of 3 tasks done this week, one next task, Complete your I-9 and W-4 for payroll, with a Start button, and two more for this week",
-              "One next step, and at most two more",
-            ),
+            { motion: "today", alt: "Animation of Mei's Today: she marks her on-campus job found, the payroll forms that were waiting on it become her one next step, the week moves to 2 of 3 tasks, her miles count up, and she taps Start", caption: "Finish one step, and the next one is ready" },
             phone(
               "64-task-locked-phone",
               "Mei's task Check in with ISSS, marked Locked, with a Finish this first card linking to Download your I-94 and check it",
@@ -506,11 +492,7 @@ export const projects: Project[] = [
           id: "task",
           title: "Inside a task",
           shots: [
-            phone(
-              "40a-task-steps-phone",
-              "Pack your entry documents in your carry-on: four steps, two ticked, with links to ISSS pre-arrival steps and the SEVIS I-901 fee site",
-              "Steps, each with its own source. 2 of 4 done.",
-            ),
+            { motion: "task-steps", alt: "Animation of the task Pack your entry documents in your carry-on: its four steps are ticked one by one in order, each unlocking the next, the counter climbs to 4 of 4 and the bar turns into Complete, plus 80 miles", caption: "Steps ticked in order, then Complete" },
             phone(
               "65-task-locked-steps-phone",
               "Check in with ISSS further down: three steps with their ISSS links, a locked Mark complete button, and a Bring list with the I-20 waiting for a check and the I-94 not added",
@@ -525,21 +507,13 @@ export const projects: Project[] = [
           id: "tools",
           title: "Tools that do the hard part",
           shots: [
-            phone(
-              "70-tool-i94-check-phone",
-              "Mei's I-94 check: class of admission, admit until, name and passport number match, the date of birth differs from her passport, with a button to draft the email to ISSS",
-              "The I-94 checked against the passport",
-            ),
-            phone(
-              "71-tool-ssa-visit-phone",
-              "Your SSA visit: what has to be ready first (job offer, ISSS check-in, documents on file), starting the application at ssa.gov, and the Durham office with its phone number",
-              "An SSA visit planned around what's ready",
-            ),
-            phone(
-              "72-tool-trip-check-phone",
-              "Check a trip for a winter break from December 15 to January 10: the travel signature and the visa expire before she's back, and the passport is fine",
-              "A trip home, checked before booking",
-            ),
+            { motion: "i94-check", alt: "Animation of Mei's I-94 check: class of admission, admit until and name match, the date of birth is flagged as different from her passport, the passport number matches, then Draft the email to ISSS about it opens the drafted email, ready to copy", caption: "A mismatch caught, and the email to ISSS drafted" },
+            { motion: "ssa-visit", alt: "Animation of the SSA visit plan: the readiness checks resolve, a job start of November 16 is entered and SSA's 30-day rule says she can't apply until October 17, then the plan unfolds to starting online at ssa.gov and booking the Durham office", caption: "An SSA visit planned around what's ready" },
+            {
+              motion: "trip-check",
+              alt: "Animation of the trip check: a winter break from December 15 to January 10 is typed in, then each document is checked. The travel signature expires before she's back; the passport and visa are fine",
+              caption: "A trip home, checked before booking",
+            },
           ],
           what: [
             "Download your I-94: Reloco compares it with the passport, point by point, and drafts the email to ISSS if something differs.",
@@ -554,11 +528,7 @@ export const projects: Project[] = [
           id: "compare",
           title: "Compare before you choose",
           shots: [
-            phone(
-              "73-compare-banks-phone",
-              "Compare banks: Chase Secure Banking and Truist One Checking side by side, with rows for opening without an SSN and being near campus marked For you, then the monthly fee and how to avoid it",
-              "Banks side by side, what matters to her first",
-            ),
+            { motion: "compare-banks", alt: "Animation of the bank comparison: five banks fill in side by side with checkmarks, the rows that matter without an SSN are marked For you, a swipe moves through the banks, and Details on Chase opens its full terms with sources", caption: "Five banks side by side, sorted for a student without an SSN" },
             phone(
               "74-compare-bank-details-phone",
               "Chase Secure Banking's details below the table: each fact with a Source link to Chase's own page",
@@ -578,11 +548,7 @@ export const projects: Project[] = [
           id: "ask",
           title: "Ask Reloco: an assistant that knows your plan",
           shots: [
-            phone(
-              "60-ask-work-phone",
-              "Ask Reloco: Can I work 30 hours a week at my campus job? The answer, marked Confirm with ISSS, explains the 20-hour limit during the semester",
-              "A work question, checked against where she is",
-            ),
+            { motion: "ask", alt: "Animation of Ask Reloco: Can I work 30 hours a week at my campus job? is typed and sent, Reloco checks her work eligibility, streams an answer explaining the 20-hour limit while classes are in session, marks it Confirm with ISSS and links its ISSS sources", caption: "A work question, checked against where she is" },
             phone(
               "61-ask-sources-phone",
               "The rest of the answer, with its two sources: ISSS on-campus employment and UNC International Student and Scholar Services",
@@ -600,17 +566,13 @@ export const projects: Project[] = [
             "When a message changes the plan, like a CPT approval, it offers a one-tap update. Nothing changes until the student taps.",
           ],
           why: "Students told me chatbots sounded sure and were partly wrong. Here, code checks every answer before the student sees it, and the assistant can't change the plan on its own.",
-          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 9 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM and unemployment checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 53 checked facts, or a page the search actually returned counts. The screenshots show real answers for a sample junior.",
+          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 9 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM and unemployment checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 53 checked facts, or a page the search actually returned counts. The screens show a real answer for a sample junior.",
         },
         {
           id: "documents",
           title: "Documents: an encrypted vault that checks what you upload",
           shots: [
-            phone(
-              "63-documents-phone",
-              "Documents: a specimen passport on file with its preview, the details read from it, the passport number masked, and the visa and I-20 below",
-              "A specimen passport: read, confirmed and masked",
-            ),
+            { motion: "documents", alt: "Animation of adding a specimen passport to Documents: the student opts in to an AI read, checks every detail it read, confirms, and the passport is filed with its number masked to the last four digits", caption: "A specimen passport: read, confirmed and masked" },
           ],
           what: [
             "12 kinds of documents, from the passport, visa and I-20 to a lease and a job offer.",
@@ -629,11 +591,7 @@ export const projects: Project[] = [
               "Arrival mode two days out: documents to keep in hand at the border, each with a Mark ready button",
               "At the border: keep these in hand",
             ),
-            phone(
-              "43-landing-check-phone",
-              "Landing-day card: Did you make it to Chapel Hill? with Yes, I landed, On a different day, and Not yet, my trip moved",
-              "On landing day, Reloco asks",
-            ),
+            { motion: "landing", alt: "Animation of landing day: a plane flies from Shanghai to RDU on Mei's boarding pass, Reloco asks Did you make it to Chapel Hill?, a tap on Yes, I landed clears the travel task from Next up, and Today turns to Touchdown, Day 1 in Chapel Hill", caption: "On landing day, one tap clears the travel tasks" },
           ],
           what: 'Two days before landing, Today becomes a landing-day checklist: the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On the day it asks "Did you make it?"',
           why: 'The border is the highest-stakes moment of year one, and flights move. "Yes" clears the travel tasks; "On a different day" fixes the date and reschedules everything.',
@@ -642,11 +600,7 @@ export const projects: Project[] = [
           id: "yearly",
           title: "Every year, on schedule (current students)",
           shots: [
-            phone(
-              "54-travel-signature-phone",
-              "Task: Going home for winter 2026? Get a travel signature first, linked to ISSS travel and re-entry",
-              "Going home for winter? Travel signature first",
-            ),
+            { motion: "yearly", alt: "Animation of Journey scrolling through the class years: Sophomore, Junior, Senior and After graduation open in turn, and the same yearly tasks (winter travel signature, tax forms, summer CPT, full-time registration, summer move) reappear in each chapter with that year's date", caption: "The same deadlines, back every year with new dates" },
             phone(
               "51-tax-forms-phone",
               "Task: File your 2026 tax forms, Form 8843 plus a 1040-NR if you had US income",
@@ -661,11 +615,7 @@ export const projects: Project[] = [
           id: "opt",
           title: "OPT and STEM OPT (graduating students)",
           shots: [
-            phone(
-              "55-journey-after-graduation-phone",
-              "Journey: Senior year and After graduation, with tax forms, the STEM OPT extension and OPT reporting tasks",
-              "Senior year and After graduation",
-            ),
+            { motion: "opt", alt: "Animation of the OPT track: on Journey the OPT tasks unlock and complete in order down to reporting the job, whose tool counts unemployment days to 23 of 90 until a job starting Jun 12, 2028 is added and the clock stops with 67 days left", caption: "OPT in order, then a clock for unemployment days" },
           ],
           what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and count unemployment days against the limit (90, or 150 on the STEM extension), then the STEM extension, with the major checked against the DHS STEM list. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost.",
           why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
@@ -675,11 +625,7 @@ export const projects: Project[] = [
           id: "sources",
           title: "Sourced, current, and yours to share",
           shots: [
-            phone(
-              "10-task-rule-30-days-phone",
-              "Ziad's task Book a flight inside your entry window: you can enter the US no earlier than 30 days before your I-20 start date",
-              "The 30-day entry rule, sourced to UNC ISSS",
-            ),
+            { motion: "sources", alt: "Animation of Ziad's task Book a flight inside your entry window: the rule that you can enter no earlier than 30 days before the program start date on your I-20 is highlighted, a step links UNC ISSS, Add due date to Google Calendar is tapped, and the official sources appear", caption: "The 30-day rule, sourced to UNC ISSS" },
             phone(
               "23-family-share-phone",
               "Read-only share page showing a student's first-year certificate and stamps",
@@ -701,16 +647,8 @@ export const projects: Project[] = [
         title: "Progress that motivates",
         text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts. A certificate marks the first year, and another marks graduation.",
         shots: [
-          phone(
-            "41-reward-miles-phone",
-            "Task complete: Nice work, plus 60 miles, and 2 more this week for your goal",
-            "Miles for every task",
-          ),
-          phone(
-            "42-reward-stamp-phone",
-            "Chapter complete: Pre-flight stamped, plus 50 miles",
-            "A stamp for every chapter",
-          ),
+          { motion: "miles", alt: "Animation of completing a task: the last step of Get a US phone number is ticked, Complete is tapped, and a card says Nice work as confetti falls and the miles count up to 60", caption: "Miles for every task" },
+          { motion: "stamp", alt: "Animation of finishing a chapter: the Pre-flight stamp comes down on the reward card with confetti and plus 50 miles, then the card closes and Mei's passport shows the Pre-flight stamp, 1 of 9", caption: "A stamp for every chapter" },
           phone(
             "20-passport-phone",
             "Aisha's profile: a passport with six of nine chapter stamps and her trip dates",

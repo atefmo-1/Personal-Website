@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PhoneFrame } from "./PhoneFrame";
+import { RelocoMotion } from "./reloco-motion";
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
 import { relocoDisplay, relocoSans } from "@/lib/relocoFonts";
@@ -77,13 +78,17 @@ function Head({
 function ShotFig({ s, sizes }: { s: Shot; sizes: string }) {
   return (
     <figure className="min-w-0">
-      <PhoneFrame
-        src={s.src}
-        alt={s.alt}
-        width={s.width}
-        height={s.height}
-        sizes={sizes}
-      />
+      {s.motion ? (
+        <RelocoMotion id={s.motion} alt={s.alt} />
+      ) : (
+        <PhoneFrame
+          src={s.src}
+          alt={s.alt}
+          width={s.width}
+          height={s.height}
+          sizes={sizes}
+        />
+      )}
       <figcaption className="mt-3 text-center text-[14px] leading-snug text-muted">
         {s.caption}
       </figcaption>
@@ -142,7 +147,7 @@ function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
       <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
         {f.shots.map((s) => (
           <div
-            key={s.src + s.caption}
+            key={(s.src ?? s.motion) + s.caption}
             className="w-[240px] shrink-0 snap-center md:mx-auto md:w-full md:max-w-[290px]"
           >
             <ShotFig s={s} sizes="(min-width: 768px) 290px, 240px" />
@@ -155,7 +160,7 @@ function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
       >
         {f.shots.map((s) => (
           <ShotFig
-            key={s.src + s.caption}
+            key={(s.src ?? s.motion) + s.caption}
             s={s}
             sizes="(min-width: 1024px) 300px, 45vw"
           />
