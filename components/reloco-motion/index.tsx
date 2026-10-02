@@ -19,6 +19,7 @@ import { scene as ssaVisit } from "./SsaVisit";
 import { scene as stamp } from "./Stamp";
 import { scene as taskSteps } from "./TaskSteps";
 import { scene as today } from "./Today";
+import { scene as visaCheck } from "./VisaCheck";
 import { scene as yearly } from "./Yearly";
 
 // Every motion graphic in the case study, by id. A scene is a component drawn on the Stage plus
@@ -30,6 +31,7 @@ const SCENES = {
   today,
   "task-steps": taskSteps,
   "i94-check": i94Check,
+  "visa-check": visaCheck,
   "ssa-visit": ssaVisit,
   "compare-banks": compareBanks,
   ask,

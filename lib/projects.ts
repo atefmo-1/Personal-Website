@@ -5,6 +5,7 @@ import {
   siNextdotjs,
   siPuppeteer,
   siReact,
+  siSentry,
   siSupabase,
   siTailwindcss,
   siTypescript,
@@ -19,8 +20,8 @@ import type { MotionId } from "@/components/reloco-motion";
 // feature says what it does, why it matters and how I built it. Metrics live only in the Metrics
 // section, each with a definition and a source. No em dashes, no invented numbers.
 // Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild), updated
-// for v2 (Ask Reloco and Documents, September 2026) and v2.1 (task tools and comparisons, October
-// 2026). Every number is checked against Reloco's code and eval runs. "Pages" means unique URLs listed
+// for v2 (Ask Reloco and Documents, September 2026), v2.1 (task tools and comparisons, October
+// 2026) and v2.3 (the visa interview check, a second security review, Sentry and tester feedback). Every number is checked against Reloco's code and eval runs. "Pages" means unique URLs listed
 // as a task's sources across the task library. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
 export type ImageShot = { src: string; alt: string; caption: string; width: number; height: number; motion?: undefined };
@@ -196,7 +197,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **49** tasks across **9** areas, linked to **55** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, and **Documents** keeps their papers encrypted and checked.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **49** tasks across **9** areas, linked to **64** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, and **Documents** keeps their papers encrypted and checked.",
         },
         {
           label: "Scope",
@@ -206,7 +207,7 @@ export const projects: Project[] = [
           label: "Role",
           text: "Solo: user interviews, product strategy, UX and visual design, full-stack and AI engineering, security, launch.",
         },
-        { label: "Status", text: "v2.1 live at reloco.app, October 2026: the plan, task tools, Ask Reloco and Documents." },
+        { label: "Status", text: "v2.3 live at reloco.app, October 2026: the plan, task tools, Ask Reloco and Documents, with the first testers starting." },
       ],
       audience: {
         intro:
@@ -508,19 +509,20 @@ export const projects: Project[] = [
           title: "Tools that do the hard part",
           shots: [
             { motion: "i94-check", alt: "Animation of Mei's I-94 check: class of admission, admit until and name match, the date of birth is flagged as different from her passport, the passport number matches, then Draft the email to ISSS about it opens the drafted email, ready to copy", caption: "A mismatch caught, and the email to ISSS drafted" },
+            {
+              motion: "visa-check",
+              alt: "Animation of Ziad's visa interview check: his program start comes from his I-20, Reloco says the embassy can issue his visa from Jan 7, 2026 and he can enter from Dec 8, 2026, he types an interview date of Sep 3, 2026 and his SEVIS fee has time to be verified, then his papers are compared: the passport, name and date of birth match, the SEVIS fee receipt's SEVIS ID differs from his I-20, and the DS-160 matches. After the interview he picks More processing (221(g)) and sees what it means, what to do and how long it takes",
+              caption: "Papers checked before the interview, and a plan after it",
+            },
             { motion: "ssa-visit", alt: "Animation of the SSA visit plan: the readiness checks resolve, a job start of November 16 is entered and SSA's 30-day rule says she can't apply until October 17, then the plan unfolds to starting online at ssa.gov and booking the Durham office", caption: "An SSA visit planned around what's ready" },
             {
               motion: "dmv-visit",
               alt: "Animation of Mei's DMV visit plan: her check-in, passport, visa, I-94 and I-20, no-SSN status and lease all check out, she says she'll drive her own car and gets the insurance she needs to bring, then booking and the Carrboro office appear",
               caption: "A first license, planned around what's ready",
             },
-            {
-              motion: "trip-check",
-              alt: "Animation of the trip check: a winter break from December 15 to January 10 is typed in, then each document is checked. The travel signature expires before she's back; the passport and visa are fine",
-              caption: "A trip home, checked before booking",
-            },
           ],
           what: [
+            "Get your F-1 visa: the passport, I-20, SEVIS fee receipt and DS-160 confirmation page are checked against each other, the interview date against the SEVIS fee and the earliest day the embassy can issue the visa, and after the interview a 221(g) or 214(b) result says what it means, what to do and how it affects the start date, with the email to ISSS drafted.",
             "Download your I-94: Reloco compares it with the passport, point by point, and drafts the email to ISSS if something differs.",
             "Apply for an SSN: an SSA visit plan, from what has to be ready (the job offer, the ISSS check-in, the documents) to the Durham office and its number.",
             "Before a trip home: the travel signature, passport and visa are checked against the dates of the trip.",
@@ -528,7 +530,7 @@ export const projects: Project[] = [
             "Also: a lease explained in plain words, the major checked against the DHS STEM list, CPT months counted from an offer letter, immunizations checked against UNC's rules, an OPT unemployment counter, help deciding whether to enroll in or waive student health insurance, and a dated task when a student reports a move.",
           ],
           why: "Steps say what to do. The hard part is knowing whether your own papers are right: a wrong date of birth on an I-94 or a visa that lapses over winter break can stop a student at the border. Each tool runs that check with the student's own documents and dates.",
-          how: "The checks are plain code, not AI: date math, the STEM list, CPT months, the J-1 insurance minimums. AI only reads documents, and readers that explain an upload (a lease, an insurance policy, an offer) quote the exact words they relied on. A file picked just for that is read once and never stored. Each reader has its own eval: the insurance reader passed 49 of 49 checks on invented policies.",
+          how: "The checks are plain code, not AI: date math (down to the 3 business days ICE says a SEVIS fee payment needs to be verified before the interview, skipping federal holidays), the STEM list, CPT months, the J-1 insurance minimums. AI only reads documents, and readers that explain an upload (a lease, an insurance policy, an offer) quote the exact words they relied on. A file picked just for that is read once and never stored. Each reader has its own eval: the insurance reader passed 49 of 49 checks on invented policies.",
         },
         {
           id: "compare",
@@ -581,12 +583,12 @@ export const projects: Project[] = [
             { motion: "documents", alt: "Animation of adding a specimen passport to Documents: the student opts in to an AI read, checks every detail it read, confirms, and the passport is filed with its number masked to the last four digits", caption: "A specimen passport: read, confirmed and masked" },
           ],
           what: [
-            "12 kinds of documents, from the passport, visa and I-20 to a lease and a job offer.",
+            "13 kinds of documents, from the passport, visa, I-20 and DS-160 confirmation page to a lease and a job offer.",
             "With the student's OK, AI reads the key details for them to confirm, and the plan uses the real dates. It checks the upload is the right document first: a lease uploaded as a passport is refused before it's stored.",
             "Tasks that need documents show what's on file, what needs a check and what's missing.",
           ],
           why: "A passport and an I-20 are the most sensitive things a student owns, so trust had to be designed in from the first version, not added later.",
-          how: "Names and numbers are encrypted in the app with AES-256-GCM before they reach the database, with separate keys for sensitive and high-risk fields, and each value is bound to its student and field. Files live in a private bucket, served only through Reloco and typed by their real bytes, never their name. Every upload, AI read, view and delete goes into a log students can read but not edit. On invented specimen documents, the reader got 147 of 147 fields right and refused 8 of 8 wrong documents, and code checks official number formats so a misread number is flagged, not saved.",
+          how: "Names and numbers are encrypted in the app with AES-256-GCM before they reach the database, with separate keys for sensitive and high-risk fields, and each value is bound to its student and field. Files live in a private bucket, served only through Reloco and typed by their real bytes, never their name. Every upload, AI read, view and delete goes into a log students can read but not edit. On invented specimen documents, the reader got 196 of 196 fields right and passed 76 of 76 upload checks, accepting each document in its own slot and refusing it in the wrong one, and code checks official number formats so a misread number is flagged, not saved.",
         },
         {
           id: "arrival",
@@ -612,6 +614,11 @@ export const projects: Project[] = [
               "Task: File your 2026 tax forms, Form 8843 plus a 1040-NR if you had US income",
               "Tax season, every February",
             ),
+            {
+              motion: "trip-check",
+              alt: "Animation of the trip check: a winter break from December 15 to January 10 is typed in, then each document is checked. The travel signature expires before she's back; the passport and visa are fine",
+              caption: "A trip home, checked before booking",
+            },
           ],
           what: 'Yearly tasks come back as dated copies: winter travel signature, tax forms (Form 8843, and a 1040-NR if there was US income), CPT for each summer, summer address and full-time enrollment. Optional ones, like a trip home or a summer move, close as "Not needed" if their date passes untouched, instead of sitting overdue. Tax tasks add treaty notes for the student\'s passport country. When a student reports a move, a dated task covers the 10-day address rule and everything else that needs the new address.',
           why: "Upperclassmen don't need onboarding; they need the recurring deadlines they forget.",
@@ -640,8 +647,8 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "Tasks link 55 pages on 25 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
-            "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department, USPS), North Carolina (the DMV and Department of Revenue), and consumer guides from the CFPB and FTC.",
+            "Tasks link 64 pages on 29 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
+            "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department, USPS), North Carolina (the DMV and the Departments of Revenue and Insurance), local utilities (Duke Energy, OWASA), and consumer guides from the CFPB, FTC and FCC.",
             "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
             "The dates in Documents (passport, visa, I-20, I-94) drive the plan, like the reminder to renew a passport.",
             "Deadlines sync to Google, Apple or Outlook.",
@@ -759,7 +766,7 @@ export const projects: Project[] = [
             name: "Data",
             purpose: "One Store interface",
             parts: [
-              "Supabase Postgres with row-level security on every table and 9 migrations, including checks that every link between rows stays inside one account.",
+              "Supabase Postgres with row-level security on every table and 13 migrations, including checks that every link between rows stays inside one account.",
               "Facts that tools need (check results, reported moves, OPT jobs) live in one validated JSON field, so most new features ship without a migration.",
               "Security-definer functions serve the share page and calendar feed by revocable token.",
               "Google OAuth, with the session refreshed in the request proxy.",
@@ -788,6 +795,8 @@ export const projects: Project[] = [
               "Uploads typed by their real bytes: a page renamed passport.jpg is refused, and files only open in the browser if they're a real image or PDF.",
               "Sign-in cookies unreadable by page scripts, and sign-in only returns to known addresses.",
               "A full security review before launch: no cross-account access, no open redirects, and 0 known vulnerabilities in dependencies.",
+              "A second review after launch, by six reviewers working in parallel. It led to encrypting immunization results and pasted messages, a database cap on uploads, and deleting documents added during signup along with the account.",
+              "Error reports through Sentry, sent via Reloco's own address so the page's security policy stays strict. Form contents, cookies, IP addresses, anything sent to Claude and share-link tokens are stripped first, checked on real reports.",
             ],
           },
         ],
@@ -802,7 +811,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**274** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **147/147** fields and refused **8/8** wrong documents, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
+          "**308** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **85/85** with **0** safety failures, at about **1¢** a question. Document reading scored **196/196** fields and passed **76/76** upload checks, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, the database has grown through **13** migrations, each with row-level security (the newest access rules tested against a real Postgres), and Sentry reports production errors with personal data stripped.",
         stack: [
           {
             label: "Frontend",
@@ -840,6 +849,7 @@ export const projects: Project[] = [
             items: [
               { name: "Vitest", icon: siVitest },
               { name: "Puppeteer", icon: siPuppeteer },
+              { name: "Sentry", icon: siSentry },
               { name: "Vercel", icon: siVercel },
               { name: "GitHub", icon: siGithub },
             ],
@@ -1010,6 +1020,12 @@ export const projects: Project[] = [
           status: "Completed",
           date: "October 2026",
           text: "An OPT application check (the student's own I-765 filing window, eligibility and what to send, with a STEM version) and a DMV visit plan for a first North Carolina driver's license. Live at reloco.app.",
+        },
+        {
+          phase: "v2.3",
+          status: "Completed",
+          date: "October 2026",
+          text: "A visa interview check (the passport, I-20, SEVIS fee receipt and DS-160 checked against each other, the interview timing, and what to do after a 221(g) or 214(b)), a second security review, error monitoring that strips personal data, and an in-app feedback form for the first testers. Live at reloco.app.",
         },
         {
           phase: "v3",
