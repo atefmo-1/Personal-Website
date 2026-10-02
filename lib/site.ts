@@ -41,6 +41,7 @@ export const site = {
     school: "UNC Chapel Hill '27",
     flag: "🇺🇸",
     scholarship: "Morehead‑Cain Scholar", // non-breaking hyphen
+    firstGen: "first‑gen", // first-generation college student (Carolina Firsts); non-breaking hyphen
   },
   // The ending rotates (typewriter). It sits at the end so the space reserved for the longest
   // phrase trails off invisibly. The first phrase is what shows without animation.
@@ -50,12 +51,12 @@ export const site = {
     after: "",
   },
   description:
-    "Atef Mohamed works in product and data. Senior at UNC Chapel Hill studying Computer Science and Information Science, and a Morehead-Cain Scholar.",
+    "Atef Mohamed works in product and data. Senior at UNC Chapel Hill studying Computer Science and Information Science, a first-generation college student and a Morehead-Cain Scholar.",
 };
 
 export const about = {
   paragraphs: [
-    "I grew up in a small village in Sharqia, Egypt 🇪🇬. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at asking questions, which turns out to be most of product work.",
+    "I grew up in a small village in Sharqia, Egypt 🇪🇬, and I’m a first‑generation college student. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at asking questions, which turns out to be most of product work.",
   ],
   // Newest first. Sources: Morehead-Cain's <1% and full ride are from the resume; "America's first"
   // is from moreheadcain.org; ALA's 47 countries are from africanleadershipacademy.org (which also lists a 4% acceptance rate).
