@@ -510,6 +510,11 @@ export const projects: Project[] = [
             { motion: "i94-check", alt: "Animation of Mei's I-94 check: class of admission, admit until and name match, the date of birth is flagged as different from her passport, the passport number matches, then Draft the email to ISSS about it opens the drafted email, ready to copy", caption: "A mismatch caught, and the email to ISSS drafted" },
             { motion: "ssa-visit", alt: "Animation of the SSA visit plan: the readiness checks resolve, a job start of November 16 is entered and SSA's 30-day rule says she can't apply until October 17, then the plan unfolds to starting online at ssa.gov and booking the Durham office", caption: "An SSA visit planned around what's ready" },
             {
+              motion: "dmv-visit",
+              alt: "Animation of Mei's DMV visit plan: her check-in, passport, visa, I-94 and I-20, no-SSN status and lease all check out, she says she'll drive her own car and gets the insurance she needs to bring, then booking and the Carrboro office appear",
+              caption: "A first license, planned around what's ready",
+            },
+            {
               motion: "trip-check",
               alt: "Animation of the trip check: a winter break from December 15 to January 10 is typed in, then each document is checked. The travel signature expires before she's back; the passport and visa are fine",
               caption: "A trip home, checked before booking",
@@ -519,6 +524,7 @@ export const projects: Project[] = [
             "Download your I-94: Reloco compares it with the passport, point by point, and drafts the email to ISSS if something differs.",
             "Apply for an SSN: an SSA visit plan, from what has to be ready (the job offer, the ISSS check-in, the documents) to the Durham office and its number.",
             "Before a trip home: the travel signature, passport and visa are checked against the dates of the trip.",
+            "Getting a driver's license: a DMV visit plan, from the documents in Documents (no SSN needed) and proof of address to insurance, the nearest office and the tests.",
             "Also: a lease explained in plain words, the major checked against the DHS STEM list, CPT months counted from an offer letter, immunizations checked against UNC's rules, an OPT unemployment counter, help deciding whether to enroll in or waive student health insurance, and a dated task when a student reports a move.",
           ],
           why: "Steps say what to do. The hard part is knowing whether your own papers are right: a wrong date of birth on an I-94 or a visa that lapses over winter break can stop a student at the border. Each tool runs that check with the student's own documents and dates.",
@@ -615,11 +621,12 @@ export const projects: Project[] = [
           id: "opt",
           title: "OPT and STEM OPT (graduating students)",
           shots: [
+            { motion: "opt-filing", alt: "Animation of Aisha's OPT application check: her program end comes from her I-20, she enters the date ISSS issued her OPT I-20, and Reloco shows USCIS can receive it from Feb 20 to Mar 21, 2028, with 21 days left, then her CPT and academic year check out and her documents are in place", caption: "Her own filing window, worked out" },
             { motion: "opt", alt: "Animation of the OPT track: on Journey the OPT tasks unlock and complete in order down to reporting the job, whose tool counts unemployment days to 23 of 90 until a job starting Jun 12, 2028 is added and the clock stops with 67 days left", caption: "OPT in order, then a clock for unemployment days" },
           ],
-          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and count unemployment days against the limit (90, or 150 on the STEM extension), then the STEM extension, with the major checked against the DHS STEM list. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost.",
+          what: "Decide what's next, request the OPT I-20 from ISSS, file the I-765 inside the window, report the job and count unemployment days against the limit (90, or 150 on the STEM extension), then the STEM extension, with the major checked against the DHS STEM list. Before that, Reloco counts full-time CPT months, from the student or their I-20, and warns well before 12, the point where OPT is lost. When it's time to file, it works out the student's own window: USCIS must receive the application within 30 days of the OPT I-20 and no later than 60 days after graduation, so Reloco shows the real last day, the eligibility checks and what to send.",
           why: "The OPT filing window is strict, and missing it can cost the job offer. Reloco surfaces it years early and in order.",
-          how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next.",
+          how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next. The filing window is plain date math, tested at its edges. While I was building it, a DHS rule that would cut the 60 days to 30 was paused by a court, and the government's regulations site already showed the new text. The check follows what USCIS says it applies today, says so on the card, and switches with one setting if the rule takes effect.",
         },
         {
           id: "sources",
@@ -795,7 +802,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**263** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **147/147** fields and refused **8/8** wrong documents, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
+          "**274** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **95%** with **0** safety failures, at about **1¢** a question. Document reading scored **147/147** fields and refused **8/8** wrong documents, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, and the database has grown through **9** migrations, each with row-level security.",
         stack: [
           {
             label: "Frontend",
@@ -997,6 +1004,12 @@ export const projects: Project[] = [
           status: "Completed",
           date: "October 2026",
           text: "Task tools (the I-94, trip, STEM, CPT and immunization checks, the SSA visit plan, a lease explainer, the OPT unemployment counter and a health insurance helper), side-by-side comparisons, document upload at signup, and reporting a move. Live at reloco.app.",
+        },
+        {
+          phase: "v2.2",
+          status: "Completed",
+          date: "October 2026",
+          text: "An OPT application check (the student's own I-765 filing window, eligibility and what to send, with a STEM version) and a DMV visit plan for a first North Carolina driver's license. Live at reloco.app.",
         },
         {
           phase: "v3",

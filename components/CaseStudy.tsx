@@ -144,7 +144,7 @@ function FeatureBlock({ f, n, i }: { f: Feature; n: string; i: number }) {
   const count = f.shots.length;
   const phones =
     count >= 3 ? (
-      <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
+      <div className={`-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:overflow-visible md:px-0 md:pb-0 ${count >= 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
         {f.shots.map((s) => (
           <div
             key={(s.src ?? s.motion) + s.caption}

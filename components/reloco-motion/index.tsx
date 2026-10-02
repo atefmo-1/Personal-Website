@@ -6,11 +6,13 @@ import { TRIP_CHECK_MS, TripCheck } from "./TripCheck";
 import { scene as ask } from "./Ask";
 import { scene as compareBanks } from "./CompareBanks";
 import { scene as documents } from "./Documents";
+import { scene as dmvVisit } from "./DmvVisit";
 import { scene as i94Check } from "./I94Check";
 import { scene as landing } from "./Landing";
 import { scene as miles } from "./Miles";
 import { scene as onboarding } from "./Onboarding";
 import { scene as opt } from "./Opt";
+import { scene as optFiling } from "./OptFiling";
 import { scene as planBuild } from "./PlanBuild";
 import { scene as sources } from "./Sources";
 import { scene as ssaVisit } from "./SsaVisit";
@@ -35,6 +37,8 @@ const SCENES = {
   landing,
   yearly,
   opt,
+  "opt-filing": optFiling,
+  "dmv-visit": dmvVisit,
   sources,
   miles,
   stamp,
