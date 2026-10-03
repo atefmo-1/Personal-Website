@@ -73,7 +73,7 @@ export function Hero() {
               Studying <strong className="font-semibold">{site.study.majors[0]}</strong> and{" "}
               <strong className="font-semibold">{site.study.majors[1]}</strong> at{" "}
               <strong className="font-semibold">{site.study.school}</strong> as a{" "}
-              <strong className="font-semibold">{site.study.firstGen} {site.study.scholarship}</strong> {site.study.flag}
+              <strong className="font-semibold">{site.study.scholarship}</strong> {site.study.flag}
             </p>
           </div>
 

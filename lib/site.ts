@@ -41,7 +41,6 @@ export const site = {
     school: "UNC Chapel Hill '27",
     flag: "🇺🇸",
     scholarship: "Morehead‑Cain Scholar", // non-breaking hyphen
-    firstGen: "first‑gen", // first-generation college student (Carolina Firsts); non-breaking hyphen
   },
   // The ending rotates (typewriter). It sits at the end so the space reserved for the longest
   // phrase trails off invisibly. The first phrase is what shows without animation.

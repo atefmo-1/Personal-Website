@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Reveal } from "./Reveal";
+import { ProjectCard } from "./Projects";
 import { EducationRows, ExperienceRows } from "./RoleRows";
+import { showProjects } from "@/lib/pages";
+import { projects } from "@/lib/projects";
 import { about } from "@/lib/site";
 
 const h2 = "font-display text-2xl font-bold tracking-tight sm:text-3xl";
@@ -13,7 +16,9 @@ function More({ href, children }: { href: string; children: React.ReactNode }) {
   );
 }
 
-// Under the hero on the home page: the short story, then education and experience.
+const featured = projects.find((p) => p.slug === "reloco");
+
+// Under the hero on the home page: the short story, the featured project, then education and experience.
 export function HomeSections() {
   return (
     <div className="container-x space-y-16 pb-24 sm:space-y-20 sm:pb-32">
@@ -27,6 +32,18 @@ export function HomeSections() {
           <More href="/about">Hobbies, communities, and the route map</More>
         </div>
       </Reveal>
+
+      {showProjects && featured && (
+        <section>
+          <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+            <h2 className={h2}>Featured project</h2>
+            <More href="/projects">All projects</More>
+          </div>
+          <Reveal>
+            <ProjectCard project={featured} headingLevel="h3" />
+          </Reveal>
+        </section>
+      )}
 
       <section>
         <h2 className={`${h2} mb-5`}>Education</h2>
