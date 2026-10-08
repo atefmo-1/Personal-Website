@@ -5,9 +5,9 @@ export const showProjects = true;
 
 const allPages = [
   { href: "/", title: "Home" },
-  { href: "/about", title: "About" },
   { href: "/experience", title: "Work & Experience", short: "Work" },
   { href: "/projects", title: "Projects" },
+  { href: "/about", title: "About" },
   { href: "/contact", title: "Contact" },
 ] as const;
 
