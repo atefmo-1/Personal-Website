@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes" | "lost";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes" | "lost" | "pascal" | "collatz" | "bst" | "konigsberg";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -447,7 +447,164 @@ function lost(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { lost, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+const circle = (cx: number, cy: number, r: number, steps = 16) => {
+  const pts: number[] = [];
+  for (let k = 0; k <= steps; k++) pts.push(cx + Math.cos((k / steps) * Math.PI * 2) * r, cy + Math.sin((k / steps) * Math.PI * 2) * r);
+  return pts;
+};
+
+// Pascal's triangle, keeping only the entries not divisible by p. For p = 2 that's the
+// Sierpinski triangle. Lucas's theorem: C(n, k) mod p is the product of C(n_i, k_i) over the
+// base-p digits of n and k, so it's zero exactly when some digit of k exceeds n's.
+function pascal(w: number, h: number, seed: number): Line[] {
+  const p = [2, 3, 5, 7][(seed - 1) % 4];
+  const rows = 64;
+  const s = Math.min(w / (rows + 2), (h * 0.9) / (rows * 0.866));
+  const top = (h - rows * s * 0.866) / 2;
+  const lines: Line[] = [];
+  const nonzero = (n: number, k: number) => {
+    while (n > 0 || k > 0) {
+      if (k % p > n % p) return false;
+      n = Math.floor(n / p);
+      k = Math.floor(k / p);
+    }
+    return true;
+  };
+  for (let n = 0; n < rows; n++)
+    for (let k = 0; k <= n; k++) {
+      if (!nonzero(n, k)) continue;
+      const start = (n / rows) * 0.85;
+      lines.push({ pts: circle(w / 2 + (k - n / 2) * s, top + n * s * 0.866, s * 0.34, 8), width: 0.9, alpha: 0.85, start, end: start + 0.12 });
+    }
+  lines.push({ pts: [4, 12, 4, 12], width: 0, alpha: 0, start: 0.95, end: 1, text: { x: 4, y: 12, s: `MOD ${p}`, align: "left" } });
+  return lines;
+}
+
+// The Collatz conjecture: halve even numbers, send odd n to 3n + 1, and every start seems to
+// reach 1. Each number's path is drawn backwards from 1, turning one way on even steps and the
+// other way on odd ones, so shared endings grow into one branching tree.
+function collatz(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 977 + 1);
+  const even = 0.11 + r() * 0.03;
+  const odd = -even * (1.8 + r() * 0.2); // odd turns about twice as hard, the classic "coral" ratio
+  const count = 1500;
+  const paths: number[][] = [];
+  for (let n = 2; n <= count; n++) {
+    const seq: number[] = [];
+    for (let m = n; m !== 1; m = m % 2 ? 3 * m + 1 : m / 2) seq.push(m);
+    seq.reverse();
+    let x = 0;
+    let y = 0;
+    let a = -Math.PI / 2;
+    const pts = [x, y];
+    for (const m of seq) {
+      a += m % 2 ? odd : even;
+      x += Math.cos(a) * 4;
+      y += Math.sin(a) * 4;
+      pts.push(x, y);
+    }
+    paths.push(pts);
+  }
+  fit(paths, w, h, 0.05);
+  return paths.map((pts, i) => {
+    const start = (i / paths.length) * 0.75;
+    return { pts, width: 0.6, alpha: 0.16, start, end: start + 0.25 };
+  });
+}
+
+// A binary search tree growing as random numbers are inserted: smaller to the left, larger to
+// the right. Laid out by in-order position, so reading the nodes left to right gives them sorted.
+function bst(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 4093 + 17);
+  const pool = Array.from({ length: 60 }, (_, i) => i + 1);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const values = pool.slice(0, 22);
+  type Node = { v: number; l?: Node; rt?: Node; depth: number; parent?: Node; order: number };
+  let root: Node | undefined;
+  const nodes: Node[] = [];
+  values.forEach((v, order) => {
+    const node: Node = { v, depth: 0, order };
+    if (!root) root = node;
+    else {
+      let cur = root;
+      for (;;) {
+        node.depth++;
+        if (v < cur.v) {
+          if (!cur.l) { cur.l = node; break; }
+          cur = cur.l;
+        } else {
+          if (!cur.rt) { cur.rt = node; break; }
+          cur = cur.rt;
+        }
+      }
+      node.parent = cur;
+    }
+    nodes.push(node);
+  });
+  const sorted = [...nodes].sort((a, b) => a.v - b.v);
+  const maxDepth = Math.max(...nodes.map((n) => n.depth));
+  const m = 14;
+  const pos = new Map(sorted.map((n, i) => [n, { x: m + (i / (sorted.length - 1)) * (w - 2 * m), y: m + 4 + (n.depth / Math.max(1, maxDepth)) * (h - 2 * m - 8) }]));
+  const lines: Line[] = [];
+  const rad = Math.min(9, (w - 2 * m) / sorted.length / 2.2);
+  nodes.forEach((n) => {
+    const p = pos.get(n)!;
+    const start = (n.order / nodes.length) * 0.85;
+    if (n.parent) {
+      const q = pos.get(n.parent)!;
+      const d = Math.hypot(p.x - q.x, p.y - q.y) || 1;
+      const ux = (p.x - q.x) / d;
+      const uy = (p.y - q.y) / d;
+      lines.push({ pts: [q.x + ux * rad, q.y + uy * rad, p.x - ux * rad, p.y - uy * rad], width: 0.9, alpha: 0.6, start, end: start + 0.06 });
+    }
+    lines.push({ pts: circle(p.x, p.y, rad, 20), width: 1.1, alpha: 0.95, start: start + 0.05, end: start + 0.1, text: { x: p.x, y: p.y + 3.5, s: String(n.v), align: "center" } });
+  });
+  return lines;
+}
+
+// Euler's bridges of Königsberg (1736): four land masses, seven bridges. A walk crossing every
+// bridge exactly once needs zero or two land masses with an odd number of bridges; here all four
+// are odd, so there's no such walk.
+function konigsberg(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 61 + 5);
+  const jitter = () => (r() - 0.5) * 0.04;
+  const N = {
+    C: { x: w * (0.42 + jitter()), y: h * 0.13, label: "NORTH BANK", side: "right" },
+    A: { x: w * (0.36 + jitter()), y: h * 0.5, label: "ISLAND", side: "left" },
+    B: { x: w * (0.42 + jitter()), y: h * 0.87, label: "SOUTH BANK", side: "right" },
+    D: { x: w * (0.74 + jitter()), y: h * 0.5, label: "EAST", side: "right" },
+  };
+  const edges: [keyof typeof N, keyof typeof N, number][] = [
+    ["A", "C", -0.35], ["A", "C", 0.35], ["A", "B", -0.35], ["A", "B", 0.35], ["A", "D", 0], ["C", "D", 0.12], ["B", "D", -0.12],
+  ];
+  const lines: Line[] = [];
+  edges.forEach(([a, b, bend], i) => {
+    const p = N[a];
+    const q = N[b];
+    const mx = (p.x + q.x) / 2 - (q.y - p.y) * bend;
+    const my = (p.y + q.y) / 2 + (q.x - p.x) * bend;
+    const pts: number[] = [];
+    for (let t = 0; t <= 1.001; t += 0.04) {
+      const u = 1 - t;
+      pts.push(u * u * p.x + 2 * u * t * mx + t * t * q.x, u * u * p.y + 2 * u * t * my + t * t * q.y);
+    }
+    const start = 0.15 + (i / edges.length) * 0.6;
+    lines.push({ pts, width: 1.1, alpha: 0.8, start, end: start + 0.12 });
+  });
+  (Object.keys(N) as (keyof typeof N)[]).forEach((k) => {
+    const n = N[k];
+    const degree = edges.filter(([a, b]) => a === k || b === k).length;
+    // Labels sit outside the graph so they never cross a bridge
+    const right = n.side === "right";
+    lines.push({ pts: circle(n.x, n.y, 6, 20), width: 1.8, alpha: 1, start: 0, end: 0.12, text: { x: n.x + (right ? 14 : -14), y: n.y + 4, s: `${n.label} · ${degree}`, align: right ? "left" : "right" } });
+  });
+  return lines;
+}
+
+const builders = { pascal, collatz, bst, konigsberg, lost, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 // `redraws` lets something outside the canvas (the caption's redraw button) ask for a new version:
 // each time the number goes up, the figure draws a new variation.

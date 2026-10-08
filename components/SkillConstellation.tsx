@@ -138,7 +138,7 @@ export function SkillConstellation({ groups }: { groups: Group[] }) {
         </svg>
       </div>
       <figcaption className="label mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-        <span>Fig. 2 · The toolbox as constellations. Click one to read its stars.</span>
+        <span>Fig. 2 · The toolbox as constellations, each joined by its minimum spanning tree. Click one to read its stars.</span>
         <span className="flex gap-2 normal-case tracking-normal">
           {skies.map((sky, gi) => (
             <button

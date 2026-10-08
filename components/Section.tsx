@@ -6,11 +6,13 @@ type Props = {
   intro?: string;
   // A generative figure beside the heading, with its caption.
   art?: { kind: ArtKind; seed?: number; caption: string };
+  // Or any other figure to sit in that spot
+  aside?: React.ReactNode;
   children: React.ReactNode;
 };
 
 // A page body with its heading, and optionally a generative figure beside it.
-export function Section({ title, intro, art, children }: Props) {
+export function Section({ title, intro, art, aside, children }: Props) {
   return (
     <section className="container-x pb-24 pt-28 sm:pb-32 sm:pt-36">
       <header className="mb-12 grid items-end gap-x-12 gap-y-8 sm:mb-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
@@ -21,6 +23,7 @@ export function Section({ title, intro, art, children }: Props) {
           {intro && <p className="mt-4 text-lg text-muted">{intro}</p>}
         </div>
         {art && <ArtFigure {...art} artClassName="aspect-[3/1]" />}
+        {aside}
       </header>
       {children}
     </section>

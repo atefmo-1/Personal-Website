@@ -151,7 +151,7 @@ export const about = {
   ],
   routeTitle: "The route so far",
   sketchbookTitle: "Sketchbook",
-  sketchbookIntro: "Design is one of my hobbies, and math makes good pens. Each of these is drawn live in your browser from an equation; click one for a new version.",
+  sketchbookIntro: "Design is one of my hobbies, and math makes good pens. Each of these is drawn live in your browser, from equations, rules or algorithms; click one, or its button, for a new version.",
   // US places visited. DC is listed but not counted as a state.
   statesVisited: [
     "North Carolina",

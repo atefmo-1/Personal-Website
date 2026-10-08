@@ -21,7 +21,7 @@ const rows: { label: string; body: React.ReactNode }[] = [
   },
   {
     label: "Drawings",
-    body: "Every figure is drawn live in your browser from math, so no two visits have to look the same: a Fourier series for my name, the Lorenz system (solved step by step), the golden angle, Lissajous and spirograph curves, a Julia set traced as contour lines, noise-driven flow fields, ridgelines, and the parabolas of a jump shot. The route drawing on the home page is a hand-written SVG path. The Outward Bound photo is printed as a halftone made from the original.",
+    body: "Every figure is drawn live in your browser from math, so no two visits have to look the same: a Fourier series for my name, the Lorenz system (solved step by step), the golden angle, Lissajous and spirograph curves, a Julia set traced as contour lines, noise-driven flow fields, ridgelines, and the parabolas of a jump shot. From computer science and discrete math: a finite automaton, a Turing machine, the Game of Life, Pascal’s triangle mod p, Collatz paths, a binary search tree and the bridges of Königsberg. The route drawing on the home page is a hand-written SVG path. The Outward Bound photo is printed as a halftone made from the original.",
   },
   {
     label: "Built with",

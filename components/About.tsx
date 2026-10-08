@@ -8,7 +8,9 @@ import { about } from "@/lib/site";
 import { ArtFigure, type ArtKind } from "./Art";
 import { TripPhoto } from "./TripPhoto";
 import { TripRidgelines } from "./TripRidgelines";
+import { TuringTape } from "./TuringTape";
 import { Ink } from "./Ink";
+import { LifeGrid } from "./LifeGrid";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
 const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia");
@@ -21,6 +23,15 @@ const sketches: { kind: ArtKind; caption: string }[] = [
   { kind: "julia", caption: "Julia set: z² + c, as contours" },
   { kind: "flow", caption: "Flow field: ink on noise" },
 ];
+
+const discrete: { kind: ArtKind; caption: string }[] = [
+  { kind: "pascal", caption: "Pascal’s triangle mod p: fractals in counting" },
+  { kind: "collatz", caption: "Collatz: every path ends at 1 (so far)" },
+  { kind: "bst", caption: "Binary search tree, built one insert at a time" },
+  { kind: "konigsberg", caption: "Königsberg: 7 bridges, all odd, no Euler walk" },
+];
+
+const sketchGrid = "mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3";
 
 export function About() {
   return (
@@ -142,8 +153,17 @@ export function About() {
       <section className="mt-14 sm:mt-16">
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
         <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3">
+        <h3 className="label mt-8">Curves and chaos</h3>
+        <div className={sketchGrid}>
           {sketches.map((s) => (
+            <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-[4/3]" />
+          ))}
+        </div>
+        <h3 className="label mt-12">Computation and discrete math</h3>
+        <div className={sketchGrid}>
+          <TuringTape caption="Turing machine: adding 1 in binary" />
+          <LifeGrid caption="Game of Life: four rules, endless patterns" />
+          {discrete.map((s) => (
             <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-[4/3]" />
           ))}
         </div>
