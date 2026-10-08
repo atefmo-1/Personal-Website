@@ -123,3 +123,51 @@ body {
     animation: none;
   }
 }
+
+/* Theme switch as day and night (ThemeToggle.tsx). The new theme is revealed through a mask
+   with a soft horizon: sunset brings dark down from the top, sunrise brings light up from the
+   bottom. The mask is 2.5x the page height, so moving it slides the horizon across the page. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-sweep]::view-transition-new(root) {
+  mask-size: 100% 250%;
+  mask-repeat: no-repeat;
+  animation: sweep 0.9s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+:root[data-sweep="sunset"]::view-transition-new(root) {
+  mask-image: linear-gradient(to bottom, #000 40%, transparent 60%);
+  --sweep-from: 0 100%;
+  --sweep-to: 0 0;
+}
+:root[data-sweep="sunrise"]::view-transition-new(root) {
+  mask-image: linear-gradient(to top, #000 40%, transparent 60%);
+  --sweep-from: 0 0;
+  --sweep-to: 0 100%;
+}
+@keyframes sweep {
+  from {
+    mask-position: var(--sweep-from);
+  }
+  to {
+    mask-position: var(--sweep-to);
+  }
+}
+
+/* Ink drawing under the hero (InkJourney.tsx): the line draws itself once, like a pen. */
+@keyframes ink {
+  from {
+    stroke-dashoffset: 1000;
+  }
+}
+.ink-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ink-path {
+    animation: ink 3.4s cubic-bezier(0.45, 0, 0.3, 1) both;
+  }
+}

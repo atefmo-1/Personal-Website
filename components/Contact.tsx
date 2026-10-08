@@ -4,6 +4,7 @@ import { CopyEmail } from "./CopyEmail";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 import { site } from "@/lib/site";
+import { drawings } from "@/lib/drawings";
 
 const links = [
   { label: "LinkedIn", href: site.linkedin, icon: IconBrandLinkedin, external: true },
@@ -14,6 +15,7 @@ export function Contact() {
   return (
     <Section
       title="Say hello"
+      drawing={drawings.contact}
       intro="Recruiting, want to work on something together, looking for advice, or up for a coffee or a call? My inbox is open 👋"
     >
       <div className="grid-12 gap-y-10">

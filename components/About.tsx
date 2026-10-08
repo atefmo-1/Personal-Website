@@ -5,13 +5,14 @@ import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
+import { drawings } from "@/lib/drawings";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
 const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia");
 
 export function About() {
   return (
-    <Section title="About">
+    <Section title="About" drawing={drawings.about}>
       {/* Hobbies */}
       <section>
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{about.hobbiesTitle}</h2>

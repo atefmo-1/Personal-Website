@@ -19,11 +19,25 @@ export function ThemeToggle() {
 
   function toggle() {
     const next: Theme = currentTheme() === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem("theme", next);
-    } catch {}
-    setTheme(next);
+    const root = document.documentElement;
+    const apply = () => {
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {}
+      setTheme(next);
+    };
+
+    // Day and night: the new theme sweeps in like a sunrise (from the bottom) or a sunset
+    // (from the top). See ::view-transition-* in globals.css. Browsers without view
+    // transitions, and readers who prefer reduced motion, get the instant swap.
+    const reduced = !matchMedia("(prefers-reduced-motion: no-preference)").matches;
+    if (reduced || !("startViewTransition" in document)) return apply();
+    root.dataset.sweep = next === "dark" ? "sunset" : "sunrise";
+    const t = document.startViewTransition(apply);
+    // If the browser skips the animation, the theme still changes; just clean up.
+    t.ready.catch(() => {});
+    t.finished.finally(() => delete root.dataset.sweep);
   }
 
   const label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
