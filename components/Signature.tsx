@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { signaturePoints, signatureSize } from "@/lib/signature";
 
-// My name, drawn by a chain of spinning circles: a Fourier series. The outline of "Atef" is
+// My name, drawn by a chain of spinning circles: a Fourier series. The pen line of "Atef" is
 // treated as a loop of complex numbers; a discrete Fourier transform turns that loop into
 // circles, each spinning at a whole-number speed, and stacking them tip to tail traces the name.
 // It starts when it scrolls into view; clicking redraws it. Reduced-motion readers see the
@@ -56,7 +56,7 @@ export function Signature({ className = "" }: { className?: string }) {
 
     // Fit the name's box into the canvas, leaving room for the circles to swing.
     function frame() {
-      const s = Math.min((w * 0.7) / signatureSize.w, (h * 0.78) / signatureSize.h);
+      const s = Math.min((w * 0.84) / signatureSize.w, (h * 0.84) / signatureSize.h);
       return { s, ox: (w - signatureSize.w * s) / 2, oy: (h - signatureSize.h * s) / 2 };
     }
 
@@ -82,7 +82,7 @@ export function Signature({ className = "" }: { className?: string }) {
       // Lift the pen near each jump too: the series rings a little where the path jumps.
       const at = Math.floor(t * n);
       let pen = 1;
-      for (let d = -2; d <= 2; d++) pen &= signaturePoints[((at + d + n) % n) * 3 + 2];
+      for (let d = -1; d <= 1; d++) pen &= signaturePoints[((at + d + n) % n) * 3 + 2];
       trace.push(x, y, pen);
     }
 
@@ -95,7 +95,7 @@ export function Signature({ className = "" }: { className?: string }) {
       const p = Math.min(1, progress);
 
       // The name so far, lifting the pen over the jumps between strokes
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 2;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.strokeStyle = `rgba(${fg},0.95)`;

@@ -5,7 +5,7 @@ import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
-import { ArtFigure, type ArtKind } from "./Art";
+import { Art, ArtFigure, type ArtKind } from "./Art";
 import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
@@ -82,35 +82,34 @@ export function About() {
           ))}
         </ul>
 
-        {/* One standout trip, with the mountains it was in */}
-        <div className="mt-8 grid items-end gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <div>
-            <h3 className="label">{about.highlight.label}</h3>
-            <Reveal className="mt-3 grid max-w-3xl overflow-hidden rounded-xl border border-line sm:grid-cols-[14rem_1fr]">
-              <Image
-                src={about.highlight.image.src}
-                alt={about.highlight.image.alt}
-                width={about.highlight.image.width}
-                height={about.highlight.image.height}
-                sizes="(min-width: 640px) 224px, 100vw"
-                className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto"
-              />
-              <div className="p-5">
-                <a
-                  href={about.highlight.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
-                >
-                  <IconCompass size={18} stroke={1.6} className="self-center" aria-hidden />
-                  {about.highlight.title} <span aria-hidden className="text-muted">↗</span>
-                </a>
-                <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
-              </div>
-            </Reveal>
+        {/* One standout trip, with the mountains it was in drawn as ridgelines */}
+        <h3 className="label mt-8">{about.highlight.label}</h3>
+        <Reveal className="mt-3 grid overflow-hidden rounded-xl border border-line sm:grid-cols-[14rem_1fr] lg:grid-cols-[14rem_1fr_minmax(0,24rem)]">
+          <Image
+            src={about.highlight.image.src}
+            alt={about.highlight.image.alt}
+            width={about.highlight.image.width}
+            height={about.highlight.image.height}
+            sizes="(min-width: 640px) 224px, 100vw"
+            className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto"
+          />
+          <div className="p-5">
+            <a
+              href={about.highlight.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
+            >
+              <IconCompass size={18} stroke={1.6} className="self-center" aria-hidden />
+              {about.highlight.title} <span aria-hidden className="text-muted">↗</span>
+            </a>
+            <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
           </div>
-          <ArtFigure kind="ridges" seed={3} caption="Fig. 2 · Smith Rock to Broken Top, as ridgelines" artClassName="aspect-[16/9]" />
-        </div>
+          <div className="flex flex-col border-t border-line px-5 pb-4 pt-3 sm:col-span-2 lg:col-span-1 lg:border-l lg:border-t-0">
+            <Art kind="ridges" seed={3} label="Smith Rock to Broken Top, as ridgelines" className="h-28 lg:h-auto lg:min-h-[120px] lg:flex-1" />
+            <p className="label mt-2">Fig. 2 · Smith Rock to Broken Top, as ridgelines</p>
+          </div>
+        </Reveal>
       </section>
 
       {/* Orgs */}
@@ -149,9 +148,9 @@ export function About() {
       <section className="mt-14 sm:mt-16">
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
         <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
-        <div className="mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3">
           {sketches.map((s) => (
-            <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-square" />
+            <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-[4/3]" />
           ))}
         </div>
       </section>

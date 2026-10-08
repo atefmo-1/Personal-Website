@@ -100,8 +100,8 @@ export function Hero() {
           <ArtFigure
             kind="order"
             caption="Fig. 1 · Messy workflows in, tools people use out"
-            className="enter-fade mt-8 max-w-[640px]"
-            artClassName="aspect-[5/1]"
+            className="enter-fade mt-7 max-w-[560px]"
+            artClassName="aspect-[6/1]"
           />
           {/* On phones the sky sits here, so the name stays near the top */}
           <SkyNow className="mt-8 max-w-[300px] lg:hidden" />

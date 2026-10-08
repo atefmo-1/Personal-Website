@@ -37,7 +37,7 @@ export function HomeSections() {
             <More href="/about">Hobbies, communities, and the route map</More>
           </div>
         </div>
-        <ArtFigure kind="delta" seed={1} caption="Fig. 2 · The Nile Delta. I grew up at the dot." artClassName="aspect-[4/3]" />
+        <ArtFigure kind="delta" seed={1} caption="Fig. 2 · The Nile Delta. I grew up at the dot." artClassName="aspect-[16/10]" />
       </Reveal>
 
       {showProjects && featured && (
@@ -66,8 +66,8 @@ export function HomeSections() {
       </section>
 
       {/* Signed off: my name, drawn by a Fourier series */}
-      <figure className="mx-auto max-w-3xl print:hidden">
-        <Signature className="aspect-[16/9]" />
+      <figure className="mx-auto max-w-2xl print:hidden">
+        <Signature className="aspect-[2/1]" />
         <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
           <span>Fig. 3 · My name, drawn by {signaturePoints.length / 3} spinning circles (a Fourier series)</span>
           <span aria-hidden className="shrink-0 normal-case tracking-normal">

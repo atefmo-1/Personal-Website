@@ -72,6 +72,17 @@ function ridges(w: number, h: number, seed: number): Line[] {
     const start = (i / n) * 0.55;
     lines.push({ pts, width: 1.1, alpha: 0.85, start, end: start + 0.45, fill: true });
   }
+  // Squash the peaks if the tallest would poke out of a short box (like the footer's)
+  let squash = 1;
+  lines.forEach((l, i) => {
+    const y0 = h * 0.3 + (i / (n - 1)) * h * 0.66;
+    for (let k = 1; k < l.pts.length; k += 2) if (l.pts[k] < 4) squash = Math.min(squash, (y0 - 4) / (y0 - l.pts[k]));
+  });
+  if (squash < 1)
+    lines.forEach((l, i) => {
+      const y0 = h * 0.3 + (i / (n - 1)) * h * 0.66;
+      for (let k = 1; k < l.pts.length; k += 2) l.pts[k] = y0 - (y0 - l.pts[k]) * squash;
+    });
   return lines;
 }
 

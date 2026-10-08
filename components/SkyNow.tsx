@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CHAPEL_HILL, distanceKm, moonPhase, sunElevation, visitorPlace } from "@/lib/sky";
+import { CHAPEL_HILL, moonPhase, sunElevation } from "@/lib/sky";
 
 // The sky over Chapel Hill right now: today's sun path, where the sun is on it, and the moon at
-// night. Below it, how far the visitor's time zone city is. Computed in the browser and updated
-// every minute.
+// night. Computed in the browser and updated every minute.
 const W = 300;
 const H = 86;
 const HORIZON = 64;
@@ -17,7 +16,6 @@ type Now = {
   below: string;
   dot: [number, number];
   moon: { age: number; lit: number };
-  away: { city: string; km: number } | null;
 };
 
 function read(): Now {
@@ -41,8 +39,6 @@ function read(): Now {
   const curve = day.filter((seg) => seg.length > 1).map((seg) => "M" + seg.join(" L")).join(" ");
   const below = "M" + all.join(" L");
   const elevation = sunElevation(now, ...CHAPEL_HILL);
-  const place = visitorPlace();
-  const km = place ? distanceKm(place.at, CHAPEL_HILL) : 0;
   return {
     time: now.toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }),
     elevation,
@@ -50,7 +46,6 @@ function read(): Now {
     below,
     dot: [x(hh * 60 + mm), y(Math.max(elevation, -14))],
     moon: moonPhase(now),
-    away: place && km > 80 ? { city: place.city, km: Math.round(km / 100) * 100 } : null,
   };
 }
 
@@ -81,7 +76,7 @@ export function SkyNow({ className = "" }: { className?: string }) {
   const day = now ? now.elevation > -0.833 : true;
 
   return (
-    <figure className={`min-h-[132px] print:hidden ${className}`}>
+    <figure className={`min-h-[116px] print:hidden ${className}`}>
       {now && (
         <>
           <svg viewBox={`0 0 ${W} ${H}`} className="block w-full text-fg" role="img" aria-label={`The sun's path over Chapel Hill today. It's ${now.time} there, and the sun is ${Math.abs(Math.round(now.elevation))}° ${day ? "above" : "below"} the horizon.`}>
@@ -105,11 +100,6 @@ export function SkyNow({ className = "" }: { className?: string }) {
           </svg>
           <figcaption className="label mt-2 leading-relaxed">
             Chapel Hill · {now.time} · {day ? `sun ${Math.round(now.elevation)}° up` : `night · moon ${Math.round(now.moon.lit * 100)}% lit`}
-            {now.away && (
-              <span className="block normal-case tracking-normal">
-                Your time zone ({now.away.city}) is ~{now.away.km.toLocaleString("en-US")} km away
-              </span>
-            )}
           </figcaption>
         </>
       )}
