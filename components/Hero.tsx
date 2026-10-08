@@ -50,10 +50,7 @@ export function Hero() {
         </figure>
 
         <div className="col-span-12 lg:col-span-8">
-          <p className="enter-fade flex items-center gap-2 font-mono text-[11px] uppercase tracking-label text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-            {site.status}
-          </p>
+          <p className="enter-fade font-mono text-[11px] uppercase tracking-label text-muted">{site.status}</p>
 
           <h1
             className="mt-4 font-display font-bold uppercase leading-[0.86] tracking-[-0.025em] text-[13vw] sm:text-[10vw] lg:text-[min(6.5vw,6rem)]"
