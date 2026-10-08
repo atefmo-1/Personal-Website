@@ -37,10 +37,8 @@ export function HomeSections() {
             <More href="/about">Hobbies, communities, and the route map</More>
           </div>
         </div>
-        <ArtFigure kind="rings" seed={1} caption="Fig. 1 · Three homes, three rings" artClassName="aspect-[4/3]" />
+        <ArtFigure kind="delta" seed={1} caption="Fig. 2 · The Nile Delta. I grew up at the dot." artClassName="aspect-[4/3]" />
       </Reveal>
-
-      <ArtFigure kind="order" seed={1} caption="Fig. 2 · Messy workflows in, tools people use out" artClassName="aspect-[3/1] sm:aspect-[4/1]" />
 
       {showProjects && featured && (
         <section>
@@ -68,7 +66,7 @@ export function HomeSections() {
       </section>
 
       {/* Signed off: my name, drawn by a Fourier series */}
-      <figure className="mx-auto max-w-3xl">
+      <figure className="mx-auto max-w-3xl print:hidden">
         <Signature className="aspect-[16/9]" />
         <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
           <span>Fig. 3 · My name, drawn by {signaturePoints.length / 3} spinning circles (a Fourier series)</span>

@@ -12,6 +12,8 @@ import { Ink } from "./Ink";
 const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia");
 
 const sketches: { kind: ArtKind; caption: string }[] = [
+  { kind: "lorenz", caption: "Lorenz attractor: chaos from three equations" },
+  { kind: "phyllotaxis", caption: "Golden angle: 137.5°, like a sunflower" },
   { kind: "lissajous", caption: "Lissajous: two sine waves" },
   { kind: "spirograph", caption: "Spirograph: a wheel in a wheel" },
   { kind: "julia", caption: "Julia set: z² + c, as contours" },
@@ -20,7 +22,7 @@ const sketches: { kind: ArtKind; caption: string }[] = [
 
 export function About() {
   return (
-    <Section title="About" art={{ kind: "ridges", seed: 3, caption: "Fig. 1 · Smith Rock to Broken Top, as ridgelines" }}>
+    <Section title="About" art={{ kind: "shots", caption: "Fig. 1 · Every jump shot is a parabola" }}>
       {/* Hobbies */}
       <section>
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.hobbiesTitle}</Ink></h2>
@@ -80,30 +82,35 @@ export function About() {
           ))}
         </ul>
 
-        {/* One standout trip */}
-        <h3 className="label mt-8">{about.highlight.label}</h3>
-        <Reveal className="mt-3 grid max-w-3xl overflow-hidden rounded-xl border border-line sm:grid-cols-[14rem_1fr]">
-          <Image
-            src={about.highlight.image.src}
-            alt={about.highlight.image.alt}
-            width={about.highlight.image.width}
-            height={about.highlight.image.height}
-            sizes="(min-width: 640px) 224px, 100vw"
-            className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto"
-          />
-          <div className="p-5">
-            <a
-              href={about.highlight.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
-            >
-              <IconCompass size={18} stroke={1.6} className="self-center" aria-hidden />
-              {about.highlight.title} <span aria-hidden className="text-muted">↗</span>
-            </a>
-            <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
+        {/* One standout trip, with the mountains it was in */}
+        <div className="mt-8 grid items-end gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <div>
+            <h3 className="label">{about.highlight.label}</h3>
+            <Reveal className="mt-3 grid max-w-3xl overflow-hidden rounded-xl border border-line sm:grid-cols-[14rem_1fr]">
+              <Image
+                src={about.highlight.image.src}
+                alt={about.highlight.image.alt}
+                width={about.highlight.image.width}
+                height={about.highlight.image.height}
+                sizes="(min-width: 640px) 224px, 100vw"
+                className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto"
+              />
+              <div className="p-5">
+                <a
+                  href={about.highlight.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
+                >
+                  <IconCompass size={18} stroke={1.6} className="self-center" aria-hidden />
+                  {about.highlight.title} <span aria-hidden className="text-muted">↗</span>
+                </a>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
+          <ArtFigure kind="ridges" seed={3} caption="Fig. 2 · Smith Rock to Broken Top, as ridgelines" artClassName="aspect-[16/9]" />
+        </div>
       </section>
 
       {/* Orgs */}
@@ -142,7 +149,7 @@ export function About() {
       <section className="mt-14 sm:mt-16">
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
         <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
-        <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {sketches.map((s) => (
             <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-square" />
           ))}

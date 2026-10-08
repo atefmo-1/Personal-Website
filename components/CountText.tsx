@@ -60,7 +60,11 @@ export function CountText({ text, className }: { text: string; className?: strin
     <span ref={ref} className={className}>
       {/* Screen readers get the final text once, not every animation frame */}
       <span className="sr-only">{text}</span>
-      <span aria-hidden>
+      {/* Printing shows the final text, even if the numbers haven't counted up yet */}
+      <span aria-hidden className="hidden print:inline">
+        {text}
+      </span>
+      <span aria-hidden className="print:hidden">
         {parts.map((p, i) =>
           typeof p === "string" ? (
             p

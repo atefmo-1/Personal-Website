@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { BlueprintMode } from "@/components/BlueprintMode";
 import { Footer } from "@/components/Footer";
 import { MotionProvider } from "@/components/MotionProvider";
 import { Nav } from "@/components/Nav";
@@ -19,6 +20,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  // Makes the share image URL absolute in production
+  metadataBase: new URL("https://atefmohamed.com"),
   title: {
     default: site.name,
     template: `%s | ${site.name}`,
@@ -28,8 +31,9 @@ export const metadata: Metadata = {
     title: site.name,
     description: site.description,
     type: "website",
-    images: ["/portrait.webp"],
   },
+  // The preview image comes from app/opengraph-image.tsx
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -58,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
+          <BlueprintMode />
         </MotionProvider>
       </body>
     </html>

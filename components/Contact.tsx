@@ -1,5 +1,6 @@
 import { IconBrandLinkedin, IconFileText } from "@tabler/icons-react";
 import { ContactForm } from "./ContactForm";
+import { MorseHello } from "./MorseHello";
 import { CopyEmail } from "./CopyEmail";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
@@ -15,9 +16,11 @@ export function Contact() {
   return (
     <Section
       title="Say hello"
-      art={{ kind: "converge", seed: 2, caption: "Fig. 1 · Every path ends at my inbox" }}
+      art={{ kind: "planes", caption: "Fig. 1 · Messages, inbound to Chapel Hill" }}
       intro="Recruiting, want to work on something together, looking for advice, or up for a coffee or a call? My inbox is open 👋"
     >
+      <MorseHello className="-mt-4 mb-12 sm:mb-14" />
+
       <div className="grid-12 gap-y-10">
         {/* Direct options: quickest for recruiters, so they come first */}
         <Reveal className="col-span-12 lg:col-span-4">

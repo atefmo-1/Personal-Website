@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { route } from "@/lib/site";
+import { CHAPEL_HILL, distanceKm, visitorPlace } from "@/lib/sky";
 
 // A slowly spinning dotted globe with the route pinned on it (Sharqia → Johannesburg → Chapel Hill).
 // Drawn on a canvas in the theme's text color at low opacity, so it works in light and dark mode.
@@ -37,6 +38,10 @@ export function Globe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // A faint arc from the visitor's time zone city to Chapel Hill (computed here, never sent)
+    const place = visitorPlace();
+    const visitor = place && distanceKm(place.at, CHAPEL_HILL) > 300 ? toVec(...place.at) : null;
+    const visitorArc = visitor ? arc(visitor, toVec(...CHAPEL_HILL)) : null;
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const still = !window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
@@ -94,6 +99,29 @@ export function Globe({ className }: { className?: string }) {
         ctx.strokeStyle = `rgba(${c},0.55)`;
         ctx.stroke();
       }
+      if (visitorArc && visitor) {
+        ctx.setLineDash([1, 4]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(${c},0.4)`;
+        ctx.beginPath();
+        let pen = false;
+        for (const v of visitorArc) {
+          const [x, y, d] = at(v);
+          if (d <= 0) { pen = false; continue; }
+          if (pen) ctx.lineTo(x, y);
+          else ctx.moveTo(x, y);
+          pen = true;
+        }
+        ctx.stroke();
+        const [vx, vy, vd] = at(visitor);
+        if (vd > 0) {
+          ctx.setLineDash([]);
+          ctx.strokeStyle = `rgba(${c},0.6)`;
+          ctx.beginPath();
+          ctx.arc(vx, vy, 3, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
       ctx.setLineDash([]);
 
       for (const v of PINS) {
@@ -121,7 +149,7 @@ export function Globe({ className }: { className?: string }) {
     if (still) {
       // Theme changes still need a redraw even without animation.
       const obs = new MutationObserver(draw);
-      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-blueprint"] });
       return () => obs.disconnect();
     }
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));

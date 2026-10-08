@@ -186,3 +186,99 @@ body {
     transition: none;
   }
 }
+
+/* Skill constellation (SkillConstellation.tsx): lines and stars appear on first view. */
+.constellation .constellation-edge {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.6s ease;
+}
+.constellation .constellation-star {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.constellation.is-seen .constellation-edge {
+  stroke-dashoffset: 0;
+}
+.constellation.is-seen .constellation-star {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .constellation .constellation-edge,
+  .constellation .constellation-star {
+    transition: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Blueprint mode (BlueprintMode.tsx): type "draw" anywhere. Doubled attribute selector so it
+   wins over both themes. */
+:root[data-blueprint][data-blueprint] {
+  color-scheme: dark;
+  --bg: 16 54 102;
+  --surface: 22 66 120;
+  --fg: 236 244 255;
+  --muted: 168 196 230;
+  --line: 72 112 166;
+}
+:root[data-blueprint] body {
+  background-image: linear-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.09) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+}
+:root[data-blueprint] .brand {
+  color: currentColor;
+}
+
+/* Print: a clean black-on-white sheet. Interactive drawings are hidden (print:hidden); the
+   hero's ink route drawing stays as the one illustration. */
+@page {
+  margin: 14mm;
+}
+@media print {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* :not(#_) adds ID-level weight, so these beat the dark and blueprint tokens */
+  :root:not(#_) {
+    color-scheme: light;
+    --bg: 255 255 255;
+    --surface: 255 255 255;
+    --fg: 0 0 0;
+    --muted: 80 80 80;
+    --line: 205 205 205;
+  }
+  body {
+    background: #fff !important;
+  }
+  /* Content that reveals on scroll may not have been scrolled to yet */
+  [style*="opacity"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .ink-underline {
+    clip-path: none;
+  }
+  .ink-path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  main section,
+  main header {
+    padding-top: 0 !important;
+  }
+  a[href^="http"]::after {
+    content: "";
+  }
+  article,
+  li,
+  figure {
+    break-inside: avoid;
+  }
+}

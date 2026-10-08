@@ -184,7 +184,7 @@ export function Signature({ className = "" }: { className?: string }) {
     );
     io.observe(canvas);
     const mo = new MutationObserver(draw);
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-blueprint"] });
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     mq.addEventListener("change", draw);
     const button = canvas.parentElement!;

@@ -66,7 +66,7 @@ export function ProjectCard({ project: p, headingLevel: Heading = "h2" }: { proj
 
 export function Projects() {
   return (
-    <Section title="Projects" intro={projectsIntro} art={{ kind: "phyllotaxis", caption: "Fig. 1 · 640 seeds, each turned 137.5° (the golden angle)" }}>
+    <Section title="Projects" intro={projectsIntro} art={{ kind: "flow", seed: 5, caption: "Fig. 1 · Ideas, before they find their shape" }}>
       <div className="grid gap-6">
         {projects.map((p) => (
           <Reveal key={p.slug}>

@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "delta" | "shots" | "planes";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -17,6 +17,8 @@ type Line = {
   fill?: boolean; // fill below the line with the page color (ridgelines hide what's behind)
   dot?: boolean; // finish the line with a small dot
   segs?: boolean; // pts are separate segments (x1, y1, x2, y2), not one polyline
+  plane?: boolean; // a paper plane rides the tip of the line while it draws
+  text?: { x: number; y: number; s: string; align?: CanvasTextAlign }; // a small label, shown once the line is drawn
 };
 
 const DURATION = 2400; // ms
@@ -318,7 +320,137 @@ function isoSegments(field: Float32Array, cols: number, rows: number, cell: numb
   return out;
 }
 
-const builders = { order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+// The Nile running north to Cairo, then fanning out into the delta and the Mediterranean.
+// Sharqia, where I grew up, is marked on the delta's eastern side.
+function delta(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 2654435761 + 11);
+  const apex = { x: w * 0.5, y: h * 0.66 };
+  const coastY = (x: number) => h * 0.12 + ((x - w / 2) / (w / 2)) ** 2 * h * 0.16;
+  const lines: Line[] = [];
+  const depthMax = 6;
+
+  // The river below Cairo, meandering up from the bottom edge
+  const trunk: number[] = [];
+  for (let y = h; y >= apex.y; y -= 3) trunk.push(apex.x + (noise(y / 40, seed) - 0.5) * 18 * ((y - apex.y) / (h - apex.y)), y);
+  lines.push({ pts: trunk, width: 1.8, alpha: 0.95, start: 0, end: 0.18 });
+
+  function branch(x: number, y: number, ang: number, len: number, depth: number) {
+    const pts = [x, y];
+    let a = ang;
+    for (let d = 0; d < len; d += 3) {
+      a += (noise(x / 30 + seed * 3, y / 30 + depth) - 0.5) * 0.22;
+      x += Math.cos(a) * 3;
+      y += Math.sin(a) * 3;
+      if (y < coastY(x) || x < 2 || x > w - 2) break;
+      pts.push(x, y);
+    }
+    const start = 0.15 + (depth / depthMax) * 0.55;
+    lines.push({ pts, width: Math.max(0.6, 1.7 - depth * 0.2), alpha: 0.9 - depth * 0.06, start, end: start + 0.14 });
+    if (depth >= depthMax || y < coastY(x) + 2) return;
+    const spread = 0.24 + r() * 0.22;
+    branch(x, y, ang - spread, len * (0.72 + r() * 0.1), depth + 1);
+    branch(x, y, ang + spread, len * (0.72 + r() * 0.1), depth + 1);
+  }
+  const spread0 = 0.38 + r() * 0.12;
+  branch(apex.x, apex.y, -Math.PI / 2 - spread0, h * 0.2, 1);
+  branch(apex.x, apex.y, -Math.PI / 2 + spread0, h * 0.2, 1);
+
+  // The coast
+  const coast: number[] = [];
+  for (let x = 0; x <= w; x += 4) coast.push(x, coastY(x) + (noise(x / 25, 7) - 0.5) * 4);
+  lines.push({ pts: coast, width: 1, alpha: 0.55, start: 0.6, end: 0.95, text: { x: w / 2, y: h * 0.07, s: "MEDITERRANEAN SEA", align: "center" } });
+
+  // Cairo at the apex, Sharqia to the northeast
+  const ring = (cx: number, cy: number, rad: number) => {
+    const pts: number[] = [];
+    for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.2) pts.push(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
+    return pts;
+  };
+  lines.push({ pts: ring(apex.x, apex.y, 3), width: 1.4, alpha: 1, start: 0.16, end: 0.2, text: { x: apex.x - 10, y: apex.y + 4, s: "CAIRO", align: "right" } });
+  const sx = w * 0.66;
+  const sy = apex.y - (apex.y - coastY(sx)) * 0.42;
+  lines.push({ pts: ring(sx, sy, 4.5), width: 1.8, alpha: 1, start: 0.85, end: 0.95 });
+  lines.push({ pts: ring(sx, sy, 10), width: 0.9, alpha: 0.6, start: 0.9, end: 1, text: { x: sx + 16, y: sy + 4, s: "SHARQIA", align: "left" } });
+  return lines;
+}
+
+// A hoop and a handful of jump shots: each one is a parabola, y = y0 + vy*t + g*t^2/2.
+function shots(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 40503 + 5);
+  const floor = h * 0.94;
+  const rim = { x: w * 0.83, y: h * 0.4 };
+  const lines: Line[] = [];
+  // Floor, pole, backboard, rim and net
+  lines.push({ pts: [w * 0.02, floor, w * 0.98, floor], width: 1, alpha: 0.6, start: 0, end: 0.1 });
+  lines.push({ pts: [w * 0.93, floor, w * 0.93, h * 0.22, w * 0.88, h * 0.22], width: 1.4, alpha: 0.9, start: 0.02, end: 0.12 });
+  lines.push({ pts: [w * 0.88, h * 0.12, w * 0.88, h * 0.46], width: 2, alpha: 1, start: 0.06, end: 0.14 });
+  lines.push({ pts: [w * 0.88, rim.y, w * 0.79, rim.y], width: 1.6, alpha: 1, start: 0.1, end: 0.16 });
+  for (let i = 0; i < 4; i++) {
+    const x = w * 0.79 + (i / 3) * w * 0.09;
+    lines.push({ pts: [x, rim.y, w * 0.805 + (i / 3) * w * 0.06, rim.y + h * 0.12], width: 0.7, alpha: 0.55, start: 0.12, end: 0.18 });
+  }
+  const n = 7;
+  for (let i = 0; i < n; i++) {
+    const x0 = w * (0.05 + r() * 0.55);
+    const y0 = floor - h * (0.2 + r() * 0.08);
+    const miss = i === 2 || i === 5;
+    const tx = rim.x + (miss ? (r() < 0.5 ? -1 : 1) * w * 0.035 : 0);
+    const T = 1;
+    const g = h * (2.2 + r() * 1.2); // higher arcs for some shots
+    const vx = (tx - x0) / T;
+    const vy = (rim.y - y0 - (g * T * T) / 2) / T;
+    const pts: number[] = [];
+    for (let t = 0; t <= T; t += 0.01) pts.push(x0 + vx * t, y0 + vy * t + (g * t * t) / 2);
+    if (miss) {
+      // Off the rim: a small bounce away
+      const bx = tx;
+      for (let t = 0.01; t <= 0.5; t += 0.01) pts.push(bx + (tx < rim.x ? -1 : 1) * w * 0.12 * t, rim.y - h * 0.5 * t + h * 1.6 * t * t);
+    } else {
+      for (let t = 0.01; t <= 0.12; t += 0.01) pts.push(tx, rim.y + h * t);
+    }
+    const start = 0.15 + (i / n) * 0.7;
+    lines.push({ pts, width: miss ? 0.8 : 1.1, alpha: miss ? 0.5 : 0.85, start, end: start + 0.16, dot: true });
+  }
+  return lines;
+}
+
+// Paper planes on curved paths from all directions, landing in Chapel Hill.
+function planes(w: number, h: number, seed: number): Line[] {
+  const r = rng(seed * 7477 + 13);
+  const home = { x: w * 0.6, y: h * 0.56 };
+  const lines: Line[] = [];
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + r() * 0.4;
+    const far = Math.max(w, h) * (0.55 + r() * 0.2);
+    const x0 = home.x + Math.cos(a) * far;
+    const y0 = home.y + Math.sin(a) * far * 0.6;
+    // Curve each path to one side, like a great-circle route on a flat map
+    const mx = (x0 + home.x) / 2 - Math.sin(a) * far * 0.35 * (r() < 0.5 ? 1 : -1);
+    const my = (y0 + home.y) / 2 - Math.abs(Math.cos(a)) * far * 0.25;
+    const pts: number[] = [];
+    for (let t = 0; t <= 1; t += 0.01) {
+      const u = 1 - t;
+      const x = u * u * x0 + 2 * u * t * mx + t * t * home.x;
+      const y = u * u * y0 + 2 * u * t * my + t * t * home.y;
+      if (x < -20 || x > w + 20 || y < -20 || y > h + 20) continue;
+      pts.push(x, y);
+    }
+    if (pts.length < 6) continue;
+    const start = r() * 0.55;
+    lines.push({ pts, width: 0.9, alpha: 0.6, start, end: start + 0.4, plane: true });
+  }
+  const ring = (rad: number) => {
+    const pts: number[] = [];
+    for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.15) pts.push(home.x + Math.cos(a) * rad, home.y + Math.sin(a) * rad);
+    return pts;
+  };
+  lines.push({ pts: ring(4), width: 2, alpha: 1, start: 0.9, end: 0.97 });
+  lines.push({ pts: ring(11), width: 0.9, alpha: 0.6, start: 0.93, end: 1, text: { x: home.x + 18, y: home.y + 4, s: "CHAPEL HILL", align: "left" } });
+  return lines;
+}
+
+const builders = { delta, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; seed?: number; label: string; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -380,6 +512,33 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
         ctx.strokeStyle = `rgba(${fg},${l.alpha})`;
         ctx.lineWidth = l.width;
         ctx.stroke();
+        if (l.plane && f < 1 && count > 2) {
+          // A small paper plane at the head, pointing along the path
+          const hx = l.pts[(count - 1) * 2];
+          const hy = l.pts[(count - 1) * 2 + 1];
+          const ang = Math.atan2(hy - l.pts[(count - 2) * 2 + 1], hx - l.pts[(count - 2) * 2]);
+          ctx.save();
+          ctx.translate(hx, hy);
+          ctx.rotate(ang);
+          ctx.beginPath();
+          ctx.moveTo(6, 0);
+          ctx.lineTo(-5, -4.5);
+          ctx.lineTo(-2.5, 0);
+          ctx.lineTo(-5, 4.5);
+          ctx.closePath();
+          ctx.fillStyle = bg;
+          ctx.fill();
+          ctx.strokeStyle = `rgba(${fg},1)`;
+          ctx.lineWidth = 1.1;
+          ctx.stroke();
+          ctx.restore();
+        }
+        if (l.text && f === 1) {
+          ctx.font = `500 10px ${css("--font-mono") || "monospace"}`;
+          ctx.textAlign = l.text.align ?? "left";
+          ctx.fillStyle = `rgba(${fg},0.8)`;
+          ctx.fillText(l.text.s, l.text.x, l.text.y);
+        }
         if (l.dot && f === 1) {
           const x = l.pts[l.pts.length - 2];
           const y = l.pts[l.pts.length - 1];
@@ -442,7 +601,7 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
     );
     io.observe(canvas);
     const mo = new MutationObserver(() => draw(progress));
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-blueprint"] });
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onScheme = () => draw(progress);
     mq.addEventListener("change", onScheme);
@@ -471,7 +630,7 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
 // A figure with a gallery-style caption under it.
 export function ArtFigure({ kind, seed, caption, className = "", artClassName = "aspect-[16/9]" }: { kind: ArtKind; seed?: number; caption: string; className?: string; artClassName?: string }) {
   return (
-    <figure className={className}>
+    <figure className={`print:hidden ${className}`}>
       <Art kind={kind} seed={seed} label={caption} className={artClassName} />
       <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
         <span>{caption}</span>

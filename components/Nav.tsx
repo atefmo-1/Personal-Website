@@ -9,7 +9,7 @@ import { site } from "@/lib/site";
 export function Nav() {
   const pathname = usePathname();
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 print:hidden border-b border-line bg-bg/85 backdrop-blur-md">
       <nav aria-label="Primary" className="container-x flex h-14 items-center justify-between gap-4">
         <Link href="/" className="font-display text-[15px] font-bold tracking-tight" aria-label={`${site.name}, home`}>
           <span className="hidden md:inline">{site.name}</span>

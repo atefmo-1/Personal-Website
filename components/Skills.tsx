@@ -1,4 +1,5 @@
 import { Reveal } from "./Reveal";
+import { SkillConstellation } from "./SkillConstellation";
 import { SkillPill } from "./SkillPill";
 import { skillGroups, skillsIntro } from "@/lib/skills";
 import { Ink } from "./Ink";
@@ -14,8 +15,10 @@ export function Skills() {
         <p className="text-muted">{skillsIntro}</p>
       </div>
 
+      <SkillConstellation groups={skillGroups.map((g) => ({ title: g.title, items: g.items.map((s) => s.name) }))} />
+
       <Reveal>
-        <dl className="mt-6 border-t border-line">
+        <dl className="mt-8 border-t border-line">
           {skillGroups.map((group) => (
             <div
               key={group.title}

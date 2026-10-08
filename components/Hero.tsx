@@ -1,8 +1,10 @@
 import Image from "next/image";
+import { ArtFigure } from "./Art";
 import { Button } from "./Button";
 import { Globe } from "./Globe";
 import { InkJourney } from "./InkJourney";
 import { RotatingWord } from "./RotatingWord";
+import { SkyNow } from "./SkyNow";
 import { site } from "@/lib/site";
 
 // The entrance is pure CSS (see .enter-* in globals.css), gated on
@@ -36,7 +38,7 @@ export function Hero() {
       <div className="container-x grid-12 items-center gap-y-8 pb-10 pt-24 sm:pb-14 sm:pt-28">
         {/* Portrait: first on phones, right column on desktop */}
         <figure className="enter-fade relative col-span-12 lg:order-last lg:col-span-4 lg:col-start-9" style={delay(0.2)}>
-          <Globe className="pointer-events-none absolute left-[4.5rem] top-1/2 -z-10 aspect-square w-[260px] -translate-x-1/2 -translate-y-1/2 sm:left-[5.5rem] sm:w-[320px] lg:left-auto lg:right-[150px] lg:w-[520px] lg:translate-x-1/2" />
+          <Globe className="pointer-events-none print:hidden absolute left-[4.5rem] top-1/2 -z-10 aspect-square w-[260px] -translate-x-1/2 -translate-y-1/2 sm:left-[5.5rem] sm:w-[320px] lg:left-auto lg:right-[150px] lg:w-[520px] lg:translate-x-1/2" />
           <div className="w-36 sm:w-44 lg:ml-auto lg:w-full lg:max-w-[300px]">
             <div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl bg-line">
               <Image
@@ -49,6 +51,8 @@ export function Hero() {
               />
             </div>
           </div>
+          {/* The sky over Chapel Hill right now */}
+          <SkyNow className="mt-5 hidden w-full max-w-[300px] lg:ml-auto lg:block" />
         </figure>
 
         <div className="col-span-12 lg:col-span-8">
@@ -91,6 +95,16 @@ export function Hero() {
               </Button>
             </div>
           </div>
+
+          {/* The tagline, drawn: tangled lines that settle into calm, parallel ones */}
+          <ArtFigure
+            kind="order"
+            caption="Fig. 1 · Messy workflows in, tools people use out"
+            className="enter-fade mt-8 max-w-[640px]"
+            artClassName="aspect-[5/1]"
+          />
+          {/* On phones the sky sits here, so the name stays near the top */}
+          <SkyNow className="mt-8 max-w-[300px] lg:hidden" />
         </div>
 
         <div className="order-last col-span-12 mt-4 sm:mt-8">
