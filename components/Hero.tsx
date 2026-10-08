@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { ArtFigure } from "./Art";
 import { Button } from "./Button";
-import { Globe } from "./Globe";
 import { InkJourney } from "./InkJourney";
 import { RotatingWord } from "./RotatingWord";
 import { SkyNow } from "./SkyNow";
@@ -33,12 +32,10 @@ function SplitWord({ word, start }: { word: string; start: number }) {
 
 export function Hero() {
   return (
-    // `isolate` gives the globe its own layer, so it can sit behind the portrait.
-    <section className="relative isolate overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="container-x grid-12 items-center gap-y-8 pb-10 pt-24 sm:pb-14 sm:pt-28">
         {/* Portrait: first on phones, right column on desktop */}
         <figure className="enter-fade relative col-span-12 lg:order-last lg:col-span-4 lg:col-start-9" style={delay(0.2)}>
-          <Globe className="pointer-events-none print:hidden absolute left-[4.5rem] top-1/2 -z-10 aspect-square w-[260px] -translate-x-1/2 -translate-y-1/2 sm:left-[5.5rem] sm:w-[320px] lg:left-auto lg:right-[150px] lg:w-[520px] lg:translate-x-1/2" />
           <div className="w-36 sm:w-44 lg:ml-auto lg:w-full lg:max-w-[300px]">
             <div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl bg-line">
               <Image

@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "delta" | "shots" | "planes";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -331,60 +331,6 @@ function isoSegments(field: Float32Array, cols: number, rows: number, cell: numb
   return out;
 }
 
-// The Nile running north to Cairo, then fanning out into the delta and the Mediterranean.
-// Sharqia, where I grew up, is marked on the delta's eastern side.
-function delta(w: number, h: number, seed: number): Line[] {
-  const r = rng(seed * 2654435761 + 11);
-  const apex = { x: w * 0.5, y: h * 0.66 };
-  const coastY = (x: number) => h * 0.12 + ((x - w / 2) / (w / 2)) ** 2 * h * 0.16;
-  const lines: Line[] = [];
-  const depthMax = 6;
-
-  // The river below Cairo, meandering up from the bottom edge
-  const trunk: number[] = [];
-  for (let y = h; y >= apex.y; y -= 3) trunk.push(apex.x + (noise(y / 40, seed) - 0.5) * 18 * ((y - apex.y) / (h - apex.y)), y);
-  lines.push({ pts: trunk, width: 1.8, alpha: 0.95, start: 0, end: 0.18 });
-
-  function branch(x: number, y: number, ang: number, len: number, depth: number) {
-    const pts = [x, y];
-    let a = ang;
-    for (let d = 0; d < len; d += 3) {
-      a += (noise(x / 30 + seed * 3, y / 30 + depth) - 0.5) * 0.22;
-      x += Math.cos(a) * 3;
-      y += Math.sin(a) * 3;
-      if (y < coastY(x) || x < 2 || x > w - 2) break;
-      pts.push(x, y);
-    }
-    const start = 0.15 + (depth / depthMax) * 0.55;
-    lines.push({ pts, width: Math.max(0.6, 1.7 - depth * 0.2), alpha: 0.9 - depth * 0.06, start, end: start + 0.14 });
-    if (depth >= depthMax || y < coastY(x) + 2) return;
-    const spread = 0.24 + r() * 0.22;
-    branch(x, y, ang - spread, len * (0.72 + r() * 0.1), depth + 1);
-    branch(x, y, ang + spread, len * (0.72 + r() * 0.1), depth + 1);
-  }
-  const spread0 = 0.38 + r() * 0.12;
-  branch(apex.x, apex.y, -Math.PI / 2 - spread0, h * 0.2, 1);
-  branch(apex.x, apex.y, -Math.PI / 2 + spread0, h * 0.2, 1);
-
-  // The coast
-  const coast: number[] = [];
-  for (let x = 0; x <= w; x += 4) coast.push(x, coastY(x) + (noise(x / 25, 7) - 0.5) * 4);
-  lines.push({ pts: coast, width: 1, alpha: 0.55, start: 0.6, end: 0.95, text: { x: w / 2, y: h * 0.07, s: "MEDITERRANEAN SEA", align: "center" } });
-
-  // Cairo at the apex, Sharqia to the northeast
-  const ring = (cx: number, cy: number, rad: number) => {
-    const pts: number[] = [];
-    for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.2) pts.push(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
-    return pts;
-  };
-  lines.push({ pts: ring(apex.x, apex.y, 3), width: 1.4, alpha: 1, start: 0.16, end: 0.2, text: { x: apex.x - 10, y: apex.y + 4, s: "CAIRO", align: "right" } });
-  const sx = w * 0.66;
-  const sy = apex.y - (apex.y - coastY(sx)) * 0.42;
-  lines.push({ pts: ring(sx, sy, 4.5), width: 1.8, alpha: 1, start: 0.85, end: 0.95 });
-  lines.push({ pts: ring(sx, sy, 10), width: 0.9, alpha: 0.6, start: 0.9, end: 1, text: { x: sx + 16, y: sy + 4, s: "SHARQIA", align: "left" } });
-  return lines;
-}
-
 // A hoop and a handful of jump shots: each one is a parabola, y = y0 + vy*t + g*t^2/2.
 function shots(w: number, h: number, seed: number): Line[] {
   const r = rng(seed * 40503 + 5);
@@ -461,7 +407,7 @@ function planes(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { delta, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+const builders = { shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; seed?: number; label: string; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
