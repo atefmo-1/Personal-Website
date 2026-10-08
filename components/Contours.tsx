@@ -2,8 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-// Faint topographic contour lines, like a trail map, behind the hero. Clicking or tapping
-// anywhere in the hero (outside links and buttons) sends a ripple through the lines.
+// Faint topographic contour lines, like a trail map, behind every page (mounted once in the
+// layout). Clicking or tapping anywhere outside links, buttons and form fields sends a ripple
+// through the lines.
 // The lines are static otherwise, so nothing moves on hover and the canvas only redraws
 // while a ripple is running. Reduced-motion readers get the still map with no ripples.
 const CELL = 7; // marching-squares grid size in CSS px
@@ -81,12 +82,11 @@ function contourSegments(w: number, h: number): Float32Array {
 
 type Ripple = { x: number; y: number; t0: number };
 
-export function Contours({ className }: { className?: string }) {
+export function Contours({ className, alpha = 0.09 }: { className?: string; alpha?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
-    const host = canvas.parentElement!;
     const ctx = canvas.getContext("2d")!;
     const still = !window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
     let segs: Float32Array = new Float32Array(0);
@@ -148,7 +148,7 @@ export function Contours({ className }: { className?: string }) {
           base.lineTo(x2, y2);
         }
       }
-      ctx.strokeStyle = `rgba(${c},0.09)`;
+      ctx.strokeStyle = `rgba(${c},${alpha})`;
       ctx.stroke(base);
       ctx.strokeStyle = `rgba(${c},0.45)`;
       ctx.stroke(lit);
@@ -176,16 +176,16 @@ export function Contours({ className }: { className?: string }) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onScheme = () => draw(performance.now());
     mq.addEventListener("change", onScheme);
-    if (!still) host.addEventListener("pointerdown", onPointerDown);
+    if (!still) document.addEventListener("pointerdown", onPointerDown);
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
       mo.disconnect();
       mq.removeEventListener("change", onScheme);
-      host.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("pointerdown", onPointerDown);
     };
-  }, []);
+  }, [alpha]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden />;
 }

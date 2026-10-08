@@ -1,12 +1,13 @@
 import { Reveal } from "./Reveal";
 import { brandColors, brandStyle } from "@/lib/brandColor";
 import { certificates } from "@/lib/certificates";
+import { Ink } from "./Ink";
 
 // Sits under Skills on the Work & Experience page. Server component, like Skills.
 export function Certificates() {
   return (
     <section id="certificates" className="mt-20 scroll-mt-24 sm:mt-28">
-      <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Certificates</h2>
+      <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>Certificates</Ink></h2>
 
       <Reveal>
         <ul className="mt-6 border-t border-line">

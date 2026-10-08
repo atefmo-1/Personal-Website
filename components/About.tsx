@@ -5,17 +5,17 @@ import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
-import { drawings } from "@/lib/drawings";
+import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
 const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia");
 
 export function About() {
   return (
-    <Section title="About" drawing={drawings.about}>
+    <Section title="About">
       {/* Hobbies */}
       <section>
-        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{about.hobbiesTitle}</h2>
+        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.hobbiesTitle}</Ink></h2>
         <Reveal>
           <ul className="mt-5 flex flex-wrap gap-2">
             {about.hobbies.map((h) => (
@@ -100,7 +100,7 @@ export function About() {
 
       {/* Orgs */}
       <section className="mt-14 sm:mt-16">
-        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{about.currentlyTitle}</h2>
+        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.currentlyTitle}</Ink></h2>
         <Reveal>
           <ul className="mt-6 grid border-t border-line sm:grid-cols-2 sm:gap-x-8">
             {about.currently.map((c) => (
@@ -115,7 +115,7 @@ export function About() {
       {/* Route map */}
       <section className="grid-12 mt-14 gap-y-8 sm:mt-16">
         <div className="col-span-12 lg:col-span-4 xl:col-span-3">
-          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{about.routeTitle}</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.routeTitle}</Ink></h2>
           <p className="mt-5 inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-line px-3.5 py-2 text-sm">
             <IconMapPin size={16} stroke={1.6} className="shrink-0" aria-hidden />
             {statesOnly.length} states + DC, and counting!

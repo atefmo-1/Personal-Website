@@ -1,6 +1,7 @@
 import { Reveal } from "./Reveal";
 import { SkillPill } from "./SkillPill";
 import { skillGroups, skillsIntro } from "@/lib/skills";
+import { Ink } from "./Ink";
 
 // Compact block that sits under the roles on the Work & Experience page.
 // Server component on purpose: icon paths are inlined into the HTML, so the (large)
@@ -9,7 +10,7 @@ export function Skills() {
   return (
     <section id="skills" className="mt-20 scroll-mt-24 sm:mt-28">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Skills & tools</h2>
+        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>Skills & tools</Ink></h2>
         <p className="text-muted">{skillsIntro}</p>
       </div>
 

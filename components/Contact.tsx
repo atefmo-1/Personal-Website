@@ -4,7 +4,7 @@ import { CopyEmail } from "./CopyEmail";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 import { site } from "@/lib/site";
-import { drawings } from "@/lib/drawings";
+import { Ink } from "./Ink";
 
 const links = [
   { label: "LinkedIn", href: site.linkedin, icon: IconBrandLinkedin, external: true },
@@ -15,7 +15,6 @@ export function Contact() {
   return (
     <Section
       title="Say hello"
-      drawing={drawings.contact}
       intro="Recruiting, want to work on something together, looking for advice, or up for a coffee or a call? My inbox is open 👋"
     >
       <div className="grid-12 gap-y-10">
@@ -50,7 +49,7 @@ export function Contact() {
         {/* The form, in a card */}
         <Reveal className="col-span-12 lg:col-span-7 lg:col-start-6" delay={0.1}>
           <div className="rounded-2xl border border-line bg-surface p-6 sm:p-8">
-            <h2 className="font-display text-2xl font-bold tracking-tight">Send a message</h2>
+            <h2 className="font-display text-2xl font-bold tracking-tight"><Ink>Send a message</Ink></h2>
             <div className="mt-6">
               <ContactForm />
             </div>

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Button } from "./Button";
-import { Contours } from "./Contours";
 import { Globe } from "./Globe";
 import { InkJourney } from "./InkJourney";
 import { RotatingWord } from "./RotatingWord";
@@ -34,8 +33,6 @@ export function Hero() {
   return (
     // `isolate` gives the globe its own layer, so it can sit behind the portrait.
     <section className="relative isolate overflow-hidden">
-      {/* Trail-map contours behind everything; click or tap to send a ripple through them */}
-      <Contours className="pointer-events-none absolute inset-0 -z-20 h-full w-full [mask-image:radial-gradient(ellipse_at_70%_45%,#000_30%,transparent_75%)]" />
       <div className="container-x grid-12 items-center gap-y-8 pb-10 pt-24 sm:pb-14 sm:pt-28">
         {/* Portrait: first on phones, right column on desktop */}
         <figure className="enter-fade relative col-span-12 lg:order-last lg:col-span-4 lg:col-start-9" style={delay(0.2)}>

@@ -5,6 +5,7 @@ import { EducationRows, ExperienceRows } from "./RoleRows";
 import { showProjects } from "@/lib/pages";
 import { projects } from "@/lib/projects";
 import { about } from "@/lib/site";
+import { Ink } from "./Ink";
 
 const h2 = "font-display text-2xl font-bold tracking-tight sm:text-3xl";
 
@@ -36,7 +37,7 @@ export function HomeSections() {
       {showProjects && featured && (
         <section>
           <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-            <h2 className={h2}>Featured project</h2>
+            <h2 className={h2}><Ink>Featured project</Ink></h2>
             <More href="/projects">All projects</More>
           </div>
           <Reveal>
@@ -46,13 +47,13 @@ export function HomeSections() {
       )}
 
       <section>
-        <h2 className={`${h2} mb-5`}>Education</h2>
+        <h2 className={`${h2} mb-5`}><Ink>Education</Ink></h2>
         <EducationRows />
       </section>
 
       <section>
         <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <h2 className={h2}>Experience</h2>
+          <h2 className={h2}><Ink>Experience</Ink></h2>
           <More href="/experience">Skills and more on work</More>
         </div>
         <ExperienceRows />
