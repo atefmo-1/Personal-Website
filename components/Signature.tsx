@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RedrawButton } from "./Art";
 import { signaturePoints, signatureSize } from "@/lib/signature";
 
 // My name, drawn by a chain of spinning circles: a Fourier series. The pen line of "Atef" is
@@ -36,8 +37,13 @@ function transform(): Term[] {
   return terms.sort((a, b) => b.amp - a.amp);
 }
 
-export function Signature({ className = "" }: { className?: string }) {
+export function Signature({ className = "", redraws = 0 }: { className?: string; redraws?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const replayRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    if (redraws > 0) replayRef.current();
+  }, [redraws]);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -192,6 +198,7 @@ export function Signature({ className = "" }: { className?: string }) {
       started = true;
       play();
     };
+    replayRef.current = replay;
     button.addEventListener("click", replay);
 
     return () => {
@@ -213,5 +220,19 @@ export function Signature({ className = "" }: { className?: string }) {
     >
       <canvas ref={canvasRef} className="block h-full w-full" aria-hidden />
     </button>
+  );
+}
+
+// The signature with its caption and a "draw again" button.
+export function SignatureFigure({ caption, className = "" }: { caption: string; className?: string }) {
+  const [redraws, setRedraws] = useState(0);
+  return (
+    <figure className={`print:hidden ${className}`}>
+      <Signature className="aspect-[2/1]" redraws={redraws} />
+      <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
+        <span>{caption}</span>
+        <RedrawButton onClick={() => setRedraws((n) => n + 1)}>↻ draw again</RedrawButton>
+      </figcaption>
+    </figure>
   );
 }

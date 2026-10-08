@@ -3,7 +3,6 @@ import { ArtFigure } from "./Art";
 import { Button } from "./Button";
 import { InkJourney } from "./InkJourney";
 import { RotatingWord } from "./RotatingWord";
-import { SkyNow } from "./SkyNow";
 import { site } from "@/lib/site";
 
 // The entrance is pure CSS (see .enter-* in globals.css), gated on
@@ -48,8 +47,6 @@ export function Hero() {
               />
             </div>
           </div>
-          {/* The sky over Chapel Hill right now */}
-          <SkyNow className="mt-5 hidden w-full max-w-[300px] lg:ml-auto lg:block" />
         </figure>
 
         <div className="col-span-12 lg:col-span-8">
@@ -100,8 +97,6 @@ export function Hero() {
             className="enter-fade mt-7 max-w-[560px]"
             artClassName="aspect-[6/1]"
           />
-          {/* On phones the sky sits here, so the name stays near the top */}
-          <SkyNow className="mt-8 max-w-[300px] lg:hidden" />
         </div>
 
         <div className="order-last col-span-12 mt-4 sm:mt-8">

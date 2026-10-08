@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Signature } from "./Signature";
+import { SignatureFigure } from "./Signature";
 import { Reveal } from "./Reveal";
 import { ProjectCard } from "./Projects";
 import { EducationRows, ExperienceRows } from "./RoleRows";
@@ -62,15 +62,10 @@ export function HomeSections() {
       </section>
 
       {/* Signed off: my name, drawn by a Fourier series */}
-      <figure className="mx-auto max-w-2xl print:hidden">
-        <Signature className="aspect-[2/1]" />
-        <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
-          <span>Fig. 2 · My name, drawn by {signaturePoints.length / 3} spinning circles (a Fourier series)</span>
-          <span aria-hidden className="shrink-0 normal-case tracking-normal">
-            ↻ redraw
-          </span>
-        </figcaption>
-      </figure>
+      <SignatureFigure
+        caption={`Fig. 2 · My name, drawn by ${signaturePoints.length / 3} spinning circles (a Fourier series)`}
+        className="mx-auto max-w-2xl"
+      />
     </div>
   );
 }

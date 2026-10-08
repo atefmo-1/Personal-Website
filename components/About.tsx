@@ -5,7 +5,8 @@ import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
-import { Art, ArtFigure, type ArtKind } from "./Art";
+import { ArtFigure, type ArtKind } from "./Art";
+import { TripRidgelines } from "./TripRidgelines";
 import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
@@ -106,8 +107,7 @@ export function About() {
             <p className="mt-2 text-[15px] leading-relaxed text-muted">{about.highlight.text}</p>
           </div>
           <div className="flex flex-col border-t border-line px-5 pb-4 pt-3 sm:col-span-2 lg:col-span-1 lg:border-l lg:border-t-0">
-            <Art kind="ridges" seed={3} label="Smith Rock to Broken Top, as ridgelines" className="h-28 lg:h-auto lg:min-h-[120px] lg:flex-1" />
-            <p className="label mt-2">Fig. 2 · Smith Rock to Broken Top, as ridgelines</p>
+            <TripRidgelines />
           </div>
         </Reveal>
       </section>

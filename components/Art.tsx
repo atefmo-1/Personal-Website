@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fbm, noise, rng } from "@/lib/noise";
 
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
@@ -409,8 +409,15 @@ function planes(w: number, h: number, seed: number): Line[] {
 
 const builders = { shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
-export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; seed?: number; label: string; className?: string }) {
+// `redraws` lets something outside the canvas (the caption's redraw button) ask for a new version:
+// each time the number goes up, the figure draws a new variation.
+export function Art({ kind, seed = 1, label, className = "", redraws = 0 }: { kind: ArtKind; seed?: number; label: string; className?: string; redraws?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const redrawRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    if (redraws > 0) redrawRef.current();
+  }, [redraws]);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -562,6 +569,7 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onScheme = () => draw(progress);
     mq.addEventListener("change", onScheme);
+    redrawRef.current = redraw;
     const button = canvas.parentElement!;
     button.addEventListener("click", redraw);
 
@@ -584,17 +592,28 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
   );
 }
 
-// A figure with a gallery-style caption under it.
+// A figure with a gallery-style caption under it. Clicking the drawing or "redraw" draws a new one.
 export function ArtFigure({ kind, seed, caption, className = "", artClassName = "aspect-[16/9]" }: { kind: ArtKind; seed?: number; caption: string; className?: string; artClassName?: string }) {
+  const [redraws, setRedraws] = useState(0);
   return (
     <figure className={`print:hidden ${className}`}>
-      <Art kind={kind} seed={seed} label={caption} className={artClassName} />
+      <Art kind={kind} seed={seed} label={caption} className={artClassName} redraws={redraws} />
       <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
         <span>{caption}</span>
-        <span aria-hidden className="shrink-0 normal-case tracking-normal">
-          ↻ redraw
-        </span>
+        <RedrawButton onClick={() => setRedraws((n) => n + 1)} />
       </figcaption>
     </figure>
+  );
+}
+
+export function RedrawButton({ onClick, children = "↻ redraw" }: { onClick: () => void; children?: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="shrink-0 rounded-full border border-line px-2 py-0.5 normal-case tracking-normal transition-colors hover:border-fg hover:text-fg"
+    >
+      {children}
+    </button>
   );
 }
