@@ -7,15 +7,26 @@ import { Nav } from "@/components/Nav";
 import { site } from "@/lib/site";
 import "./globals.css";
 
+// Each font names a fallback stack, so text never drops to the browser's default serif while a
+// font loads (or if one fails to).
 const display = Space_Grotesk({
   subsets: ["latin"],
   weight: ["500", "700"],
+  display: "swap",
+  fallback: ["system-ui", "Helvetica Neue", "Arial", "sans-serif"],
   variable: "--font-display",
 });
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
+const body = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "Helvetica Neue", "Arial", "sans-serif"],
+  variable: "--font-body",
+});
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
+  fallback: ["ui-monospace", "Menlo", "monospace"],
   variable: "--font-mono",
 });
 
