@@ -12,7 +12,7 @@ const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia
 
 export function About() {
   return (
-    <Section title="About">
+    <Section title="About" art={{ kind: "ridges", seed: 3, caption: "Fig. 1 · Smith Rock to Broken Top, as ridgelines" }}>
       {/* Hobbies */}
       <section>
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.hobbiesTitle}</Ink></h2>

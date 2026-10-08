@@ -57,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen flex-col bg-bg font-sans text-fg">
         <MotionProvider>
           {/* Trail-map contour lines behind every page; click or tap anywhere to ripple them */}
-          <Contours alpha={0.07} className="pointer-events-none fixed inset-0 -z-10 h-full w-full" />
+          <Contours className="pointer-events-none fixed inset-0 -z-10 h-full w-full" />
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />

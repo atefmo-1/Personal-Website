@@ -82,7 +82,7 @@ function contourSegments(w: number, h: number): Float32Array {
 
 type Ripple = { x: number; y: number; t0: number };
 
-export function Contours({ className, alpha = 0.09 }: { className?: string; alpha?: number }) {
+export function Contours({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -95,7 +95,8 @@ export function Contours({ className, alpha = 0.09 }: { className?: string; alph
     let w = 0;
     let h = 0;
 
-    const fg = () => getComputedStyle(document.documentElement).getPropertyValue("--fg").trim().replace(/ /g, ",");
+    const css = (v: string) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+    const fg = () => css("--fg").replace(/ /g, ",");
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -148,9 +149,10 @@ export function Contours({ className, alpha = 0.09 }: { className?: string; alph
           base.lineTo(x2, y2);
         }
       }
-      ctx.strokeStyle = `rgba(${c},${alpha})`;
+      // Line strength per theme comes from --art in globals.css
+      ctx.strokeStyle = `rgba(${c},${Number(css("--art")) || 0.16})`;
       ctx.stroke(base);
-      ctx.strokeStyle = `rgba(${c},0.45)`;
+      ctx.strokeStyle = `rgba(${c},0.6)`;
       ctx.stroke(lit);
     }
 
@@ -185,7 +187,7 @@ export function Contours({ className, alpha = 0.09 }: { className?: string; alph
       mq.removeEventListener("change", onScheme);
       document.removeEventListener("pointerdown", onPointerDown);
     };
-  }, [alpha]);
+  }, []);
 
   return <canvas ref={canvasRef} className={className} aria-hidden />;
 }

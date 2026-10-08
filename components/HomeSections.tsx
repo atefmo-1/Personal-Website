@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArtFigure } from "./Art";
 import { Reveal } from "./Reveal";
 import { ProjectCard } from "./Projects";
 import { EducationRows, ExperienceRows } from "./RoleRows";
@@ -23,16 +24,21 @@ const featured = projects.find((p) => p.slug === "reloco");
 export function HomeSections() {
   return (
     <div className="container-x space-y-16 pb-24 sm:space-y-20 sm:pb-32">
-      <Reveal className="border-t border-line pt-10 sm:pt-14">
-        {about.paragraphs.map((p) => (
-          <p key={p} className="max-w-4xl font-display text-2xl font-medium leading-[1.3] tracking-tight sm:text-3xl">
-            {p}
-          </p>
-        ))}
-        <div className="mt-5">
-          <More href="/about">Hobbies, communities, and the route map</More>
+      <Reveal className="grid items-center gap-x-12 gap-y-10 border-t border-line pt-10 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div>
+          {about.paragraphs.map((p) => (
+            <p key={p} className="max-w-4xl font-display text-2xl font-medium leading-[1.3] tracking-tight sm:text-3xl">
+              {p}
+            </p>
+          ))}
+          <div className="mt-5">
+            <More href="/about">Hobbies, communities, and the route map</More>
+          </div>
         </div>
+        <ArtFigure kind="rings" seed={1} caption="Fig. 1 · Three homes, three rings" artClassName="aspect-[4/3]" />
       </Reveal>
+
+      <ArtFigure kind="order" seed={1} caption="Fig. 2 · Messy workflows in, tools people use out" artClassName="aspect-[3/1] sm:aspect-[4/1]" />
 
       {showProjects && featured && (
         <section>
