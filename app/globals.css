@@ -12,6 +12,8 @@
   --fg: 20 20 20;
   --muted: 104 104 110;
   --line: 222 220 214;
+  /* The one accent: ink blue, used only for live dots, the active page and keyboard focus */
+  --accent: 36 82 214;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,6 +24,7 @@
     --fg: 237 235 231;
     --muted: 142 142 147;
     --line: 38 38 41;
+    --accent: 138 164 255;
   }
 }
 
@@ -32,6 +35,7 @@
   --fg: 237 235 231;
   --muted: 142 142 147;
   --line: 38 38 41;
+  --accent: 138 164 255;
 }
 
 body {
@@ -49,8 +53,35 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid rgb(var(--fg));
+  outline: 2px solid rgb(var(--accent));
   outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Text links (not buttons or pills) get a hand-drawn-looking underline instead of a box */
+a:focus-visible:not([class*="rounded"]) {
+  outline: none;
+  text-decoration: underline wavy rgb(var(--accent));
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+}
+
+/* Micro-typography: balanced headings, no lonely last words in paragraphs, curly quotes, and
+   punctuation that hangs outside the text edge where the browser supports it. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+.hang {
+  hanging-punctuation: first last;
+}
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
 }
 
 @layer components {
@@ -221,6 +252,7 @@ body {
   --fg: 236 244 255;
   --muted: 168 196 230;
   --line: 72 112 166;
+  --accent: 255 209 102;
 }
 :root[data-blueprint] body {
   background-image: linear-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px),
@@ -253,6 +285,7 @@ body {
     --fg: 0 0 0;
     --muted: 80 80 80;
     --line: 205 205 205;
+    --accent: 36 82 214;
   }
   body {
     background: #fff !important;
@@ -280,5 +313,63 @@ body {
   li,
   figure {
     break-inside: avoid;
+  }
+}
+
+/* Black-on-transparent art (the halftone photo) turns light on dark backgrounds. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ink-invert {
+    filter: invert(1);
+  }
+}
+:root[data-theme="dark"] .ink-invert,
+:root[data-blueprint] .ink-invert {
+  filter: invert(1);
+}
+@media print {
+  .ink-invert {
+    filter: none !important;
+  }
+}
+
+/* Page change (app/template.tsx): an ink line sweeps across under the nav, the page fades in. */
+.page-ink {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 3.5rem;
+  z-index: 49;
+  height: 1.5px;
+  background: rgb(var(--fg));
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes page-ink {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .page-ink {
+    animation: page-ink 0.7s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  .page-enter {
+    animation: page-enter 0.45s ease 0.1s both;
   }
 }

@@ -52,5 +52,5 @@ export const experience: Experience[] = [
 
 // The work-focused bio at the top of the Work & Experience page.
 export const workBio = [
-  "Product is my home base, but I like working close to the data and the code. So far that's meant health tech 🩺, readiness analytics 📊, tech policy research 🏛️, and a climate nonprofit 🌱",
+  "Product is my home base, but I like working close to the data and the code. So far that’s meant health tech 🩺, readiness analytics 📊, tech policy research 🏛️, and a climate nonprofit 🌱",
 ];

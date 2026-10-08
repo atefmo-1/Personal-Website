@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SignatureFigure } from "./Signature";
+import { Emphasis } from "./Emphasis";
 import { Reveal } from "./Reveal";
 import { ProjectCard } from "./Projects";
 import { EducationRows, ExperienceRows } from "./RoleRows";
@@ -27,8 +28,8 @@ export function HomeSections() {
     <div className="container-x space-y-16 pb-24 sm:space-y-20 sm:pb-32">
       <Reveal className="border-t border-line pt-10 sm:pt-14">
         {about.paragraphs.map((p) => (
-          <p key={p} className="max-w-4xl font-display text-2xl font-medium leading-[1.3] tracking-tight sm:text-3xl">
-            {p}
+          <p key={p} className="hang max-w-4xl font-display text-2xl font-medium leading-[1.3] tracking-tight sm:text-3xl">
+            <Emphasis text={p} />
           </p>
         ))}
         <div className="mt-5">

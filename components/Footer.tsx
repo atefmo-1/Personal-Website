@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Art } from "./Art";
+import { Monogram } from "./Monogram";
 import { site } from "@/lib/site";
 
 export function Footer() {
@@ -10,9 +12,12 @@ export function Footer() {
       </div>
       <div className="border-t border-line">
       <div className="container-x flex flex-col gap-4 py-8 font-mono text-[11px] uppercase tracking-label text-muted sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © {new Date().getFullYear()} {site.name}. Handmade in Chapel Hill.
-          <span className="hidden sm:inline"> Psst: type “draw”.</span>
+        <p className="flex items-center gap-3">
+          <Monogram className="h-3.5 w-auto shrink-0" />
+          <span>
+            © {new Date().getFullYear()} {site.name}. Handmade in Chapel Hill.
+            <span className="hidden sm:inline"> Psst: type “draw”.</span>
+          </span>
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <a className="transition-colors hover:text-fg" href={site.linkedin} target="_blank" rel="noopener noreferrer">
@@ -24,6 +29,9 @@ export function Footer() {
           <a className="transition-colors hover:text-fg" href={site.resume} target="_blank" rel="noopener noreferrer">
             Resume
           </a>
+          <Link className="transition-colors hover:text-fg" href="/colophon">
+            Colophon
+          </Link>
         </div>
       </div>
       </div>

@@ -20,7 +20,7 @@ export function ProjectCard({ project: p, headingLevel: Heading = "h2" }: { proj
       <div className="p-6 sm:p-8">
         <div className="flex flex-wrap items-center gap-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 font-mono text-[10px] uppercase tracking-label">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-fg" />
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
             {p.status}
           </span>
           {p.live && <span className="font-mono text-xs uppercase tracking-label text-muted">{p.live.label}</span>}

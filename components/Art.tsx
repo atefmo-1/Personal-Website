@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes" | "lost";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -407,7 +407,47 @@ function planes(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+// For the 404 page: a contour map and a dashed trail that wanders in and simply stops.
+function lost(w: number, h: number, seed: number): Line[] {
+  const cell = 5;
+  const cols = Math.ceil(w / cell) + 1;
+  const rows = Math.ceil(h / cell) + 1;
+  const field = new Float32Array(cols * rows);
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) field[j * cols + i] = fbm((i * cell) / 210 + seed * 4, (j * cell) / 210 + seed);
+  const lines: Line[] = [];
+  const levels = 10;
+  for (let l = 0; l < levels; l++) {
+    const iso = 0.22 + (l / (levels - 1)) * 0.56;
+    lines.push({ pts: isoSegments(field, cols, rows, cell, iso), width: 0.8, alpha: 0.3 + (l % 3 === 0 ? 0.15 : 0), start: 0, end: 0.45, segs: true });
+  }
+  // The trail: a wandering line, cut into dashes
+  const r = rng(seed * 31 + 9);
+  const end = { x: w * (0.56 + r() * 0.12), y: h * (0.32 + r() * 0.16) };
+  let x = w * 0.04;
+  let y = h * 0.86;
+  const dashes: number[] = [];
+  let travelled = 0;
+  for (let s = 0; s < 900; s++) {
+    const dx = end.x - x;
+    const dy = end.y - y;
+    const d = Math.hypot(dx, dy);
+    if (d < 4) break;
+    const a = Math.atan2(dy, dx) + (noise(x / 60 + seed, y / 60) - 0.5) * 2.2;
+    const nx = x + Math.cos(a) * 2;
+    const ny = y + Math.sin(a) * 2;
+    if (Math.floor(travelled / 7) % 2 === 0) dashes.push(x, y, nx, ny);
+    travelled += 2;
+    x = nx;
+    y = ny;
+  }
+  lines.push({ pts: dashes, width: 1.8, alpha: 1, start: 0.35, end: 0.9, segs: true });
+  // Where the trail runs out
+  const q = 7;
+  lines.push({ pts: [end.x - q, end.y - q, end.x + q, end.y + q, end.x - q, end.y + q, end.x + q, end.y - q], width: 2, alpha: 1, start: 0.9, end: 1, segs: true, text: { x: end.x + 14, y: end.y + 4, s: "YOU ARE HERE (?)", align: "left" } });
+  return lines;
+}
+
+const builders = { lost, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 // `redraws` lets something outside the canvas (the caption's redraw button) ask for a new version:
 // each time the number goes up, the figure draws a new variation.
@@ -455,6 +495,12 @@ export function Art({ kind, seed = 1, label, className = "", redraws = 0 }: { ki
           ctx.strokeStyle = `rgba(${fg},${l.alpha})`;
           ctx.lineWidth = l.width;
           ctx.stroke();
+          if (l.text && f === 1) {
+            ctx.font = `500 10px ${css("--font-mono") || "monospace"}`;
+            ctx.textAlign = l.text.align ?? "left";
+            ctx.fillStyle = `rgba(${fg},0.8)`;
+            ctx.fillText(l.text.s, l.text.x, l.text.y);
+          }
           continue;
         }
         const count = Math.max(2, Math.floor((l.pts.length / 2) * f));

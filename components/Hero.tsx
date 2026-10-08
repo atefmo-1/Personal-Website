@@ -51,7 +51,7 @@ export function Hero() {
 
         <div className="col-span-12 lg:col-span-8">
           <p className="enter-fade flex items-center gap-2 font-mono text-[11px] uppercase tracking-label text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-fg" aria-hidden />
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
             {site.status}
           </p>
 

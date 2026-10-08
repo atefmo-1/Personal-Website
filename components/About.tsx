@@ -6,7 +6,9 @@ import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
 import { ArtFigure, type ArtKind } from "./Art";
+import { TripPhoto } from "./TripPhoto";
 import { TripRidgelines } from "./TripRidgelines";
+import { Emphasis } from "./Emphasis";
 import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
@@ -86,14 +88,7 @@ export function About() {
         {/* One standout trip, with the mountains it was in drawn as ridgelines */}
         <h3 className="label mt-8">{about.highlight.label}</h3>
         <Reveal className="mt-3 grid overflow-hidden rounded-xl border border-line sm:grid-cols-[14rem_1fr] lg:grid-cols-[14rem_1fr_minmax(0,24rem)]">
-          <Image
-            src={about.highlight.image.src}
-            alt={about.highlight.image.alt}
-            width={about.highlight.image.width}
-            height={about.highlight.image.height}
-            sizes="(min-width: 640px) 224px, 100vw"
-            className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto"
-          />
+          <TripPhoto />
           <div className="p-5">
             <a
               href={about.highlight.url}
@@ -147,7 +142,9 @@ export function About() {
       {/* Sketchbook: drawings made with math */}
       <section className="mt-14 sm:mt-16">
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
-        <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
+        <p className="mt-3 max-w-2xl text-muted">
+          <Emphasis text={about.sketchbookIntro} />
+        </p>
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3">
           {sketches.map((s) => (
             <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-[4/3]" />

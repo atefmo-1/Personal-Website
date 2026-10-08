@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { BlueprintMode } from "@/components/BlueprintMode";
 import { Footer } from "@/components/Footer";
 import { MotionProvider } from "@/components/MotionProvider";
@@ -13,6 +13,8 @@ const display = Space_Grotesk({
   variable: "--font-display",
 });
 const body = Inter({ subsets: ["latin"], variable: "--font-body" });
+// An italic serif for a word or two of emphasis in headlines and big text
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-serif" });
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -52,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

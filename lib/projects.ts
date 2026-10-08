@@ -1048,4 +1048,4 @@ export const projects: Project[] = [
 ];
 
 export const projectsIntro =
-  "Things I build when nobody's assigning homework 🛠️";
+  "Things I build when nobody’s assigning homework 🛠️";

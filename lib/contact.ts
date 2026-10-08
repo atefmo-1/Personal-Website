@@ -17,12 +17,12 @@ export function validate(input: Partial<Record<keyof ContactInput, unknown>>) {
   const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
   const name = str(input.name);
-  if (!name) errors.name = "I'd love to know who's saying hi.";
+  if (!name) errors.name = "I’d love to know who’s saying hi.";
   else if (name.length > limits.name) errors.name = "That name is a bit long for my inbox.";
 
   const email = str(input.email);
-  if (!email) errors.email = "I'll need an email to write back.";
-  else if (email.length > limits.email || !EMAIL.test(email)) errors.email = "That email doesn't look quite right.";
+  if (!email) errors.email = "I’ll need an email to write back.";
+  else if (email.length > limits.email || !EMAIL.test(email)) errors.email = "That email doesn’t look quite right.";
 
   if (str(input.company).length > limits.company) errors.company = "Keep it under 120 characters.";
 

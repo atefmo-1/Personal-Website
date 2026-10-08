@@ -38,7 +38,7 @@ export const site = {
   // Hero: what and where I study, then one line on what I do.
   study: {
     majors: ["Computer Science", "Information Science"],
-    school: "UNC Chapel Hill '27",
+    school: "UNC Chapel Hill ’27",
     flag: "🇺🇸",
     scholarship: "Morehead‑Cain Scholar", // non-breaking hyphen
   },
@@ -55,7 +55,7 @@ export const site = {
 
 export const about = {
   paragraphs: [
-    "I grew up in a small village in Sharqia, Egypt 🇪🇬, and I’m a first‑generation college student. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at asking questions, which turns out to be most of product work.",
+    "I grew up in a small village in Sharqia, Egypt 🇪🇬, and I’m a first‑generation college student. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at *asking questions*, which turns out to be most of product work.",
   ],
   // Newest first. Sources: Morehead-Cain's <1% and full ride are from the resume; "America's first"
   // is from moreheadcain.org; ALA's 47 countries are from africanleadershipacademy.org (which also lists a 4% acceptance rate).
@@ -68,7 +68,7 @@ export const about = {
       scholarship: {
         name: "Morehead-Cain Scholar",
         url: "https://www.moreheadcain.org/",
-        note: "Full ride. America's first merit scholarship.",
+        note: "Full ride. America’s first merit scholarship.",
       },
       highlight: "<1% of the class picked for Morehead‑Cain", // non-breaking hyphen keeps the name on one line
       location: "Chapel Hill, NC 🇺🇸",
@@ -104,7 +104,7 @@ export const about = {
     location: string;
     dates: string;
   }[],
-  hobbiesTitle: "When I'm not working",
+  hobbiesTitle: "When I’m not working",
   hobbies: [
     { name: "Basketball", icon: IconBallBasketball },
     { name: "Soccer", icon: IconBallFootball },
@@ -139,7 +139,7 @@ export const about = {
     text: "15 days with Northwest Outward Bound School: a week of rock climbing at Smith Rock, then alpine backpacking around Broken Top and a roped climb to its summit.",
     image: { src: "/about/smith-rock.webp", alt: "Atef rock climbing at Smith Rock, Oregon", width: 900, height: 675 },
   },
-  currentlyTitle: "Where you'll find me",
+  currentlyTitle: "Where you’ll find me",
   currently: [
     "Carolina Analytics and Data Science",
     "Product Management Club",
@@ -151,7 +151,7 @@ export const about = {
   ],
   routeTitle: "The route so far",
   sketchbookTitle: "Sketchbook",
-  sketchbookIntro: "Design is one of my hobbies, and math makes good pens. Each of these is drawn live in your browser from an equation; click one for a new version.",
+  sketchbookIntro: "Design is one of my hobbies, and *math makes good pens*. Each of these is drawn live in your browser from an equation; click one for a new version.",
   // US places visited. DC is listed but not counted as a state.
   statesVisited: [
     "North Carolina",
