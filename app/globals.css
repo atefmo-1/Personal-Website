@@ -12,8 +12,6 @@
   --fg: 20 20 20;
   --muted: 104 104 110;
   --line: 222 220 214;
-  /* Strength of the line art (contours, generative figures) */
-  --art: 0.16;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,7 +22,6 @@
     --fg: 237 235 231;
     --muted: 142 142 147;
     --line: 38 38 41;
-    --art: 0.2;
   }
 }
 
@@ -35,7 +32,6 @@
   --fg: 237 235 231;
   --muted: 142 142 147;
   --line: 38 38 41;
-  --art: 0.2;
 }
 
 body {

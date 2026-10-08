@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import { Contours } from "@/components/Contours";
 import { Footer } from "@/components/Footer";
 import { MotionProvider } from "@/components/MotionProvider";
 import { Nav } from "@/components/Nav";
@@ -56,8 +55,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="flex min-h-screen flex-col bg-bg font-sans text-fg">
         <MotionProvider>
-          {/* Trail-map contour lines behind every page; click or tap anywhere to ripple them */}
-          <Contours className="pointer-events-none fixed inset-0 -z-10 h-full w-full" />
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />

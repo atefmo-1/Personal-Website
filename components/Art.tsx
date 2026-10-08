@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -16,6 +16,7 @@ type Line = {
   end: number;
   fill?: boolean; // fill below the line with the page color (ridgelines hide what's behind)
   dot?: boolean; // finish the line with a small dot
+  segs?: boolean; // pts are separate segments (x1, y1, x2, y2), not one polyline
 };
 
 const DURATION = 2400; // ms
@@ -157,7 +158,167 @@ function rings(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { order, ridges, flow, converge, rings };
+// Fit points into the canvas with a margin, keeping their proportions.
+function fit(all: number[][], w: number, h: number, margin = 0.08) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const pts of all)
+    for (let i = 0; i < pts.length; i += 2) {
+      x0 = Math.min(x0, pts[i]); x1 = Math.max(x1, pts[i]);
+      y0 = Math.min(y0, pts[i + 1]); y1 = Math.max(y1, pts[i + 1]);
+    }
+  const s = Math.min((w * (1 - 2 * margin)) / (x1 - x0 || 1), (h * (1 - 2 * margin)) / (y1 - y0 || 1));
+  const ox = (w - (x1 - x0) * s) / 2 - x0 * s;
+  const oy = (h - (y1 - y0) * s) / 2 - y0 * s;
+  for (const pts of all) for (let i = 0; i < pts.length; i += 2) { pts[i] = ox + pts[i] * s; pts[i + 1] = oy + pts[i + 1] * s; }
+}
+
+// The Lorenz system: three simple equations whose solution never repeats. Two runs start
+// 0.001 apart and drift onto different paths (the butterfly effect).
+function lorenz(w: number, h: number, seed: number): Line[] {
+  const [sigma, rho, beta, dt] = [10, 28, 8 / 3, 0.005];
+  const turn = (seed - 1) * 0.5; // each redraw views the attractor from a new angle
+  const run = (x: number, y: number, z: number) => {
+    const pts: number[] = [];
+    const f = (x: number, y: number, z: number) => [sigma * (y - x), x * (rho - z) - y, x * y - beta * z];
+    for (let i = 0; i < 9000; i++) {
+      // Runge-Kutta 4
+      const k1 = f(x, y, z);
+      const k2 = f(x + (dt / 2) * k1[0], y + (dt / 2) * k1[1], z + (dt / 2) * k1[2]);
+      const k3 = f(x + (dt / 2) * k2[0], y + (dt / 2) * k2[1], z + (dt / 2) * k2[2]);
+      const k4 = f(x + dt * k3[0], y + dt * k3[1], z + dt * k3[2]);
+      x += (dt / 6) * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]);
+      y += (dt / 6) * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]);
+      z += (dt / 6) * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2]);
+      if (i > 60) pts.push(x * Math.cos(turn) - y * Math.sin(turn), -z);
+    }
+    return pts;
+  };
+  const a = run(0.1, 0, 0);
+  const b = run(0.101, 0, 0);
+  fit([a, b], w, h, 0.06);
+  return [
+    { pts: b, width: 0.7, alpha: 0.35, start: 0.05, end: 1 },
+    { pts: a, width: 0.8, alpha: 0.8, start: 0, end: 0.95 },
+  ];
+}
+
+// Seeds placed 137.5 degrees apart (the golden angle), the way a sunflower packs them.
+function phyllotaxis(w: number, h: number, seed: number): Line[] {
+  const n = 640;
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const spin = (seed - 1) * 0.7;
+  const c = (Math.min(w, h) * 0.46) / Math.sqrt(n);
+  const lines: Line[] = [];
+  for (let i = 1; i <= n; i++) {
+    const r = c * Math.sqrt(i);
+    const a = i * golden + spin;
+    const x = w / 2 + r * Math.cos(a);
+    const y = h / 2 + r * Math.sin(a);
+    const size = 0.6 + (i / n) * 2.6;
+    const pts: number[] = [];
+    for (let k = 0; k <= 12; k++) pts.push(x + Math.cos((k / 12) * Math.PI * 2) * size, y + Math.sin((k / 12) * Math.PI * 2) * size);
+    const start = (i / n) * 0.85;
+    lines.push({ pts, width: 0.9, alpha: 0.85, start, end: start + 0.15 });
+  }
+  return lines;
+}
+
+// Two sine waves at different speeds, one across and one up: a Lissajous figure. Nested copies
+// with a slowly shifting phase give it depth.
+function lissajous(w: number, h: number, seed: number): Line[] {
+  const ratios = [[3, 2], [5, 4], [3, 4], [5, 6], [7, 6], [4, 5]];
+  const [a, b] = ratios[(seed - 1) % ratios.length];
+  const curves: number[][] = [];
+  for (let k = 0; k < 7; k++) {
+    const pts: number[] = [];
+    const shift = Math.PI / 2 / a + k * 0.07;
+    for (let i = 0; i <= 1400; i++) {
+      const t = (i / 1400) * Math.PI * 2;
+      pts.push(Math.sin(a * t + shift), Math.sin(b * t));
+    }
+    curves.push(pts);
+  }
+  fit(curves, w, h);
+  return curves.map((pts, k) => ({ pts, width: k === 0 ? 1.3 : 0.7, alpha: k === 0 ? 0.95 : 0.5 - k * 0.05, start: k * 0.06, end: 0.6 + k * 0.06 }));
+}
+
+// A pen in a small wheel rolling inside a big one: a spirograph (hypotrochoid).
+function spirograph(w: number, h: number, seed: number): Line[] {
+  const sets = [[11, 7, 5], [9, 5, 4.2], [13, 8, 6], [8, 5, 5], [7, 4, 3.4]];
+  const [R, r, d] = sets[(seed - 1) % sets.length];
+  const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+  const turns = r / gcd(R, r);
+  const pts: number[] = [];
+  const steps = 3200;
+  for (let i = 0; i <= steps; i++) {
+    const t = (i / steps) * Math.PI * 2 * turns;
+    pts.push((R - r) * Math.cos(t) + d * Math.cos(((R - r) / r) * t), (R - r) * Math.sin(t) - d * Math.sin(((R - r) / r) * t));
+  }
+  fit([pts], w, h);
+  return [{ pts, width: 0.8, alpha: 0.85, start: 0, end: 1 }];
+}
+
+// A Julia set (z -> z^2 + c), drawn as contour lines of how fast each point escapes.
+function julia(w: number, h: number, seed: number): Line[] {
+  const cs = [[-0.8, 0.156], [-0.4, 0.6], [0.285, 0.01], [-0.70176, -0.3842], [-0.835, -0.2321]];
+  const [cr, ci] = cs[(seed - 1) % cs.length];
+  const cell = 3;
+  const cols = Math.ceil(w / cell) + 1;
+  const rows = Math.ceil(h / cell) + 1;
+  const span = 3.1 / Math.min(w, h);
+  const field = new Float32Array(cols * rows);
+  for (let j = 0; j < rows; j++)
+    for (let i = 0; i < cols; i++) {
+      let x = (i * cell - w / 2) * span;
+      let y = (j * cell - h / 2) * span;
+      let k = 0;
+      for (; k < 120 && x * x + y * y < 16; k++) [x, y] = [x * x - y * y + cr, 2 * x * y + ci];
+      // Smooth escape count, compressed so the levels spread out evenly
+      const v = k >= 120 ? 120 : k + 1 - Math.log2(Math.log2(Math.max(1.0001, Math.sqrt(x * x + y * y))));
+      field[j * cols + i] = Math.log(1 + v);
+    }
+  const levels = 11;
+  const lines: Line[] = [];
+  for (let l = 0; l < levels; l++) {
+    const iso = 1.2 + (l / (levels - 1)) * 2.9;
+    const pts = isoSegments(field, cols, rows, cell, iso);
+    const start = (l / levels) * 0.7;
+    lines.push({ pts, width: 0.8, alpha: 0.35 + (l / levels) * 0.55, start, end: start + 0.3, segs: true });
+  }
+  return lines;
+}
+
+// Marching squares: segments where a grid of values crosses `iso`.
+function isoSegments(field: Float32Array, cols: number, rows: number, cell: number, iso: number) {
+  const out: number[] = [];
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  for (let j = 0; j < rows - 1; j++)
+    for (let i = 0; i < cols - 1; i++) {
+      const tl = field[j * cols + i], tr = field[j * cols + i + 1];
+      const br = field[(j + 1) * cols + i + 1], bl = field[(j + 1) * cols + i];
+      const idx = (tl > iso ? 8 : 0) | (tr > iso ? 4 : 0) | (br > iso ? 2 : 0) | (bl > iso ? 1 : 0);
+      if (idx === 0 || idx === 15) continue;
+      const x = i * cell, y = j * cell;
+      const T = [lerp(x, x + cell, (iso - tl) / (tr - tl)), y];
+      const R = [x + cell, lerp(y, y + cell, (iso - tr) / (br - tr))];
+      const B = [lerp(x, x + cell, (iso - bl) / (br - bl)), y + cell];
+      const L = [x, lerp(y, y + cell, (iso - tl) / (bl - tl))];
+      const seg = (a: number[], b: number[]) => out.push(a[0], a[1], b[0], b[1]);
+      switch (idx) {
+        case 1: case 14: seg(L, B); break;
+        case 2: case 13: seg(B, R); break;
+        case 3: case 12: seg(L, R); break;
+        case 4: case 11: seg(T, R); break;
+        case 6: case 9: seg(T, B); break;
+        case 7: case 8: seg(L, T); break;
+        case 5: seg(L, T); seg(B, R); break;
+        case 10: seg(T, R); seg(L, B); break;
+      }
+    }
+  return out;
+}
+
+const builders = { order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; seed?: number; label: string; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -187,6 +348,19 @@ export function Art({ kind, seed = 1, label, className = "" }: { kind: ArtKind; 
       for (const l of lines) {
         const f = clamp((p - l.start) / (l.end - l.start));
         if (f <= 0) continue;
+        if (l.segs) {
+          // Separate segments: reveal them in order (top to bottom of the grid)
+          const segCount = Math.floor((l.pts.length / 4) * f);
+          ctx.beginPath();
+          for (let i = 0; i < segCount; i++) {
+            ctx.moveTo(l.pts[i * 4], l.pts[i * 4 + 1]);
+            ctx.lineTo(l.pts[i * 4 + 2], l.pts[i * 4 + 3]);
+          }
+          ctx.strokeStyle = `rgba(${fg},${l.alpha})`;
+          ctx.lineWidth = l.width;
+          ctx.stroke();
+          continue;
+        }
         const count = Math.max(2, Math.floor((l.pts.length / 2) * f));
         ctx.beginPath();
         ctx.moveTo(l.pts[0], l.pts[1]);

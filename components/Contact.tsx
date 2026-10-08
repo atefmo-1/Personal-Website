@@ -15,7 +15,7 @@ export function Contact() {
   return (
     <Section
       title="Say hello"
-      art={{ kind: "rings", seed: 4, caption: "Fig. 1 · Say something; it carries" }}
+      art={{ kind: "converge", seed: 2, caption: "Fig. 1 · Every path ends at my inbox" }}
       intro="Recruiting, want to work on something together, looking for advice, or up for a coffee or a call? My inbox is open 👋"
     >
       <div className="grid-12 gap-y-10">

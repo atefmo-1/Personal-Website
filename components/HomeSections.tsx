@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ArtFigure } from "./Art";
+import { Signature } from "./Signature";
 import { Reveal } from "./Reveal";
 import { ProjectCard } from "./Projects";
 import { EducationRows, ExperienceRows } from "./RoleRows";
 import { showProjects } from "@/lib/pages";
 import { projects } from "@/lib/projects";
+import { signaturePoints } from "@/lib/signature";
 import { about } from "@/lib/site";
 import { Ink } from "./Ink";
 
@@ -64,6 +66,17 @@ export function HomeSections() {
         </div>
         <ExperienceRows />
       </section>
+
+      {/* Signed off: my name, drawn by a Fourier series */}
+      <figure className="mx-auto max-w-3xl">
+        <Signature className="aspect-[16/9]" />
+        <figcaption className="label mt-3 flex items-baseline justify-between gap-4">
+          <span>Fig. 3 · My name, drawn by {signaturePoints.length / 3} spinning circles (a Fourier series)</span>
+          <span aria-hidden className="shrink-0 normal-case tracking-normal">
+            ↻ redraw
+          </span>
+        </figcaption>
+      </figure>
     </div>
   );
 }

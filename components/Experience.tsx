@@ -8,7 +8,7 @@ import { workBio } from "@/lib/experience";
 export function Experience() {
   const [lead, ...rest] = workBio;
   return (
-    <Section title="Work & Experience" art={{ kind: "converge", seed: 2, caption: "Fig. 1 · Scattered data in, one decision out" }}>
+    <Section title="Work & Experience" art={{ kind: "lorenz", caption: "Fig. 1 · The Lorenz attractor: two starts 0.001 apart, two different paths" }}>
       <Reveal className="mb-16 max-w-3xl sm:mb-20">
         <p className="font-display text-xl font-medium leading-snug tracking-tight sm:text-2xl">{lead}</p>
         {rest.map((p) => (

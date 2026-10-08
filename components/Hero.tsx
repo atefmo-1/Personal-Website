@@ -94,10 +94,6 @@ export function Hero() {
         </div>
 
         <div className="order-last col-span-12 mt-4 sm:mt-8">
-          <p className="label mb-3 text-right motion-reduce:hidden">
-            <span className="hidden sm:inline">Click</span>
-            <span className="sm:hidden">Tap</span> anywhere to make waves
-          </p>
           <InkJourney />
         </div>
       </div>

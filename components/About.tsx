@@ -5,10 +5,18 @@ import { RouteMap } from "./RouteMap";
 import { Section } from "./Section";
 import { StatesGrid } from "./StatesGrid";
 import { about } from "@/lib/site";
+import { ArtFigure, type ArtKind } from "./Art";
 import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
 const statesOnly = about.statesVisited.filter((s) => s !== "District of Columbia");
+
+const sketches: { kind: ArtKind; caption: string }[] = [
+  { kind: "lissajous", caption: "Lissajous: two sine waves" },
+  { kind: "spirograph", caption: "Spirograph: a wheel in a wheel" },
+  { kind: "julia", caption: "Julia set: z² + c, as contours" },
+  { kind: "flow", caption: "Flow field: ink on noise" },
+];
 
 export function About() {
   return (
@@ -127,6 +135,17 @@ export function About() {
         </div>
         <div className="col-span-12 lg:col-span-8 xl:col-span-9">
           <RouteMap />
+        </div>
+      </section>
+
+      {/* Sketchbook: drawings made with math */}
+      <section className="mt-14 sm:mt-16">
+        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
+        <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
+        <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          {sketches.map((s) => (
+            <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-square" />
+          ))}
         </div>
       </section>
 

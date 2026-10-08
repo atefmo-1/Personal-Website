@@ -150,6 +150,8 @@ export const about = {
     "Climbing Club",
   ],
   routeTitle: "The route so far",
+  sketchbookTitle: "Sketchbook",
+  sketchbookIntro: "Drawings made with math, drawn live in your browser. Click any of them for a new one.",
   // US places visited. DC is listed but not counted as a state.
   statesVisited: [
     "North Carolina",
