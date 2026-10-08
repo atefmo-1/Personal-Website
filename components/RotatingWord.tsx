@@ -57,7 +57,7 @@ export function RotatingWord({ before, words, after }: { before: string; words: 
       <span aria-hidden>
         {before}{" "}
         {/* Invisible longest word holds the width; the typed word sits on top of it */}
-        <span className="relative inline-block whitespace-nowrap font-serif text-[1.18em] italic">
+        <span className="relative inline-block whitespace-nowrap font-semibold">
           <span className="invisible">{longest}</span>
           <span className="absolute left-0 top-0 text-fg">
             {words[index].slice(0, length)}

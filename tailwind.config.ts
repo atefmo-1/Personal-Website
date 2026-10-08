@@ -19,7 +19,6 @@ const config: Config = {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
       letterSpacing: {
         label: "0.14em",

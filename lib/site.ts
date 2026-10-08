@@ -55,7 +55,7 @@ export const site = {
 
 export const about = {
   paragraphs: [
-    "I grew up in a small village in Sharqia, Egypt 🇪🇬, and I’m a first‑generation college student. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at *asking questions*, which turns out to be most of product work.",
+    "I grew up in a small village in Sharqia, Egypt 🇪🇬, and I’m a first‑generation college student. Since then: high school in South Africa 🇿🇦, college in the US 🇺🇸, and a lot of being the new person in the room. Being new that often made me good at asking questions, which turns out to be most of product work.",
   ],
   // Newest first. Sources: Morehead-Cain's <1% and full ride are from the resume; "America's first"
   // is from moreheadcain.org; ALA's 47 countries are from africanleadershipacademy.org (which also lists a 4% acceptance rate).
@@ -151,7 +151,7 @@ export const about = {
   ],
   routeTitle: "The route so far",
   sketchbookTitle: "Sketchbook",
-  sketchbookIntro: "Design is one of my hobbies, and *math makes good pens*. Each of these is drawn live in your browser from an equation; click one for a new version.",
+  sketchbookIntro: "Design is one of my hobbies, and math makes good pens. Each of these is drawn live in your browser from an equation; click one for a new version.",
   // US places visited. DC is listed but not counted as a state.
   statesVisited: [
     "North Carolina",

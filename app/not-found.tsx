@@ -15,7 +15,7 @@ export default function NotFound() {
           <Ink weight={3}>Off the trail</Ink>
         </h1>
         <p className="mt-5 max-w-md text-lg text-muted">
-          This page doesn’t exist, or it moved. The trail back is <em className="font-serif text-[1.08em] italic text-fg">well marked</em>, though.
+          This page doesn’t exist, or it moved. The trail back is well marked, though.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           <Button href="/">

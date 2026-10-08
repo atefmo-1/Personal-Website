@@ -11,8 +11,7 @@ const rows: { label: string; body: React.ReactNode }[] = [
     body: (
       <>
         <span className="font-display font-bold">Space Grotesk</span> for headlines, <span className="font-sans">Inter</span> for reading,{" "}
-        <span className="font-mono text-[0.9em]">JetBrains Mono</span> for labels, and <em className="font-serif text-[1.1em] italic">Instrument Serif</em> for a word
-        of emphasis now and then. The signature on the home page is traced from Sacramento.
+        and <span className="font-mono text-[0.9em]">JetBrains Mono</span> for labels. The signature on the home page is traced from Sacramento.
       </>
     ),
   },
@@ -51,7 +50,7 @@ export default function ColophonPage() {
           ))}
         </dl>
         <p className="mt-8 text-muted">
-          Handmade in Chapel Hill by <em className="font-serif text-[1.08em] italic text-fg">Atef Mohamed</em>.
+          Handmade in Chapel Hill by Atef Mohamed.
         </p>
       </Reveal>
     </Section>

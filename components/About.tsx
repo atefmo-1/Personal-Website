@@ -8,7 +8,6 @@ import { about } from "@/lib/site";
 import { ArtFigure, type ArtKind } from "./Art";
 import { TripPhoto } from "./TripPhoto";
 import { TripRidgelines } from "./TripRidgelines";
-import { Emphasis } from "./Emphasis";
 import { Ink } from "./Ink";
 
 // DC is shown in the list but isn't a state, so it isn't counted.
@@ -142,9 +141,7 @@ export function About() {
       {/* Sketchbook: drawings made with math */}
       <section className="mt-14 sm:mt-16">
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.sketchbookTitle}</Ink></h2>
-        <p className="mt-3 max-w-2xl text-muted">
-          <Emphasis text={about.sketchbookIntro} />
-        </p>
+        <p className="mt-3 max-w-2xl text-muted">{about.sketchbookIntro}</p>
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3">
           {sketches.map((s) => (
             <ArtFigure key={s.kind} kind={s.kind} caption={s.caption} artClassName="aspect-[4/3]" />
