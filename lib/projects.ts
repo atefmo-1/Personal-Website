@@ -21,8 +21,10 @@ import type { MotionId } from "@/components/reloco-motion";
 // section, each with a definition and a source. No em dashes, no invented numbers.
 // Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild), updated
 // for v2 (Ask Reloco and Documents, September 2026), v2.1 (task tools and comparisons, October
-// 2026) and v2.3 (the visa interview check, a second security review, Sentry and tester feedback). Every number is checked against Reloco's code and eval runs. "Pages" means unique URLs listed
-// as a task's sources across the task library. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
+// 2026), v2.3 (the visa interview check, a second security review, Sentry and tester feedback), v2.4 (staying on
+// track: reminders, life changes, taxes, Updates) and v2.5 (six more task tools and a UI pass). Every number is
+// checked against Reloco's code and eval runs. "Pages" means unique URLs a task links (its sources and step
+// links), across the sample students. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
 export type ImageShot = { src: string; alt: string; caption: string; width: number; height: number; motion?: undefined };
 // A phone screenshot, or one of the motion graphics (components/reloco-motion) drawn at the same size.
@@ -197,7 +199,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **49** tasks across **9** areas, linked to **64** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, and **Documents** keeps their papers encrypted and checked.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **52** tasks across **9** areas, linked to **84** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, **Documents** keeps their papers encrypted and checked, and **Updates** says how each new rule affects them.",
         },
         {
           label: "Scope",
@@ -215,7 +217,7 @@ export const projects: Project[] = [
         groups: [
           {
             title: "Arriving: new students",
-            text: "The heaviest stretch. For a sample freshman, **13** of their **43** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
+            text: "The heaviest stretch. For a sample freshman, **14** of their **44** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
                 "31-freshman-today-countdown-phone",
@@ -227,7 +229,7 @@ export const projects: Project[] = [
           },
           {
             title: "Studying: sophomore to senior",
-            text: "The work comes in yearly cycles: a travel signature before winter break, taxes every February, CPT before a summer internship, full-time enrollment each fall. Reloco brings each one back on schedule, every year. Current students who join mid-degree start with everything behind them already checked off.",
+            text: "The work comes in yearly cycles: a travel signature before winter break, taxes every February, CPT before a summer internship, full-time enrollment each fall. Reloco brings each one back on schedule, every year. Current students who join mid-degree start with everything behind them already checked off, and when life changes (a job, a trip abroad, a move) the paperwork joins the plan.",
             shots: [
               phone(
                 "07-today-junior-phone",
@@ -520,6 +522,21 @@ export const projects: Project[] = [
               alt: "Animation of Mei's DMV visit plan: her check-in, passport, visa, I-94 and I-20, no-SSN status and lease all check out, she says she'll drive her own car and gets the insurance she needs to bring, then booking and the Carrboro office appear",
               caption: "A first license, planned around what's ready",
             },
+            phone(
+              "83-tool-drop-class-phone",
+              "Can I drop a class? Four classes listed, one online, and dropping STOR 435 would leave 9 credits that count, so Reloco says don't drop it yet: dropping below full time without ISSS's approval ends F-1 status",
+              "Before dropping a class: what still counts",
+            ),
+            phone(
+              "82-tool-itin-phone",
+              "Do you need an ITIN? Mei's scholarship pays for more than tuition, so she likely needs one, with the ISSS Portal request, the appointment and the IRS's timing",
+              "An ITIN only if the scholarship needs one",
+            ),
+            phone(
+              "85-tool-opt-dates-phone",
+              "Your OPT dates for a May 2028 graduate: decide by Dec 25, request the OPT I-20 on Jan 24, USCIS opens on Feb 13 and the last day is Jul 12",
+              "OPT, dated from graduation",
+            ),
           ],
           what: [
             "Get your F-1 visa: the passport, I-20, SEVIS fee receipt and DS-160 confirmation page are checked against each other, the interview date against the SEVIS fee and the earliest day the embassy can issue the visa, and after the interview a 221(g) or 214(b) result says what it means, what to do and how it affects the start date, with the email to ISSS drafted.",
@@ -528,9 +545,12 @@ export const projects: Project[] = [
             "Before a trip home: the travel signature, passport and visa are checked against the dates of the trip.",
             "Getting a driver's license: a DMV visit plan, from the documents in Documents (no SSN needed) and proof of address to insurance, the nearest office and the tests.",
             "Also: a lease explained in plain words, the major checked against the DHS STEM list, CPT months counted from an offer letter, immunizations checked against UNC's rules, an OPT unemployment counter, help deciding whether to enroll in or waive student health insurance, and a dated task when a student reports a move.",
+            "Can I drop a class? The student's classes (typed, or read from a screenshot of their schedule) checked against full time: 12 credits, only one online class counts, waitlisted ones don't. Before a drop takes them below, it says to get ISSS's approval first, with the reasons that qualify and the drop deadline.",
+            "Do you need an ITIN? Usually not. An award letter is read to split what's tax free (tuition, fees, books) from what's taxable (housing, meals, a stipend), and only a taxable part leads to the W-7 packet and ISSS's process.",
+            "Also new: an I-20 extension task when the I-20 ends before graduation, a W-4 checked from a photo before payroll gets it (the SSN is never read), whether an internship can be CPT under the August 2026 federal guidance, and OPT dated from graduation.",
           ],
           why: "Steps say what to do. The hard part is knowing whether your own papers are right: a wrong date of birth on an I-94 or a visa that lapses over winter break can stop a student at the border. Each tool runs that check with the student's own documents and dates.",
-          how: "The checks are plain code, not AI: date math (down to the 3 business days ICE says a SEVIS fee payment needs to be verified before the interview, skipping federal holidays), the STEM list, CPT months, the J-1 insurance minimums. AI only reads documents, and readers that explain an upload (a lease, an insurance policy, an offer) quote the exact words they relied on. A file picked just for that is read once and never stored. Each reader has its own eval: the insurance reader passed 49 of 49 checks on invented policies.",
+          how: "The checks are plain code, not AI: date math (down to the 3 business days ICE says a SEVIS fee payment needs to be verified before the interview, skipping federal holidays), the STEM list, CPT months, the J-1 insurance minimums. AI only reads documents, and readers that explain an upload (a lease, an insurance policy, an offer) quote the exact words they relied on. A file picked just for that is read once and never stored. Each reader has its own eval: the insurance reader passed 49 of 49 checks on invented policies, and the award-letter, class-schedule and W-4 readers passed 69 of 69, twice, quoting every value word for word and never returning an SSN.",
         },
         {
           id: "compare",
@@ -574,7 +594,7 @@ export const projects: Project[] = [
             "When a message changes the plan, like a CPT approval, it offers a one-tap update. Nothing changes until the student taps.",
           ],
           why: "Students told me chatbots sounded sure and were partly wrong. Here, code checks every answer before the student sees it, and the assistant can't change the plan on its own.",
-          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 9 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM and unemployment checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 53 checked facts, or a page the search actually returned counts. The screens show a real answer for a sample junior.",
+          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 10 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM, unemployment and tax checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 65 checked facts, or a page the search actually returned counts. New rules from Updates are in its context too, so it can say whether one affects the student. The screens show a real answer for a sample junior.",
         },
         {
           id: "documents",
@@ -636,6 +656,61 @@ export const projects: Project[] = [
           how: "OPT tasks are anchored to the graduation date, with `requires` chains so each step unlocks the next. The filing window is plain date math, tested at its edges. While I was building it, a DHS rule that would cut the 60 days to 30 was paused by a court, and the government's regulations site already showed the new text. The check follows what USCIS says it applies today, says so on the card, and switches with one setting if the rule takes effect.",
         },
         {
+          id: "life",
+          title: "When life changes",
+          shots: [
+            phone(
+              "84-life-changes-phone",
+              "Profile, What changed?: I got a job, My SSN arrived, I'm going abroad and I moved, with Mei's saved winter trip below",
+              "A job, an SSN, a trip or a move, each with its paperwork",
+            ),
+          ],
+          what: [
+            "I got a job, My SSN arrived, I'm going abroad, I moved: each adds the right task, dated to the event, not to the day the student landed. A campus job in year two gets its I-9, W-4 and SSN steps around its first day.",
+            "A trip abroad gets its own checklist from 45 days out: the travel signature, the passport and visa against the return date, and the five-month rule for study abroad.",
+            "At the start of each term, Today asks whether anything changed.",
+            "Email reminders, if the student wants them: when a task opens, before it's due, and once if it slips, plus a new rule that affects them.",
+          ],
+          why: "A plan made at signup goes stale. Students get jobs, SSNs and trips months later, and that's when the paperwork and its deadlines start.",
+          how: "Events are pure functions on the student's facts, tested in every order and undone again. Reminders are opt-in, sent by a daily job through Resend, capped under the free plan's limit with the most urgent first, and never sent twice.",
+        },
+        {
+          id: "taxes",
+          title: "Taxes, the nonresident way",
+          shots: [
+            phone(
+              "81-tax-card-phone",
+              "Aisha's 2026 taxes: she worked, her scholarship didn't pay more than tuition, no other income, so she files Form 8843 and a 1040-NR",
+              "Three answers, then exactly what to file",
+            ),
+          ],
+          what: [
+            "Three questions (did you work, does a scholarship pay more than tuition, any other income) and Reloco says what to file: Form 8843 always, a 1040-NR with taxable income, a W-7 without an SSN, and the North Carolina return. Due April 15 with wages, June 15 without.",
+            "What to wait for (a W-2 by January 31, a 1042-S by March 15), the days in the US from the student's trips, and which of their 5 exempt calendar years it is.",
+            "W-2s, 1042-Ss and 1099s can be saved in Documents. Their amounts are encrypted, and the SSN or ITIN on them is never read.",
+          ],
+          why: "Every F-1 student files something, and most don't know which form or whether one return covers a campus job, a scholarship and an internship (it does).",
+          how: "The rules are plain code from IRS publications, tested against students from India (a treaty), Canada, a sixth calendar year and a year abroad. Anything it can't settle, like residency after five years, says to ask ISSS instead of guessing.",
+        },
+        {
+          id: "updates",
+          title: "Updates: new rules, and what they mean for you",
+          shots: [
+            phone(
+              "80-updates-phone",
+              "Updates: the proposed OPT fees, marked May affect you later and Proposed, with How this affects you using Aisha's May 13, 2028 graduation date and a link to comment",
+              "A new rule, said for one student",
+            ),
+          ],
+          what: [
+            "A tab that follows new rules for international students, like proposed OPT fees, the paused end of duration of status or narrower CPT guidance.",
+            "Each one has its status (proposed, paused, in effect), its key dates, a plain summary, and How this affects you, written with the student's own dates.",
+            "What affects them gets a dot on the tab, and a line in their reminder email if they turned reminders on.",
+          ],
+          why: "Rules changed several times in 2026 alone, and students heard about them secondhand, without knowing whether they applied to them.",
+          how: "A daily job reads the Federal Register's API. Claude summarizes each new rule once with structured outputs, and it's published only with high confidence, labeled as an AI summary with its source. The note for each student is filled in by rules from their profile, so there's no AI call per student. The eval caught a summary saying a student would pay a fee that the school pays, which led to a who-pays check.",
+        },
+        {
           id: "sources",
           title: "Sourced, current, and yours to share",
           shots: [
@@ -647,9 +722,9 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "Tasks link 64 pages on 29 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
+            "Tasks link 84 pages on 34 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
             "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department, USPS), North Carolina (the DMV and the Departments of Revenue and Insurance), local utilities (Duke Energy, OWASA), and consumer guides from the CFPB, FTC and FCC.",
-            "Rule changes get a notice that says what still applies (the 2026 DHS duration-of-status rule and its court pause).",
+            "New rules show up in Updates with a note on what they mean for the student (see Updates above).",
             "The dates in Documents (passport, visa, I-20, I-94) drive the plan, like the reminder to renew a passport.",
             "Deadlines sync to Google, Apple or Outlook.",
             "A read-only share page lets family follow along.",
@@ -766,7 +841,7 @@ export const projects: Project[] = [
             name: "Data",
             purpose: "One Store interface",
             parts: [
-              "Supabase Postgres with row-level security on every table and 13 migrations, including checks that every link between rows stays inside one account.",
+              "Supabase Postgres with row-level security on every table and 18 migrations, including checks that every link between rows stays inside one account.",
               "Facts that tools need (check results, reported moves, OPT jobs) live in one validated JSON field, so most new features ship without a migration.",
               "Security-definer functions serve the share page and calendar feed by revocable token.",
               "Google OAuth, with the session refreshed in the request proxy.",
@@ -802,7 +877,7 @@ export const projects: Project[] = [
         ],
         pipeline: [
           "Answers are validated with Zod.",
-          "49 tasks are filtered to the ones that apply (43 for a sample freshman, 48 for a sample junior).",
+          "52 tasks are filtered to the ones that apply (44 for a sample freshman, 48 for a sample junior).",
           "Anchors become real dates.",
           "Yearly tasks become one copy per year.",
           "Tasks are ordered by dependencies.",
@@ -811,7 +886,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**308** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **85** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **85/85** with **0** safety failures, at about **1¢** a question. Document reading scored **196/196** fields and passed **76/76** upload checks, the insurance reader passed **49/49** checks and the comparison reader **31/31**. A crawler walks the app as scripted students and captures every screen, the database has grown through **13** migrations, each with row-level security (the newest access rules tested against a real Postgres), and Sentry reports production errors with personal data stripped.",
+          "**560** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **95** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **92/95** with **0** safety failures, at about **1¢** a question. Document reading scored **196/196** fields and passed **76/76** upload checks, the insurance reader passed **49/49** checks, the comparison reader **31/31**, and the award-letter, class-schedule and W-4 readers **69/69**, twice. The Updates summarizer is checked against each rule's own text, including who pays a fee. A crawler walks the app as scripted students and captures every screen, the database has grown through **18** migrations, each with row-level security (the newest access rules tested against a real Postgres), and Sentry reports production errors with personal data stripped.",
         stack: [
           {
             label: "Frontend",
@@ -1026,6 +1101,18 @@ export const projects: Project[] = [
           status: "Completed",
           date: "October 2026",
           text: "A visa interview check (the passport, I-20, SEVIS fee receipt and DS-160 checked against each other, the interview timing, and what to do after a 221(g) or 214(b)), a second security review, error monitoring that strips personal data, and an in-app feedback form for the first testers. Live at reloco.app.",
+        },
+        {
+          phase: "v2.4",
+          status: "Completed",
+          date: "October 2026",
+          text: "Staying on track after signup: invite-only early access, opt-in email reminders, life changes (a new job, an SSN, a trip abroad) and a check-in each term, a tax tool with tax forms saved in Documents, an Updates tab for new rules, and a smarter Ask. Live at reloco.app.",
+        },
+        {
+          phase: "v2.5",
+          status: "Completed",
+          date: "October 2026",
+          text: "Six more task tools (whether you need an ITIN, dropping a class, an I-20 extension, the W-4, CPT eligibility and OPT dates), a welcome email, and a UI pass so every screen fits the student's stage. Live at reloco.app.",
         },
         {
           phase: "v3",
