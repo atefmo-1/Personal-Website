@@ -22,7 +22,8 @@ import type { MotionId } from "@/components/reloco-motion";
 // Reloco's content follows /Users/atefmo/reloco/RELOCO_CASE_STUDY_UPDATE_V5.md (v5 rebuild), updated
 // for v2 (Ask Reloco and Documents, September 2026), v2.1 (task tools and comparisons, October
 // 2026), v2.3 (the visa interview check, a second security review, Sentry and tester feedback), v2.4 (staying on
-// track: reminders, life changes, taxes, Updates) and v2.5 (six more task tools and a UI pass). Every number is
+// track: reminders, life changes, taxes, Updates), v2.5 (six more task tools and a UI pass) and v2.6 (a written design
+// system, three rounds of design critique, and calmer handling of status-critical work). Every number is
 // checked against Reloco's code and eval runs. "Pages" means unique URLs a task links (its sources and step
 // links), across the sample students. Reloco is an app, never "a roadmap"; the student's schedule is "their plan".
 
@@ -199,7 +200,7 @@ export const projects: Project[] = [
         },
         {
           label: "Solution",
-          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **52** tasks across **9** areas, linked to **84** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, **Documents** keeps their papers encrypted and checked, and **Updates** says how each new rule affects them.",
+          text: "About 10 questions and Reloco knows which tasks apply, when each is due and what has to come first, then guides the student through them one at a time for the whole degree. It picks from **61** tasks across **9** areas, linked to **90** official and trusted pages. Tools inside the tasks check the student's own papers and compare options, **Ask Reloco** answers questions about their situation, **Documents** keeps their papers encrypted and checked, and **Updates** says how each new rule affects them.",
         },
         {
           label: "Scope",
@@ -209,7 +210,7 @@ export const projects: Project[] = [
           label: "Role",
           text: "Solo: user interviews, product strategy, UX and visual design, full-stack and AI engineering, security, launch.",
         },
-        { label: "Status", text: "v2.3 live at reloco.app, October 2026: the plan, task tools, Ask Reloco and Documents, with the first testers starting." },
+        { label: "Status", text: "v2.6 live at reloco.app, October 2026, in invite-only early access: shared with UNC's international students, with the first testers using it." },
       ],
       audience: {
         intro:
@@ -217,7 +218,7 @@ export const projects: Project[] = [
         groups: [
           {
             title: "Arriving: new students",
-            text: "The heaviest stretch. For a sample freshman, **14** of their **44** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
+            text: "The heaviest stretch. For a sample new student, **15** of their **54** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
                 "31-freshman-today-countdown-phone",
@@ -232,9 +233,9 @@ export const projects: Project[] = [
             text: "The work comes in yearly cycles: a travel signature before winter break, taxes every February, CPT before a summer internship, full-time enrollment each fall. Reloco brings each one back on schedule, every year. Current students who join mid-degree start with everything behind them already checked off, and when life changes (a job, a trip abroad, a move) the paperwork joins the plan.",
             shots: [
               phone(
-                "07-today-junior-phone",
-                "Aisha's Today as a junior: day 780 in Chapel Hill, 63% progress, and one next task, a travel signature before winter break",
-                "A junior's Today: the winter travel signature",
+                "90-today-junior-ban-phone",
+                "Lina's Today as a junior from Nigeria: 1 of 9 done this year, graduating May 2028, the entry-ban warning with Check a trip before you book, then her next task with Already done and Start",
+                "A junior's Today, with the rule that affects her first",
               ),
               phone(
                 "50-cpt-summer-phone",
@@ -467,9 +468,9 @@ export const projects: Project[] = [
           shots: [
             { motion: "plan-build", alt: "Animation of Ziad's plan being built: four stages tick off one by one while the nine areas pop in with their task counts, then the plane lands at RDU and the screen reads Cleared for takeoff, 35 tasks across 9 areas", caption: "The plan, built stage by stage" },
             phone(
-              "18-journey-whole-degree-phone",
-              "Journey screen listing chapters from Settling in and First spring through Sophomore, Junior and Senior year and After graduation",
-              "The rest of the degree, by class year",
+              "92-journey-search-phone",
+              "Journey: a task search, Checks and tools (trip, full-time and I-94 checks), 6 of 9 chapters done, freshman year folded as Done before Reloco, then Sophomore and Junior year",
+              "The degree by year, with search and every check in one place",
             ),
           ],
           what: "Nine areas: immigration, taxes, work, banking, IDs, housing, health, campus and tech. A personal, dated plan. Tasks appear only when they apply: the campus job only if you'll work, STEM OPT only for STEM majors, a driver's license only if you'll drive. Change a date in Profile and the whole plan reschedules, keeping progress.",
@@ -496,6 +497,11 @@ export const projects: Project[] = [
           title: "Inside a task",
           shots: [
             { motion: "task-steps", alt: "Animation of the task Pack your entry documents in your carry-on: its four steps are ticked one by one in order, each unlocking the next, the counter climbs to 4 of 4 and the bar turns into Complete, plus 80 miles", caption: "Steps ticked in order, then Complete" },
+            phone(
+              "91-task-travel-ban-phone",
+              "Task: Thinking of going home for winter 2026? Talk to ISSS first. A red Before you plan a trip warning says Nigeria is under the US entry ban, with the Federal Register source and How to reach ISSS, and step 1 is talking to ISSS",
+              "A warning that changes what's safe to do comes before the steps",
+            ),
             phone(
               "65-task-locked-steps-phone",
               "Check in with ISSS further down: three steps with their ISSS links, a locked Mark complete button, and a Bring list with the I-20 waiting for a check and the I-94 not added",
@@ -594,7 +600,7 @@ export const projects: Project[] = [
             "When a message changes the plan, like a CPT approval, it offers a one-tap update. Nothing changes until the student taps.",
           ],
           why: "Students told me chatbots sounded sure and were partly wrong. Here, code checks every answer before the student sees it, and the assistant can't change the plan on its own.",
-          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 10 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM, unemployment and tax checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 65 checked facts, or a page the search actually returned counts. New rules from Updates are in its context too, so it can say whether one affects the student. The screens show a real answer for a sample junior.",
+          how: "Claude Sonnet 5 in a streaming tool-use loop I wrote, with 10 tools of my own (the plan, a task, their documents, work, travel, OPT, STEM, unemployment and tax checks, and one for deadlines and suggestions) plus web search limited to 17 official domains. Citations are validated on the server: only a task in their plan, one of 75 checked facts, or a page the search actually returned counts. New rules from Updates are in its context too, so it can say whether one affects the student. The screens show a real answer for a sample junior.",
         },
         {
           id: "documents",
@@ -722,7 +728,7 @@ export const projects: Project[] = [
             ),
           ],
           what: [
-            "Tasks link 84 pages on 34 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
+            "Tasks link 90 pages on 37 sites: official pages for every rule, and guides like the CFPB's for banking and credit.",
             "Sources: UNC offices (ISSS, Campus Health, Housing, One Card, Career Services), federal agencies (the IRS, USCIS, SSA, DHS, CBP, the State Department, USPS), North Carolina (the DMV and the Departments of Revenue and Insurance), local utilities (Duke Energy, OWASA), and consumer guides from the CFPB, FTC and FCC.",
             "New rules show up in Updates with a note on what they mean for the student (see Updates above).",
             "The dates in Documents (passport, visa, I-20, I-94) drive the plan, like the reminder to renew a passport.",
@@ -734,7 +740,7 @@ export const projects: Project[] = [
       ],
       progress: {
         title: "Progress that motivates",
-        text: "Tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts. A certificate marks the first year, and another marks graduation.",
+        text: "Everyday tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts. Status and tax tasks earn no points: finishing one shows a calm \"done and saved\" with Undo instead of confetti. Miles and stamps live in Journey, so Today keeps one number, this year's tasks done. A certificate marks the first year, and another marks graduation.",
         shots: [
           { motion: "miles", alt: "Animation of completing a task: the last step of Get a US phone number is ticked, Complete is tapped, and a card says Nice work as confetti falls and the miles count up to 60", caption: "Miles for every task" },
           { motion: "stamp", alt: "Animation of finishing a chapter: the Pre-flight stamp comes down on the reward card with confetti and plus 50 miles, then the card closes and Mei's passport shows the Pre-flight stamp, 1 of 9", caption: "A stamp for every chapter" },
@@ -781,7 +787,15 @@ export const projects: Project[] = [
           },
           {
             title: "Private by design",
-            text: "Encryption, an access log and opt-in AI reads were in the first version of Documents, not added later.",
+            text: "Encryption and an access log were in the first version of Documents, not added later. AI reading fills in the details by default and can be switched off on any upload; the choice is remembered.",
+          },
+          {
+            title: "Calm where it matters",
+            text: "Status-critical tasks (immigration, taxes, staying full time, reporting an address) earn no points and ask before they're skipped. A rule that changes what's safe to do, like an entry ban, leads with what to do next.",
+          },
+          {
+            title: "A written design system",
+            text: "A product brief and a design system file set the rules: one serif weight, flat cards with no shadows, gold only for rewards and brick only for urgency, 44px targets and nothing under 12px. Three rounds of independent design critique, scored on Nielsen's heuristics, found what to fix next.",
           },
           {
             title: "Mobile-first, works everywhere",
@@ -795,10 +809,10 @@ export const projects: Project[] = [
             name: "Content",
             purpose: "What Reloco knows",
             parts: [
-              "Task library: 49 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years or per-event copies, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
+              "Task library: 61 typed tasks. Each declares conditions, date anchors (arrival, program start, tax year, fixed date), dependencies and hard `requires`, repeat years or per-event copies, and whether it's optional, travel-only or a later-year task, plus steps, documents and sources.",
               "School pack: UNC's offices, links and airport, kept separate from the engine.",
               "Country data: tax treaties and passport-validity rules.",
-              "53 checked facts for the assistant, each with its source and the date I checked it. Calendar facts expire on their own.",
+              "75 checked facts for the assistant, each with its source and the date I checked it. Calendar facts expire on their own.",
             ],
           },
           {
@@ -833,7 +847,7 @@ export const projects: Project[] = [
               "Citations, reply types and plan suggestions are validated in code before anything reaches the student.",
               "Document reading and checking with structured outputs, plus format checks for official numbers.",
               "Readers for leases, insurance policies, offer letters and options a student found: structured outputs with quotes, checked word for word in their evals. A file picked just for one of them is read once and never stored.",
-              "One model everywhere, chosen by evals: moving document reading from Haiku to Sonnet 5 took it from 98.9% to 100% of fields on specimens, and moving the scanner and notes off Opus cut their cost.",
+              "Models chosen by evals and cost: Claude Haiku 5.5 for document reading, checks and notes (about a twentieth of the price), retried once on Sonnet 5 if a read comes back cut off. Ask Reloco and Updates summaries stay on Sonnet 5, where Haiku missed the eval gates.",
               "Daily caps per student on every AI feature (40 questions, 30 document checks, 10 comparisons), counted in a log students can't edit.",
             ],
           },
@@ -841,7 +855,7 @@ export const projects: Project[] = [
             name: "Data",
             purpose: "One Store interface",
             parts: [
-              "Supabase Postgres with row-level security on every table and 18 migrations, including checks that every link between rows stays inside one account.",
+              "Supabase Postgres with row-level security on every table and 25 migrations, including checks that every link between rows stays inside one account.",
               "Facts that tools need (check results, reported moves, OPT jobs) live in one validated JSON field, so most new features ship without a migration.",
               "Security-definer functions serve the share page and calendar feed by revocable token.",
               "Google OAuth, with the session refreshed in the request proxy.",
@@ -859,7 +873,7 @@ export const projects: Project[] = [
               "Documents",
               "RFC 5545 calendar feed",
               "Family share page",
-              "Email reminders (built, off until sending is live)",
+              "Opt-in email reminders",
             ],
           },
           {
@@ -877,7 +891,7 @@ export const projects: Project[] = [
         ],
         pipeline: [
           "Answers are validated with Zod.",
-          "52 tasks are filtered to the ones that apply (44 for a sample freshman, 48 for a sample junior).",
+          "61 tasks are filtered to the ones that apply (54 for a sample new student).",
           "Anchors become real dates.",
           "Yearly tasks become one copy per year.",
           "Tasks are ordered by dependencies.",
@@ -886,7 +900,7 @@ export const projects: Project[] = [
           "The plan is saved, and each step streams to the screen.",
         ],
         quality:
-          "**560** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **95** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **92/95** with **0** safety failures, at about **1¢** a question. Document reading scored **196/196** fields and passed **76/76** upload checks, the insurance reader passed **49/49** checks, the comparison reader **31/31**, and the award-letter, class-schedule and W-4 readers **69/69**, twice. The Updates summarizer is checked against each rule's own text, including who pays a fee. A crawler walks the app as scripted students and captures every screen, the database has grown through **18** migrations, each with row-level security (the newest access rules tested against a real Postgres), and Sentry reports production errors with personal data stripped.",
+          "**674** tests guard the engine's invariants, like never opening a task before its prerequisites. The AI has its own evals: **95** Ask Reloco cases across **5** student personas, where every safety case (referrals, scams, prompt injection) must pass and the gate is 90%. The latest full run passed **92/95** with **0** safety failures, at about **1¢** a question. Document reading scored **196/196** fields and passed **76/76** upload checks, the insurance reader passed **49/49** checks, the comparison reader **31/31**, and the award-letter, class-schedule and W-4 readers **69/69**, twice. The Updates summarizer is checked against each rule's own text, including who pays a fee. A crawler walks the app as scripted students and captures every screen, the database has grown through **25** migrations, each with row-level security (the newest access rules tested against a real Postgres), and Sentry reports production errors with personal data stripped.",
         stack: [
           {
             label: "Frontend",
@@ -1113,6 +1127,12 @@ export const projects: Project[] = [
           status: "Completed",
           date: "October 2026",
           text: "Six more task tools (whether you need an ITIN, dropping a class, an I-20 extension, the W-4, CPT eligibility and OPT dates), a welcome email, and a UI pass so every screen fits the student's stage. Live at reloco.app.",
+        },
+        {
+          phase: "v2.6",
+          status: "Completed",
+          date: "October 2026",
+          text: "A written design system and three rounds of design critique, then the fixes: no points on status-critical tasks, the entry ban surfaced where it changes what's safe, a Get help page with how to reach ISSS, tap-to-explain acronyms, Journey search with every check in one place, CPT history kept as dated periods, and visible focus and 44px targets throughout. Live at reloco.app.",
         },
         {
           phase: "v3",
