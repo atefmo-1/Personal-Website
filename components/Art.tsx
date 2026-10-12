@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "planes" | "lost" | "pascal" | "collatz" | "bst" | "konigsberg";
+export type ArtKind = "ridges" | "flow" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "lost" | "pascal" | "collatz" | "bst" | "konigsberg";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -29,28 +29,6 @@ const smooth = (a: number, b: number, v: number) => {
   return t * t * (3 - 2 * t);
 };
 
-// Many tangled lines on the left that settle into calm, parallel lines on the right.
-function order(w: number, h: number, seed: number): Line[] {
-  const n = Math.max(18, Math.round(h / 8));
-  const lines: Line[] = [];
-  const top = h * 0.14;
-  const gap = (h * 0.72) / (n - 1);
-  for (let i = 0; i < n; i++) {
-    const base = top + i * gap;
-    const pts: number[] = [];
-    for (let x = 0; x <= w * 0.94; x += 2) {
-      const t = x / w;
-      const mess = 1 - smooth(0.12, 0.72, t);
-      const wobble = (fbm(x / 90 + seed, i * 0.31 + seed * 2.3) - 0.5) * h * 1.25 + Math.sin(x / 23 + i) * 6;
-      // Soft limit (tanh) so tangled lines never flatten against the edges
-      const y = base + mess * wobble;
-      pts.push(x, h / 2 + Math.tanh((y - h / 2) / (h * 0.46)) * h * 0.44);
-    }
-    const start = (i / n) * 0.35;
-    lines.push({ pts, width: 1, alpha: 0.75, start, end: start + 0.65, dot: true });
-  }
-  return lines;
-}
 
 // Stacked ridgelines, like a mountain range seen in profile, back to front.
 function ridges(w: number, h: number, seed: number): Line[] {
@@ -110,66 +88,7 @@ function flow(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-// Lines that wander in from the left and all find their way to one point.
-function converge(w: number, h: number, seed: number): Line[] {
-  const r = rng(seed * 15485863 + 7);
-  const tx = w * 0.8;
-  const ty = h * 0.5;
-  const maxD = Math.hypot(w, h);
-  const lines: Line[] = [];
-  const count = Math.min(170, Math.round(h / 1.6));
-  for (let k = 0; k < count; k++) {
-    let x = 4 + r() * w * 0.3;
-    let y = h * 0.06 + r() * h * 0.88;
-    const pts = [x, y];
-    for (let s = 0; s < 600; s++) {
-      const dx = tx - x;
-      const dy = ty - y;
-      const d = Math.hypot(dx, dy);
-      if (d < 5) break;
-      const a = fbm(x / 120 + seed, y / 120 - seed) * Math.PI * 4;
-      const pull = Math.min(1, 0.3 + 0.7 * (1 - d / maxD) ** 2 + (d < 70 ? 0.5 : 0));
-      const vx = Math.cos(a) * (1 - pull) + (dx / d) * pull;
-      const vy = Math.sin(a) * (1 - pull) + (dy / d) * pull;
-      const m = Math.hypot(vx, vy) || 1;
-      x += (vx / m) * 2.2;
-      y += (vy / m) * 2.2;
-      if (x < 2 || x > w - 2 || y < 2 || y > h - 2) break;
-      pts.push(x, y);
-    }
-    if (pts.length < 20) continue;
-    const start = r() * 0.3;
-    lines.push({ pts, width: 0.8, alpha: 0.45, start, end: start + 0.7 });
-  }
-  // The point everything arrives at
-  const ring: number[] = [];
-  for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.1) ring.push(tx + Math.cos(a) * 9, ty + Math.sin(a) * 9);
-  lines.push({ pts: ring, width: 1.6, alpha: 1, start: 0.85, end: 1 });
-  return lines;
-}
 
-// Wobbly concentric rings, like a tree's growth rings, with a few marked darker.
-function rings(w: number, h: number, seed: number): Line[] {
-  const cx = w / 2;
-  const cy = h / 2;
-  const n = 30;
-  const rmax = Math.min(w, h) * 0.47;
-  const gap = rmax / (n + 2);
-  const marked = new Set([9, 18, 26]);
-  const lines: Line[] = [];
-  for (let k = 0; k < n; k++) {
-    const pts: number[] = [];
-    const base = gap * (k + 2);
-    for (let i = 0; i <= 240; i++) {
-      const a = (i / 240) * Math.PI * 2;
-      const wob = (noise(Math.cos(a) * 1.4 + 9 + seed, Math.sin(a) * 1.4 + k * 0.06 + seed) - 0.5) * gap * (2 + k * 0.18);
-      pts.push(cx + Math.cos(a) * (base + wob) * (w > h ? 1.25 : 1), cy + Math.sin(a) * (base + wob));
-    }
-    const start = (k / n) * 0.6;
-    lines.push({ pts, width: marked.has(k) ? 2 : 0.9, alpha: marked.has(k) ? 1 : 0.6, start, end: start + 0.4 });
-  }
-  return lines;
-}
 
 // Fit points into the canvas with a margin, keeping their proportions.
 function fit(all: number[][], w: number, h: number, margin = 0.08) {
@@ -331,41 +250,6 @@ function isoSegments(field: Float32Array, cols: number, rows: number, cell: numb
   return out;
 }
 
-// Paper planes on curved paths from all directions, landing in Chapel Hill.
-function planes(w: number, h: number, seed: number): Line[] {
-  const r = rng(seed * 7477 + 13);
-  const home = { x: w * 0.6, y: h * 0.56 };
-  const lines: Line[] = [];
-  const n = 14;
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2 + r() * 0.4;
-    const far = Math.max(w, h) * (0.55 + r() * 0.2);
-    const x0 = home.x + Math.cos(a) * far;
-    const y0 = home.y + Math.sin(a) * far * 0.6;
-    // Curve each path to one side, like a great-circle route on a flat map
-    const mx = (x0 + home.x) / 2 - Math.sin(a) * far * 0.35 * (r() < 0.5 ? 1 : -1);
-    const my = (y0 + home.y) / 2 - Math.abs(Math.cos(a)) * far * 0.25;
-    const pts: number[] = [];
-    for (let t = 0; t <= 1; t += 0.01) {
-      const u = 1 - t;
-      const x = u * u * x0 + 2 * u * t * mx + t * t * home.x;
-      const y = u * u * y0 + 2 * u * t * my + t * t * home.y;
-      if (x < -20 || x > w + 20 || y < -20 || y > h + 20) continue;
-      pts.push(x, y);
-    }
-    if (pts.length < 6) continue;
-    const start = r() * 0.55;
-    lines.push({ pts, width: 0.9, alpha: 0.6, start, end: start + 0.4, plane: true });
-  }
-  const ring = (rad: number) => {
-    const pts: number[] = [];
-    for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.15) pts.push(home.x + Math.cos(a) * rad, home.y + Math.sin(a) * rad);
-    return pts;
-  };
-  lines.push({ pts: ring(4), width: 2, alpha: 1, start: 0.9, end: 0.97 });
-  lines.push({ pts: ring(11), width: 0.9, alpha: 0.6, start: 0.93, end: 1, text: { x: home.x + 18, y: home.y + 4, s: "CHAPEL HILL", align: "left" } });
-  return lines;
-}
 
 // For the 404 page: a contour map and a dashed trail that wanders in and simply stops.
 function lost(w: number, h: number, seed: number): Line[] {
@@ -564,7 +448,7 @@ function konigsberg(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { pascal, collatz, bst, konigsberg, lost, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+const builders = { pascal, collatz, bst, konigsberg, lost, ridges, flow, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 // `redraws` lets something outside the canvas (the caption's redraw button) ask for a new version:
 // each time the number goes up, the figure draws a new variation.
@@ -747,7 +631,7 @@ export function Art({ kind, seed = 1, label, className = "", redraws = 0 }: { ki
   }, [kind, seed]);
 
   // Field figures fade out toward their edges instead of stopping at a hard border.
-  const soft = kind === "flow" || kind === "converge" ? "[mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_100%)]" : "";
+  const soft = kind === "flow" ? "[mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_100%)]" : "";
   return (
     <button type="button" aria-label={`${label}. Click to draw a new version.`} title="Click to draw a new version" className={`block w-full cursor-pointer rounded-2xl ${soft} ${className}`}>
       <canvas ref={canvasRef} className="block h-full w-full" aria-hidden />

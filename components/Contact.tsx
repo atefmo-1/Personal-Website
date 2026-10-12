@@ -16,7 +16,6 @@ export function Contact() {
   return (
     <Section
       title="Say hello"
-      art={{ kind: "planes", caption: "Fig. 1 · Messages, inbound to Chapel Hill" }}
       intro="Recruiting, want to work on something together, looking for advice, or up for a coffee or a call? My inbox is open 👋"
     >
       <MorseHello className="-mt-4 mb-12 sm:mb-14" />

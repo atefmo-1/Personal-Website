@@ -98,7 +98,7 @@ export function MorseHello({ className = "" }: { className?: string }) {
           </text>
         ))}
       </svg>
-      <span className="label mt-2 block">Fig. 2 · “Say hello”, in Morse code · ↻ send again</span>
+      <span className="label mt-2 block">Fig. 1 · “Say hello”, in Morse code · ↻ send again</span>
     </button>
   );
 }
