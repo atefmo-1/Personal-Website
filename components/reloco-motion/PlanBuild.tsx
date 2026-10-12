@@ -1,14 +1,13 @@
 "use client";
 
 import { AnimatePresence, cubicBezier, motion } from "framer-motion";
-import type { ReactNode } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { Scene, Tap, ease } from "./ui";
 import { useClock } from "./Stage";
 
-// The plan being built: the engine streams each stage to the setup screen, the areas of the plan
-// pop in with their task counts, and the plane lands at RDU. Ziad is the invented student from the
-// case study's screenshot: 35 tasks across 9 areas.
+// The plan being built: the engine streams each stage to the setup screen, each one ticks off,
+// and the plane lands at RDU. The areas aren't shown one by one any more: the last line counts
+// them. Ziad is the invented student from the case study's screenshot: 35 tasks across 9 areas.
 
 const NAME = "Ziad";
 const STEPS = ["Reading your answers", "Picking the tasks that apply to you", "Scheduling around your dates", "Printing your boarding pass"];
@@ -16,8 +15,6 @@ const STEPS = ["Reading your answers", "Picking the tasks that apply to you", "S
 // Each step runs, then is done; the next starts as the last one finishes.
 const RUN = [700, 2000, 4900, 5800];
 const DONE = [1500, 4600, 5500, 6700];
-const CHIPS_AT = 2350;
-const CHIP_GAP = 240;
 const LANDED = DONE[3] + 350;
 const BOARD = LANDED + 2300;
 const DURATION = BOARD + 1000;
@@ -33,32 +30,6 @@ const STATUS: [number, string][] = [
   [RUN[3], STEPS[3]],
   [LANDED, "35 tasks across 9 areas, in the right order."],
 ];
-
-const AREAS = [
-  { name: "Immigration", count: 7, color: "#2f5f8f", icon: <path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1zM5 22h14" /> },
-  { name: "IDs", count: 2, color: "#7a4e8c", icon: <><path d="M13 19a4 4 0 0 0-8 0M16 10h2M16 14h2" /><circle cx="9" cy="12" r="3" /><rect x="2" y="5" width="20" height="14" rx="2" /></> },
-  { name: "Banking", count: 3, color: "#3c7a4a", icon: <><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20M6 14h2" /></> },
-  { name: "Housing", count: 4, color: "#b5553a", icon: <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
-  { name: "Campus", count: 4, color: "#4e86b8", icon: <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0zM22 10v6M6 12.5V16a6 3 0 0 0 12 0v-3.5" /> },
-  { name: "Work", count: 5, color: "#2f7d78", icon: <><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect x="2" y="6" width="20" height="14" rx="2" /></> },
-  { name: "Health", count: 2, color: "#b8434b", icon: <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" /> },
-  { name: "Tech", count: 2, color: "#5b6068", icon: <><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M12 18h.01" /></> },
-  { name: "Taxes", count: 6, color: "#9a7428", icon: <path d="M12 17V7M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z" /> },
-];
-
-/** A category mark in passport ink: a double ring in the area's color around its icon. */
-function IconTile({ color, children }: { color: string; children: ReactNode }) {
-  return (
-    <span
-      className="grid size-8 shrink-0 place-items-center rounded-full"
-      style={{ color, background: `color-mix(in oklab, ${color} 13%, #fffbf4)`, boxShadow: `inset 0 0 0 1.5px ${color}, inset 0 0 0 3.5px #fffbf4, inset 0 0 0 4.5px color-mix(in oklab, ${color} 45%, transparent)` }}
-    >
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        {children}
-      </svg>
-    </span>
-  );
-}
 
 // The arc over the painting. While the plan builds, the plane swings back and forth along it;
 // when it's done, it lands at RDU.
@@ -126,7 +97,7 @@ function Step({ label, run, done }: { label: string; run: number; done: number }
   const { t } = useClock();
   const state = t >= done ? "done" : t >= run ? "running" : "waiting";
   return (
-    <li className="flex items-center gap-3 text-[15px]" style={{ opacity: state === "waiting" ? 0.4 : 1, transition: "opacity 300ms" }}>
+    <li className="flex items-center gap-3 text-[15px]" style={{ color: state === "waiting" ? "var(--r-ink-3)" : "var(--r-ink)", transition: "color 300ms" }}>
       <span className="relative grid size-5 shrink-0 place-items-center">
         {state === "done" ? (
           <motion.span className="grid size-5 place-items-center rounded-full text-white" style={{ background: "var(--r-success)" }} initial={{ scale: 0.4 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 520, damping: 22 }}>
@@ -138,7 +109,7 @@ function Step({ label, run, done }: { label: string; run: number; done: number }
             style={
               state === "running"
                 ? { borderColor: "var(--r-leaf)", borderTopColor: "transparent", transform: `rotate(${((t - run) / 1000) * 360}deg)` }
-                : { borderColor: "rgb(142 150 166 / 0.5)" }
+                : { borderColor: "rgb(99 107 125 / 0.5)" }
             }
           />
         )}
@@ -158,8 +129,8 @@ function Status() {
   const text = leaving ? STATUS[i - 1][1] : STATUS[i][1];
   return (
     <p
-      className="mt-2 h-6 w-full text-[16px]"
-      style={{ color: "rgb(255 255 255 / 0.85)", textShadow: "0 1px 8px rgb(0 0 0 / 0.35)", opacity: leaving ? 1 - k : land(k), transform: `translateY(${leaving ? -6 * k : 6 * (1 - land(k))}px)` }}
+      className="mt-2 h-6 w-full text-[16px] font-medium"
+      style={{ color: "#ffffff", textShadow: "0 1px 12px rgb(0 0 0 / 0.75)", opacity: leaving ? 1 - k : land(k), transform: `translateY(${leaving ? -6 * k : 6 * (1 - land(k))}px)` }}
     >
       {text}
     </p>
@@ -169,7 +140,6 @@ function Status() {
 function PlanBuild() {
   const { t } = useClock();
   const landed = t >= LANDED;
-  const shown = AREAS.filter((_, i) => t >= CHIPS_AT + i * CHIP_GAP);
   const pressed = t >= BOARD && t < BOARD + 200;
 
   return (
@@ -206,27 +176,7 @@ function PlanBuild() {
           <Status />
 
           <div className="mt-auto w-full rounded-[28px] p-4" style={{ background: "rgb(255 251 244 / 0.95)", boxShadow: "0 22px 50px -14px rgb(19 41 75 / 0.35), 0 0 0 1px rgb(19 41 75 / 0.06)" }}>
-            <ul className="flex min-h-[40px] flex-wrap justify-center gap-1.5">
-              {shown.map((a) => (
-                <motion.li
-                  key={a.name}
-                  layout
-                  className="flex items-center gap-1.5 rounded-full py-1 pr-3 pl-1"
-                  style={{ background: "var(--r-canvas)" }}
-                  initial={{ opacity: 0, scale: 0.6, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                >
-                  <IconTile color={a.color}>{a.icon}</IconTile>
-                  <span className="text-[14px] font-semibold">{a.name}</span>
-                  <span className="text-[13px] tabular-nums" style={{ color: "var(--r-ink-2)" }}>
-                    {a.count}
-                  </span>
-                </motion.li>
-              ))}
-            </ul>
-
-            <ol className="mx-auto mt-4 w-full max-w-[320px] space-y-2 text-left">
+            <ol className="mx-auto w-full max-w-[320px] space-y-2 text-left">
               {STEPS.map((label, i) => (
                 <Step key={label} label={label} run={RUN[i]} done={DONE[i]} />
               ))}

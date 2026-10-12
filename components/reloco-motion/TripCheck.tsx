@@ -57,7 +57,7 @@ export function TripCheck() {
         </p>
       </At>
 
-      <TaskBar />
+      <TaskBar optional />
     </Scene>
   );
 }

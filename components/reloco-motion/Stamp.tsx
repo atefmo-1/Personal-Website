@@ -4,13 +4,14 @@ import { motion } from "framer-motion";
 import { useId, type CSSProperties } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { useClock } from "./Stage";
-import { CompleteBar, Confetti, Reward, StepCheck } from "./Miles";
+import { Confetti, Reward, StepCheck } from "./Miles";
 import { ICONS, Icon, TaskHeader, art, outCubic, span } from "./Sources";
-import { Tap } from "./ui";
+import { AppHeader, MilesStar, TabBar, TaskBar } from "./ui";
 
-// A stamp for a chapter: Mei finishes "Plan your ride from RDU to Chapel Hill", the last task of
-// Pre-flight, and the chapter's stamp comes down on the reward card with the miles. A tap closes
-// it, then a cut to her Profile, where the passport shows the stamp, the first of nine. Mei is the
+// A stamp for a chapter: Mei marks "Plan your ride from RDU to Chapel Hill" done, the last task of
+// Pre-flight, and the chapter's stamp comes down on the reward card ("Pre-flight, done.") with the
+// miles. Continue closes it, then a cut to her Profile, where "Your chapters" shows the stamp, the
+// first of nine. Mei is the
 // case study's invented student (lands Sep 30, 2026; program starts Oct 12, 2026, her specimen).
 // The stamp is the app's (components/game/stamp.tsx), redrawn.
 
@@ -31,13 +32,6 @@ const GLYPHS: IconNode[] = [
   [["path", { d: "m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" }], ["circle", { cx: "12", cy: "8", r: "6" }]],
   [["path", { d: "M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" }], ["path", { d: "M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" }], ["path", { d: "M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" }], ["path", { d: "M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" }]],
 ];
-const NAV: IconNode[] = [
-  [["path", { d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" }], ["path", { d: "M20 2v4" }], ["path", { d: "M22 4h-4" }], ["circle", { cx: "4", cy: "20", r: "2" }]],
-  [["path", { d: "M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" }], ["path", { d: "M15 5.764v15" }], ["path", { d: "M9 3.236v15" }]],
-  [["rect", { width: "8", height: "5", x: "14", y: "17", rx: "1" }], ["path", { d: "M10 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v2.5" }], ["path", { d: "M20 17v-2a2 2 0 1 0-4 0v2" }]],
-];
-const PROFILE_ICON: IconNode = [["path", { d: "M17.925 20.056a6 6 0 0 0-11.851.001" }], ["circle", { cx: "12", cy: "11", r: "4" }], ["circle", { cx: "12", cy: "12", r: "10" }]];
-
 /** A chapter's passport stamp: inked in its color when earned, a dashed outline until then. */
 function ChapterStamp({ index, earned, size, wet = 0, style }: { index: number; earned: boolean; size: number; /** 1 = just pressed: the ink sits darker, then dries. */ wet?: number; style?: CSSProperties }) {
   const id = useId();
@@ -149,11 +143,11 @@ function TaskPage() {
             <div key={s.text} className="flex items-start gap-3 px-4 py-3" style={{ borderTop: i ? "1px solid var(--r-line)" : "none" }}>
               <StepCheck />
               <div className="min-w-0 flex-1">
-                <span className="block text-[15px] leading-[1.45] line-through" style={{ color: "var(--r-ink-3)", textDecorationColor: "rgb(142 150 166 / 0.5)" }}>
+                <span className="block text-[15px] leading-[1.45] line-through" style={{ color: "var(--r-ink-3)", textDecorationColor: "rgb(99 107 125 / 0.5)" }}>
                   {s.text}
                 </span>
                 {s.link && (
-                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-full py-1 pr-3 pl-2.5 text-[13px] font-semibold" style={{ background: "var(--r-leaf-soft)", color: "var(--r-leaf-ink)" }}>
+                  <span className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full pr-3 pl-2.5 text-[13px] font-semibold" style={{ background: "var(--r-leaf-soft)", color: "var(--r-leaf-ink)" }}>
                     <Icon node={ICONS.arrowUpRight} size={14} />
                     {s.link}
                   </span>
@@ -168,12 +162,12 @@ function TaskPage() {
 }
 
 const TRIP = [
-  { label: "Land at RDU", value: "09/30/2026", date: true },
+  { label: "Name", value: "Mei" },
+  { label: "Land at RDU (Raleigh-Durham airport)", value: "09/30/2026", date: true },
   { label: "Program starts", value: "10/12/2026", date: true },
   { label: "Graduating", value: "05/10/2030", date: true },
   { label: "Passport country", value: "China", select: true },
   { label: "Flying from", value: "Shanghai" },
-  { label: "Name", value: "Mei" },
 ];
 
 const CalendarGlyph = () => (
@@ -185,80 +179,81 @@ const CalendarGlyph = () => (
 
 function ProfilePage() {
   const { t } = useClock();
-  // The passport as it now stands; the fresh stamp's ink settles once, nothing moves between screens.
+  // The chapters as they now stand; the fresh stamp's ink settles once, nothing moves between screens.
   const wet = 0.6 * (1 - outCubic(span(t, PROFILE + 200, PROFILE + 1400)));
   return (
-    <div className="px-3 pt-3">
-      <section className="relative overflow-hidden rounded-[28px] p-4 text-white">
-        <div className="absolute inset-0 bg-cover" style={{ backgroundImage: `url(${art("passport")})`, backgroundPosition: "50% 40%" }} />
-        <div className="absolute inset-0" style={{ background: "rgb(10 20 40 / 0.35)" }} />
-        <div className="relative flex items-center gap-4">
-          <span className={`${relocoDisplay.className} grid size-16 place-items-center rounded-full text-[36px]`} style={{ background: "#fffbf4", color: "#13294b" }}>
-            M
-          </span>
-          <div className="min-w-0">
-            <h1 className={`${relocoDisplay.className} text-[40px] leading-none`}>Mei</h1>
-            <p className="mt-1 text-[14px]" style={{ color: "rgb(255 255 255 / 0.85)" }}>
-              F-1 · UNC-Chapel Hill
-            </p>
-          </div>
-        </div>
-        <div className="relative mt-5 rounded-[20px] p-4" style={{ background: "rgb(255 251 244 / 0.95)", color: "var(--r-ink)" }}>
-          <div className="flex items-baseline justify-between">
-            <p className={`${relocoDisplay.className} text-[24px] leading-none`}>Passport</p>
-            <p className="text-[13px] font-semibold tabular-nums">
-              <span style={{ color: "#7e5600" }}>✦ 590 mi</span>
-              <span style={{ color: "#8e96a6" }}> · </span>
-              <span>1/9 stamps</span>
-            </p>
-          </div>
-          <ul className="mt-3 grid grid-cols-5 gap-x-1 gap-y-3">
-            {CHAPTERS.map((name, i) => (
-              <li key={name} className="flex flex-col items-center gap-1">
-                <ChapterStamp index={i} earned={i === 0} size={SLOT} wet={i === 0 ? wet : 0} />
-                <span className="text-center text-[10px] leading-tight font-medium" style={{ color: "#52607a" }}>
-                  {name}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="mt-9">
-        <h2 className={`${relocoDisplay.className} px-1 text-[30px] leading-none`}>Your trip</h2>
-        <p className="mt-1.5 px-1 text-[14px]" style={{ color: "var(--r-ink-2)" }}>
-          Change a date and your whole plan moves with it.
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {TRIP.map((f) => (
-            <div key={f.label} className="rounded-[16px] px-4 pt-2.5 pb-2" style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow)" }}>
-              <p className="text-[12px] font-medium" style={{ color: "var(--r-ink-2)" }}>
-                {f.label}
-              </p>
-              <p className="flex items-center justify-between py-1 text-[17px] font-medium">
-                {f.value}
-                {f.date && <CalendarGlyph />}
-                {f.select && <Icon node={[["path", { d: "m6 9 6 6 6-6" }]]} size={18} />}
+    <>
+      <AppHeader />
+      <div className="px-3 pt-3">
+        <section className="relative overflow-hidden rounded-[28px] p-4 text-white">
+          <div className="absolute inset-0 bg-cover" style={{ backgroundImage: `url(${art("passport")})`, backgroundPosition: "50% 40%" }} />
+          <div className="absolute inset-0" style={{ background: "rgb(10 20 40 / 0.35)" }} />
+          <div className="absolute inset-0" style={{ background: "rgb(10 20 40 / 0.3)" }} />
+          <div className="relative flex items-center gap-4">
+            <span className={`${relocoDisplay.className} grid size-16 place-items-center rounded-full text-[36px]`} style={{ background: "#fffbf4", color: "#13294b" }}>
+              M
+            </span>
+            <div className="min-w-0">
+              <h1 className={`${relocoDisplay.className} text-[40px] leading-none`} style={{ filter: "drop-shadow(0 1px 10px rgb(0 0 0 / 0.45))" }}>
+                Mei
+              </h1>
+              <p className="mt-1 text-[14px] font-medium" style={{ filter: "drop-shadow(0 1px 6px rgb(0 0 0 / 0.6))" }}>
+                F-1 · UNC-Chapel Hill
               </p>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+          <div className="relative mt-5 rounded-[20px] p-4" style={{ background: "rgb(255 251 244 / 0.95)", color: "var(--r-ink)" }}>
+            <div className="flex items-baseline justify-between">
+              <p className={`${relocoDisplay.className} text-[24px] leading-none`}>Your chapters</p>
+              <p className="text-[13px] font-semibold tabular-nums">
+                <span style={{ color: "#7e5600" }}>
+                  <MilesStar /> 590 mi
+                </span>
+                <span style={{ color: "var(--r-ink-3)" }}> · </span>
+                <span>1/9 stamps</span>
+              </p>
+            </div>
+            {/* Three across on a phone, as the app lays them out under 400px. */}
+            <ul className="mt-3 grid grid-cols-3 gap-x-1 gap-y-3">
+              {CHAPTERS.map((name, i) => (
+                <li key={name} className="flex flex-col items-center gap-1">
+                  <ChapterStamp index={i} earned={i === 0} size={SLOT} wet={i === 0 ? wet : 0} />
+                  <span className="text-center text-[12px] leading-tight font-medium" style={{ color: "#52607a" }}>
+                    {name}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 flex min-h-11 items-center justify-between gap-3 rounded-[12px] px-3 py-2 text-[13px] font-semibold" style={{ background: "rgb(19 41 75 / 0.06)" }}>
+              First-year certificate · 10 of 44 first-year tasks
+              <Icon node={[["path", { d: "m9 18 6-6-6-6" }]]} size={16} />
+            </p>
+          </div>
+        </section>
 
-      <nav className="absolute right-0 bottom-3 left-0 flex justify-center px-4">
-        <ul className="flex h-[60px] items-center gap-1 rounded-full p-1.5" style={{ background: "rgb(20 22 27 / 0.92)", boxShadow: "0 12px 40px -8px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.1)" }}>
-          {NAV.map((node, i) => (
-            <li key={i} className="flex h-12 min-w-12 items-center justify-center px-3.5" style={{ color: "rgb(255 255 255 / 0.6)" }}>
-              <Icon node={node} size={20} stroke={2.2} />
-            </li>
-          ))}
-          <li className="flex h-12 items-center gap-2 rounded-full bg-white px-3.5 text-[14px] font-semibold" style={{ color: "#14161b" }}>
-            <Icon node={PROFILE_ICON} size={20} stroke={2.2} /> Profile
-          </li>
-        </ul>
-      </nav>
-    </div>
+        <section className="mt-9">
+          <h2 className={`${relocoDisplay.className} px-1 text-[30px] leading-none`}>Your trip</h2>
+          <p className="mt-1.5 px-1 text-[14px]" style={{ color: "var(--r-ink-2)" }}>
+            Change a date and your whole plan moves with it.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {TRIP.map((f) => (
+              <div key={f.label} className="rounded-[16px] px-4 pt-2.5 pb-2" style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow)" }}>
+                <p className="text-[12px] font-medium" style={{ color: "var(--r-ink-2)" }}>
+                  {f.label}
+                </p>
+                <p className="flex items-center justify-between py-2.5 text-[17px] font-medium">
+                  {f.value}
+                  {f.date && <CalendarGlyph />}
+                  {f.select && <Icon node={[["path", { d: "m6 9 6 6 6-6" }]]} size={18} />}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+      <TabBar active="Profile" />
+    </>
   );
 }
 
@@ -278,7 +273,7 @@ function StampScene() {
     <motion.div className="relative h-full overflow-hidden" animate={{ opacity: ending ? 0 : 1 }} transition={{ duration: 0.4 }}>
       <div className="absolute inset-0" style={{ opacity: 1 - taskOut }}>
         <TaskPage />
-        <CompleteBar ready miles={50} left="" tapAt={TAP} />
+        <TaskBar next={2} of={2} ready miles={50} tapAt={TAP} />
       </div>
       <div className="absolute inset-0" style={{ opacity: profileIn, transform: `translateY(${10 * (1 - profileIn)}px)` }}>
         <ProfilePage />
@@ -288,22 +283,23 @@ function StampScene() {
         at={OPEN}
         thudAt={IMPACT}
         exitAt={DISMISS}
+        continueAt={DISMISS - 250}
         top={<CardStamp />}
         title={
           <>
-            <p className="mt-5 text-[11px] font-semibold tracking-[0.08em] uppercase" style={{ color: "var(--r-ink-2)" }}>
+            <p className="mt-5 text-[13px] font-semibold" style={{ color: "var(--r-ink-2)" }}>
               Chapter complete
             </p>
-            <p className={`${relocoDisplay.className} mt-1 text-[28px] leading-tight`}>Pre-flight, stamped.</p>
+            <p className={`${relocoDisplay.className} mt-1 text-[28px] leading-tight`}>Pre-flight, done.</p>
+            <p className="mt-1 text-[15px] leading-snug" style={{ color: "var(--r-ink-2)" }}>
+              Plan your ride from RDU to Chapel Hill, done.
+            </p>
           </>
         }
         miles={50}
         total="590"
       />
       <Confetti bursts={BURSTS} />
-      <div className="absolute inset-0 z-[75]" style={{ pointerEvents: "none" }}>
-        <Tap at={DISMISS} x={236} y={588} />
-      </div>
     </motion.div>
   );
 }

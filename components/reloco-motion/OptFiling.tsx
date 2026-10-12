@@ -102,7 +102,7 @@ export function OptFiling() {
         </Card>
         </At>
       </motion.div>
-      <TaskBar label="5 steps to go" />
+      <TaskBar of={5} />
     </Scene>
   );
 }

@@ -364,7 +364,7 @@ function CompareBanks() {
           </Card>
         </At>
       </div>
-      <TaskBar label="5 steps to go" />
+      <TaskBar of={5} />
     </Scene>
   );
 }

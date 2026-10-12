@@ -1,15 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { H, W, useClock } from "./Stage";
 import { ICONS, Icon, TaskHeader, art, span } from "./Sources";
-import { Scene, Tap } from "./ui";
+import { MilesStar, Scene, Tap, TaskBar } from "./ui";
 
-// Miles for a task: the last step of "Get a US phone number" is ticked, the bar lights up as
-// "Complete", and a tap brings the app's reward card: a check, "Nice work.", the miles counting
-// up, and the week's goal. Copy and layout follow the app's celebration (components/game).
+// Miles for a task: the last step of "Get a US phone number" is ticked, the bar turns from
+// "Next: step 3 of 3" into "Mark done", and a tap brings the app's reward card: a check, "Get a
+// US phone number, done.", the miles counting up, the week's goal and Continue. Copy and layout
+// follow the app's celebration (components/game).
 
 const outQuart = (p: number) => 1 - (1 - p) ** 4;
 
@@ -83,19 +84,20 @@ export function Confetti({ bursts }: { bursts: Burst[] }) {
   );
 }
 
-/** The app's reward card over a blurred page, from `at`. `top` is the check or the stamp. */
-export function Reward({ at, top, title, miles, total, extra, thudAt, exitAt }: { at: number; top: ReactNode; title: ReactNode; miles: number; total: string; extra?: ReactNode; /** A stamp lands: the card gives a little. */ thudAt?: number; /** Tapped away: the card and the blur go. */ exitAt?: number }) {
+/** The app's reward card over a blurred page, from `at`. `top` is the check or the stamp. It stays until Continue is pressed (`continueAt`). */
+export function Reward({ at, top, title, miles, total, extra, thudAt, exitAt, continueAt }: { at: number; top: ReactNode; title: ReactNode; miles: number; total: string; extra?: ReactNode; /** A stamp lands: the card gives a little. */ thudAt?: number; /** Closed: the card and the blur go. */ exitAt?: number; /** When a fingertip presses Continue. */ continueAt?: number }) {
   const { t } = useClock();
   if (t < at) return null;
   const count = Math.round(miles * outQuart(span(t, at + 250, at + 1250)));
   const counted = t >= at + 1250;
   const leaving = exitAt !== undefined && t >= exitAt;
   const thud = thudAt === undefined ? 0 : 4 * Math.sin(Math.PI * span(t, thudAt, thudAt + 240));
+  const pressed = continueAt !== undefined && t >= continueAt && t < continueAt + 200;
   return (
     <motion.div className="absolute inset-0 z-[70] grid place-items-center px-6" style={{ background: "rgb(244 238 227 / 0.7)", backdropFilter: "blur(12px)" }} initial={{ opacity: 0 }} animate={{ opacity: leaving ? 0 : 1 }} transition={{ duration: leaving ? 0.35 : 0.25 }}>
       <motion.div
         className="flex w-full max-w-[320px] flex-col items-center rounded-[20px] px-6 pt-8 pb-6 text-center"
-        style={{ background: "var(--r-surface)", boxShadow: "0 22px 50px -14px rgb(19 41 75 / 0.35), 0 0 0 1px rgb(19 41 75 / 0.06)", position: "relative", top: thud }}
+        style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow-float)", position: "relative", top: thud }}
         initial={{ scale: 0.9, y: 16 }}
         animate={{ scale: leaving ? 0.96 : 1, y: 0 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
@@ -103,9 +105,9 @@ export function Reward({ at, top, title, miles, total, extra, thudAt, exitAt }: 
         {top}
         {title}
         <p className="mt-2 flex items-baseline gap-1.5" style={{ color: "var(--r-gold-ink)" }}>
-          {/* The sparkle turns once as the count lands. */}
+          {/* The star turns once as the count lands. */}
           <motion.span aria-hidden className="inline-block" animate={counted ? { rotate: [0, 90], scale: [1, 1.5, 1] } : {}} transition={{ duration: 0.5, ease: "easeOut" }}>
-            ✦
+            <MilesStar />
           </motion.span>
           <span className={`${relocoDisplay.className} text-[34px] tabular-nums`}>+{count}</span>
           <span className="text-[15px] font-semibold">miles</span>
@@ -114,9 +116,16 @@ export function Reward({ at, top, title, miles, total, extra, thudAt, exitAt }: 
           {total} miles total
         </p>
         {extra}
-        <p className="mt-5 text-[12px]" style={{ color: "var(--r-ink-3)" }}>
-          Tap anywhere to continue
-        </p>
+        {/* Stays until the student moves on: never on a timer. */}
+        <motion.span
+          className="relative mt-5 flex h-11 w-full items-center justify-center rounded-full text-[15px] font-semibold"
+          style={{ background: "var(--r-primary)", color: "var(--r-on-primary)" }}
+          animate={{ scale: pressed ? 0.97 : 1 }}
+          transition={{ duration: 0.15 }}
+        >
+          {continueAt !== undefined && <Tap at={continueAt} x="50%" y="50%" />}
+          Continue
+        </motion.span>
       </motion.div>
     </motion.div>
   );
@@ -129,7 +138,7 @@ const OPEN = COMPLETE + 220;
 const GOAL = OPEN + 1500;
 export const MILES_MS = GOAL + 2700;
 
-const STEPS = ["Check that your phone is unlocked and supports eSIM.", "Compare prepaid plans. They don't need a credit check or an SSN.", "Activate an eSIM before you fly, or buy a SIM when you land."];
+const STEPS = ["Check that your phone is unlocked and supports eSIM.", "Compare prepaid plans: they typically don’t need a credit check. Check each plan’s page for what it asks for.", "Activate an eSIM before you fly, or buy a SIM when you land."];
 
 /** A step's checkbox: ticked ones are filled, and one ticked at `at` pops as the check draws. */
 export function StepCheck({ at }: { at?: number }) {
@@ -138,7 +147,8 @@ export function StepCheck({ at }: { at?: number }) {
   return (
     <motion.span
       className="mt-0.5 grid size-[26px] shrink-0 place-items-center rounded-full"
-      style={{ background: checked ? "var(--r-success)" : "transparent", boxShadow: checked ? "none" : "inset 0 0 0 2px rgb(142 150 166 / 0.6)", transition: "background 150ms" }}
+      // An open ring in Slate Ink; a ticked one fills in green-blue with a white check.
+      style={{ background: checked ? "var(--r-success)" : "transparent", boxShadow: checked ? "none" : "inset 0 0 0 2px var(--r-ink-2)", transition: "background 150ms" }}
       animate={at !== undefined && checked ? { scale: [1, 1.18, 1] } : { scale: 1 }}
       transition={{ duration: 0.3 }}
     >
@@ -146,37 +156,6 @@ export function StepCheck({ at }: { at?: number }) {
         <motion.path d="M3.5 8.5 6.5 11.5 12.5 5" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" initial={false} animate={{ pathLength: checked ? 1 : 0, opacity: checked ? 1 : 0 }} transition={{ duration: 0.22 }} />
       </svg>
     </motion.span>
-  );
-}
-
-/** The task page's bar: steps left until every step is ticked, then "Complete" and its miles. */
-export function CompleteBar({ ready, miles, left, tapAt }: { ready: boolean; miles: number; left: string; tapAt: number }) {
-  const { t } = useClock();
-  const pressed = t >= tapAt && t < tapAt + 200;
-  return (
-    <div className="absolute right-4 bottom-5 left-4 flex items-center gap-2 rounded-full p-1.5" style={{ background: "var(--r-surface)", boxShadow: "0 10px 30px -12px rgb(19 41 75 / 0.35)" }}>
-      <motion.div
-        className="relative flex h-12 flex-1 items-center justify-between rounded-full pr-1.5 pl-5 text-[16px] font-semibold text-white"
-        style={{ background: ready ? "var(--r-primary)" : "#8f96a5", transition: "background 300ms" }}
-        animate={{ scale: pressed ? 0.97 : ready ? [1, 1.03, 1] : 1 }}
-        transition={{ duration: pressed ? 0.15 : 0.5 }}
-      >
-        <Tap at={tapAt} x="58%" y="50%" />
-        {ready ? (
-          <span>
-            Complete <span style={{ color: "var(--r-gold)" }}>✦ +{miles}</span>
-          </span>
-        ) : (
-          left
-        )}
-        <span className="grid size-9 place-items-center rounded-full" style={{ background: ready ? "var(--r-leaf)" : "rgb(255 255 255 / 0.25)", color: ready ? "var(--r-ink)" : "white", transition: "background 300ms" }}>
-          <Icon node={ICONS.check} size={20} stroke={2.8} />
-        </span>
-      </motion.div>
-      <span className="px-3 text-[16px] font-semibold" style={{ color: "var(--r-ink)" }}>
-        Skip
-      </span>
-    </div>
   );
 }
 
@@ -207,7 +186,7 @@ function Miles() {
                   {i === 2 && <Tap at={TICK} x={29} y={27} />}
                   <StepCheck at={i === 2 ? TICK : undefined} />
                   <div className="min-w-0 flex-1">
-                    <span className="block text-[15px] leading-[1.45]" style={{ color: done ? "var(--r-ink-3)" : "var(--r-ink)", textDecorationLine: done ? "line-through" : "none", textDecorationColor: "rgb(142 150 166 / 0.5)", transition: "color 250ms" }}>
+                    <span className="block text-[15px] leading-[1.45]" style={{ color: done ? "var(--r-ink-3)" : "var(--r-ink)", textDecorationLine: done ? "line-through" : "none", textDecorationColor: "rgb(99 107 125 / 0.5)", transition: "color 250ms" }}>
                       {s}
                     </span>
                     {i === 2 && (
@@ -244,7 +223,7 @@ function Miles() {
         </section>
       </div>
 
-      <CompleteBar ready={t >= READY} miles={60} left="1 step to go" tapAt={COMPLETE} />
+      <TaskBar next={3} of={3} ready={t >= READY} miles={60} tapAt={COMPLETE} />
 
       <MilesReward />
     </Scene>
@@ -263,7 +242,7 @@ function MilesReward() {
             <motion.path d="M19 33.5 28 42 45 24" fill="none" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.35, delay: 0.15, ease: "easeOut" }} />
           </svg>
         }
-        title={<p className={`${relocoDisplay.className} mt-4 text-[26px] leading-tight`}>Nice work.</p>}
+        title={<p className={`${relocoDisplay.className} mt-4 text-[26px] leading-tight`} style={{ textWrap: "balance" } as CSSProperties}>Get a US phone number, done.</p>}
         miles={60}
         total="60"
         extra={

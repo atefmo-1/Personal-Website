@@ -163,7 +163,7 @@ function SsaVisit() {
         </At>
       </motion.div>
 
-      <TaskBar label="6 steps to go" />
+      <TaskBar of={6} />
     </Scene>
   );
 }

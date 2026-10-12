@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { createElement, type CSSProperties, type ReactNode } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { useClock } from "./Stage";
-import { Card, Scene, Tap, TaskBar, ease } from "./ui";
+import { Card, MilesStar, Scene, Tap, TaskBar, ease } from "./ui";
 
 // Sourced and current: Ziad's task "Book a flight inside your entry window". The 30-day rule is
 // marked, then the page scrolls to the step that links ISSS, the calendar button and the
@@ -40,52 +40,55 @@ export function Icon({ node, size = 16, stroke = 2, style }: { node: IconNode; s
 /** Paintings from the app's series, copied to the site at a small size. */
 export const art = (name: string) => `/projects/reloco/motion/${name}.webp`;
 
-/** A task page's painted header, as in the app's task view. */
-export function TaskHeader({ painting, icon, ink, label, title, chips, miles }: { painting: string; icon: IconNode; ink: string; label: string; title: string; chips: { text: string; clock?: boolean }[]; miles: number }) {
+/** A task page's painted header, as in the app's task view: back, title, category and chapter, then the chips. `miles` only on everyday tasks. */
+export function TaskHeader({ painting, icon, ink, label, title, chips, miles, back = "Today" }: { painting: string; icon: IconNode; ink: string; label: string; title: string; chips: { text: string; clock?: boolean; urgent?: boolean }[]; miles?: number; back?: string }) {
   const { t, duration } = useClock();
   // A slow push-in keeps the painting alive without asking for attention.
   const zoom = 1.08 - 0.08 * outCubic(span(t, 0, duration));
-  const glass: CSSProperties = { background: "rgb(255 255 255 / 0.2)", backdropFilter: "blur(12px)" };
+  const glass: CSSProperties = { background: "rgb(0 0 0 / 0.4)", backdropFilter: "blur(12px)" };
   return (
     <header className="relative overflow-hidden rounded-[28px] px-4 pt-3 pb-5 text-white">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${painting})`, transform: `scale(${zoom})` }} />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgb(10 20 40 / 0.7), transparent 60%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgb(10 20 40 / 0.72), rgb(10 20 40 / 0.35) 55%, transparent 80%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgb(10 20 40 / 0.55), rgb(10 20 40 / 0.3) 15%, transparent 30%)" }} />
       <div className="relative">
-        <span className="inline-flex h-10 items-center gap-0.5 rounded-full pr-3.5 pl-2 text-[14px] font-semibold" style={{ background: "rgb(255 255 255 / 0.15)", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / 0.25)", backdropFilter: "blur(12px)" }}>
-          <Icon node={ICONS.chevronLeft} size={20} /> Today
+        <span className="inline-flex h-11 items-center gap-0.5 rounded-full pr-3.5 pl-2 text-[14px] font-semibold" style={{ background: "rgb(0 0 0 / 0.4)", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / 0.25)", backdropFilter: "blur(12px)" }}>
+          <Icon node={ICONS.chevronLeft} size={20} /> {back}
         </span>
-        <div className="mt-16 flex items-center gap-2">
+        <h1 className={`${relocoDisplay.className} mt-20 text-[36px] leading-[1.02]`} style={{ textWrap: "balance", filter: "drop-shadow(0 1px 10px rgb(0 0 0 / 0.35))" } as CSSProperties}>
+          {title}
+        </h1>
+        <div className="mt-2 flex items-center gap-2">
           <span
             className="inline-grid size-8 shrink-0 place-items-center rounded-full"
             style={{ color: ink, background: `color-mix(in oklab, ${ink} 13%, #fffbf4)`, boxShadow: `inset 0 0 0 1.5px ${ink}, inset 0 0 0 3.5px #fffbf4, inset 0 0 0 4.5px color-mix(in oklab, ${ink} 45%, transparent), 0 0 0 2px rgb(255 255 255 / 0.3)` }}
           >
             <Icon node={icon} size={15} />
           </span>
-          <span className="text-[13px] font-medium" style={{ color: "rgb(255 255 255 / 0.9)", filter: "drop-shadow(0 1px 6px rgb(0 0 0 / 0.5))" }}>
+          <span className="text-[14px] font-semibold" style={{ filter: "drop-shadow(0 1px 6px rgb(0 0 0 / 0.7))" }}>
             {label}
           </span>
         </div>
-        <h1 className={`${relocoDisplay.className} mt-2 text-[36px] leading-[1.02]`} style={{ textWrap: "balance", filter: "drop-shadow(0 1px 10px rgb(0 0 0 / 0.35))" } as CSSProperties}>
-          {title}
-        </h1>
         <div className="mt-4 flex flex-wrap gap-1.5 text-[12px] font-semibold">
           {chips.map((c) => (
-            <span key={c.text} className="flex items-center gap-1 rounded-full px-2.5 py-1" style={glass}>
+            <span key={c.text} className="flex items-center gap-1 rounded-full px-2.5 py-1" style={c.urgent ? { background: "var(--r-urgent)", color: "var(--r-on-primary)" } : glass}>
               {c.clock && <Icon node={ICONS.clock} size={14} />}
               {c.text}
             </span>
           ))}
-          <span className="rounded-full px-2.5 py-1" style={{ background: "var(--r-gold)", color: "#2b1d00" }}>
-            ✦ +{miles}
-          </span>
+          {miles !== undefined && (
+            <span className="rounded-full px-2.5 py-1" style={{ background: "var(--r-gold)", color: "#2b1d00" }}>
+              <MilesStar /> +{miles}
+            </span>
+          )}
         </div>
       </div>
     </header>
   );
 }
 
-/** A step's empty checkbox, as in the app's step list. */
-export const StepBox = () => <span className="mt-0.5 block size-[26px] shrink-0 rounded-full" style={{ boxShadow: "inset 0 0 0 2px rgb(142 150 166 / 0.6)" }} />;
+/** A step's empty checkbox, as in the app's step list: an open ring in Slate Ink. */
+export const StepBox = () => <span className="mt-0.5 block size-[26px] shrink-0 rounded-full" style={{ boxShadow: "inset 0 0 0 2px var(--r-ink-2)" }} />;
 
 const START = 400;
 const MARK = 1250;
@@ -96,7 +99,7 @@ const SOURCES = 5650;
 export const SOURCES_MS = SOURCES + 2700;
 
 // How far the page scrolls: the header goes, and the rule stays at the top with its source below.
-const SCROLL_BY = 300;
+const SCROLL_BY = 320;
 
 /** Like `At`, but holds its place from the start, so nothing below jumps when it appears. */
 export function Hold({ at, y = 12, className, children }: { at: number; y?: number; className?: string; children: ReactNode }) {
@@ -145,7 +148,7 @@ function SourceChip() {
   const { t } = useClock();
   const ping = t >= CHIP && t < CHIP + 1100;
   return (
-    <span className="relative mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full py-1 pr-3 pl-2.5 text-[13px] font-semibold" style={{ background: "var(--r-leaf-soft)", color: "var(--r-leaf-ink)" }}>
+    <span className="relative mt-2 inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full pr-3 pl-2.5 text-[13px] font-semibold" style={{ background: "var(--r-leaf-soft)", color: "var(--r-leaf-ink)" }}>
       {/* A ring goes out once as the link scrolls in: every rule points at its source. */}
       {ping && (
         <motion.span aria-hidden className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 0 2px var(--r-leaf)" }} initial={{ opacity: 0.9, scale: 1 }} animate={{ opacity: 0, scale: 1.12 }} transition={{ duration: 1, ease: "easeOut" }} />
@@ -183,7 +186,6 @@ function Sources() {
           label="Immigration · Pre-flight"
           title="Book a flight inside your entry window"
           chips={[{ text: "Opens Oct 20" }, { text: "~45 min", clock: true }]}
-          miles={120}
         />
 
         <Hold at={START} y={10}>
@@ -212,32 +214,36 @@ function Sources() {
           </Card>
         </section>
 
-        <motion.span className="relative mt-5 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-semibold" style={{ background: pressed ? "var(--r-surface-2)" : "var(--r-surface)", boxShadow: "var(--r-shadow)" }} animate={{ scale: pressed ? 0.95 : 1 }} transition={{ duration: 0.15 }}>
+        {/* The task's last day (its window closes Dec 4), straight into Google Calendar. */}
+        <motion.span className="relative mt-5 inline-flex h-11 items-center gap-2 rounded-full px-4 text-[14px] font-semibold" style={{ background: pressed ? "var(--r-surface-2)" : "var(--r-surface)", boxShadow: "var(--r-shadow)" }} animate={{ scale: pressed ? 0.95 : 1 }} transition={{ duration: 0.15 }}>
           <Tap at={CAL} x="50%" y="50%" />
-          <Icon node={ICONS.calendarPlus} size={16} /> Add due date to Google Calendar
+          <Icon node={ICONS.calendarPlus} size={16} /> Add Dec 4 to Google Calendar <Icon node={ICONS.arrowUpRight} size={14} />
         </motion.span>
 
         <section className="mt-7">
           <h2 className={`${relocoDisplay.className} px-1 text-[26px] leading-none`}>Official sources</h2>
-          <div className="mt-3 grid gap-2">
-            {SOURCE_LIST.map((s, i) => (
-              <Hold key={s.host} at={SOURCES + i * 320} y={16}>
-                <div className="flex items-center gap-3 rounded-[16px] px-4 py-3" style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow)" }}>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[14px] leading-snug font-semibold">{s.label}</span>
-                    <span className="block text-[12px]" style={{ color: "var(--r-ink-2)" }}>
-                      {s.host}
+          {/* One card, a row per source, as in the app's list. */}
+          <Hold at={SOURCES} y={16} className="mt-3">
+            <Card className="overflow-hidden">
+              {SOURCE_LIST.map((s, i) => (
+                <Hold key={s.host} at={SOURCES + i * 320} y={8}>
+                  <div className="flex min-h-[58px] items-center gap-3 px-4">
+                    <span className="min-w-0 flex-1 py-3" style={{ borderBottom: i < SOURCE_LIST.length - 1 ? "1px solid var(--r-line)" : "none" }}>
+                      <span className="block text-[14px] leading-snug font-semibold">{s.label}</span>
+                      <span className="block text-[12px]" style={{ color: "var(--r-ink-2)" }}>
+                        {s.host}
+                      </span>
                     </span>
-                  </span>
-                  <SourceArrow at={SOURCES + i * 320 + 260} />
-                </div>
-              </Hold>
-            ))}
-          </div>
+                    <SourceArrow at={SOURCES + i * 320 + 260} />
+                  </div>
+                </Hold>
+              ))}
+            </Card>
+          </Hold>
         </section>
 
         <p className="mt-5 px-1 pb-28 text-[12px]" style={{ color: "var(--r-ink-3)" }}>
-          Guidance, not legal advice. Status questions → ISSS.
+          Guidance, not legal advice. Questions about your status go to ISSS.
         </p>
       </div>
 

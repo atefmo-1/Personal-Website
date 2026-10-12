@@ -3,8 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { useClock } from "./Stage";
-import { Heading, Scene, Tap, TaskBar, Typed, ease, typedFor } from "./ui";
-import { Chapter, I, Icon, TabBar, TaskRow, display, inOutCubic, outQuint, span, tight, type Row } from "./Yearly";
+import { Heading, Scene, TabBar, Tap, TaskBar, Typed, ease, typedFor } from "./ui";
+import { Chapter, I, Icon, TaskRow, display, inOutCubic, outQuint, span, tight, type Row } from "./Yearly";
 
 // OPT, in order: on Journey a senior's OPT tasks unlock one by one (decide what's next, request
 // the OPT I-20, file the I-765), down to "On OPT: report your job". That task's tool counts
@@ -18,8 +18,6 @@ const B = 4150; // the task page slides in
 const P = { tickFrom: B + 700, tickTo: B + 2500, type: B + 2900, add: B + 2900 + typedFor("06/12/2028") + 500 };
 export const OPT_MS = P.add + 2700;
 
-const ROW = 61.25;
-
 /** 1 while a task waits on the one before; eases to 0 as that one is done. */
 const lock = (t: number, unlockAt: number) => 1 - inOutCubic(span(t, unlockAt, 450));
 
@@ -29,14 +27,14 @@ function Journey() {
   const senior: Row[] = [
     { category: "employment", title: "Decide what’s next after graduation", due: "Due Dec 15", miles: 120, done: done(A.decide) },
     { category: "employment", title: "Check your degree qualifies for STEM OPT", due: "Due Dec 15", miles: 100 },
-    { category: "immigration", title: "Going home for winter 2027? Get a travel signature first", due: "Opens Nov 1", miles: 60 },
+    { category: "immigration", title: "Going home for winter 2027? Get a travel signature first", due: "Opens Nov 1", miles: 0 },
     { category: "employment", title: "Request your OPT I-20 from ISSS", due: "Opens Jan 24", miles: 150, locked: lock(t, A.decide + A.unlock), done: done(A.request) },
-    { category: "taxes", title: "File your 2027 tax forms", due: "Opens Feb 1", miles: 120 },
+    { category: "taxes", title: "File your 2027 tax forms", due: "Opens Feb 1", miles: 0 },
     { category: "employment", title: "File Form I-765 for OPT with USCIS", due: "Opens Feb 13", miles: 250, locked: lock(t, A.request + A.unlock), done: done(A.file) },
   ];
   const after: Row[] = [
     { category: "employment", title: "On OPT: report your job and watch the unemployment limit", due: "Opens May 13", miles: 150, locked: lock(t, A.file + A.unlock) },
-    { category: "taxes", title: "File your 2028 tax forms", due: "Opens Feb 1", miles: 120 },
+    { category: "taxes", title: "File your 2028 tax forms", due: "Opens Feb 1", miles: 0 },
     { category: "employment", title: "Apply for the 24-month STEM OPT extension", due: "Opens Feb 12", miles: 250, locked: 1 },
     { category: "employment", title: "On STEM OPT: check in every 6 months", due: "Opens May 13", miles: 150, locked: 1 },
   ];
@@ -58,15 +56,16 @@ function Journey() {
 
   return (
     <div className="absolute inset-0 overflow-hidden" style={{ background: "var(--r-canvas)" }}>
-      <div className="flex flex-col gap-2.5 px-3">
-        {/* Junior year, stamped, just above the fold. */}
+      {/* Once the I-765 is filed, the page eases down so the job report it unlocks clears the tab bar. */}
+      <div className="flex flex-col gap-2.5 px-3" style={{ transform: `translateY(${-90 * inOutCubic(span(t, A.file + 250, 600))}px)` }}>
+        {/* Junior year, done, just above the fold. */}
         <div style={{ marginTop: -80 }}>
-          <Chapter index={6} name="Junior year" art="study" done={5} total={5} open={0} bodyHeight={0} />
+          <Chapter index={6} name="Junior year" blurb="Summers, travel and staying on track" art="study" done={5} total={5} open={0} />
         </div>
-        <Chapter index={7} name="Senior year" art="certificate" done={seniorDone} total={6} current open={1} bodyHeight={6 * ROW}>
+        <Chapter index={7} name="Senior year" blurb="Graduation and OPT, timed from your graduation date" art="certificate" done={seniorDone} total={6} current open={1}>
           {rows(senior, 100, [A.decide, null, null, A.request, null, A.file])}
         </Chapter>
-        <Chapter index={8} name="After graduation" art="cat-employment" done={0} total={4} open={1} bodyHeight={4 * ROW}>
+        <Chapter index={8} name="After graduation" blurb="OPT, reporting your job and STEM OPT" art="cat-employment" done={0} total={4} open={1}>
           {rows(after, 400, [A.file + A.unlock], 0)}
         </Chapter>
       </div>

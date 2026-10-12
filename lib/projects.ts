@@ -157,8 +157,8 @@ const phone = (file: string, alt: string, caption: string): Shot => ({
 });
 
 const arrivalToday = phone(
-  "33-landing-today-arrival-mode-phone",
-  "Mei's Today screen two days before landing: a boarding pass from Shanghai to RDU and the landing-day checklist",
+  "33-landing-today-arrival-mode-phone-v26",
+  "Mei's Today two days before landing: a boarding pass from Shanghai to RDU landing Oct 13, the landing-day checklist, then Plan your ride from RDU to Chapel Hill, due today",
   "Two days out: arrival mode",
 );
 
@@ -221,8 +221,8 @@ export const projects: Project[] = [
             text: "The heaviest stretch. For a sample new student, **15** of their **54** tasks are due before the flight or in the first week, from the I-901 fee and the entry window to the I-94 and ISSS check-in. Reloco counts down to landing, then switches to arrival mode.",
             shots: [
               phone(
-                "31-freshman-today-countdown-phone",
-                "Ziad's Today screen 97 days before landing: a boarding pass from Cairo to RDU and one next task",
+                "31-freshman-today-countdown-phone-v26",
+                "Ziad's Today 97 days before landing: a boarding pass from Cairo to RDU, landing Jan 16, 2027 and 0% ready, then his one next task, Activate your Onyen and UNC email, with Already done and Start",
                 "Months out: a countdown and one next step",
               ),
               arrivalToday,
@@ -238,8 +238,8 @@ export const projects: Project[] = [
                 "A junior's Today, with the rule that affects her first",
               ),
               phone(
-                "50-cpt-summer-phone",
-                "Task: Summer 2027 internship? Get CPT approved first. Four steps, the first linked to the ISSS Portal",
+                "50-cpt-summer-phone-v26",
+                "Task: Summer 2027 internship? Get CPT approved first. Locked and optional, by May 15, 2027, with a Finish this first card linking to Learn how CPT works for internships",
                 "CPT for a summer 2027 internship",
               ),
             ],
@@ -249,14 +249,14 @@ export const projects: Project[] = [
             text: "The highest-stakes filing of the degree has a strict window. Reloco times it from the graduation date: decide, request the OPT I-20, file the I-765 inside the window, then report the job while Reloco counts unemployment days against the limit. STEM majors get the 24-month extension on the same track.",
             shots: [
               phone(
-                "52-opt-request-phone",
-                "Task: Request your OPT I-20 from ISSS, with Do first: Decide what's next after graduation",
-                "Request the OPT I-20. 'Do first' keeps the order.",
+                "52-opt-request-phone-v26",
+                "Task: Request your OPT I-20 from ISSS, in senior year, opening Jan 24, 2028, with four steps that start by checking the program end date on the I-20",
+                "Request the OPT I-20, dated from graduation",
               ),
               phone(
-                "53-stem-opt-phone",
-                "Task: Apply for the 24-month STEM OPT extension, with two Do first prerequisites",
-                "The STEM OPT extension, with its prerequisites",
+                "53-stem-opt-phone-v26",
+                "Task: Apply for the 24-month STEM OPT extension, after graduation, opening Feb 12, 2029, with three steps from the I-983 training plan to ISSS's recommendation",
+                "The STEM OPT extension, step by step",
               ),
             ],
           },
@@ -404,7 +404,7 @@ export const projects: Project[] = [
               "Do the SSN task",
               "Return, now unlocked",
             ],
-            no: ["Read the guide", "Mark complete", "Next task suggested"],
+            no: ["Read the guide", "Mark done", "Next task suggested"],
           },
         },
       },
@@ -419,7 +419,7 @@ export const projects: Project[] = [
           },
           {
             v0: "A lock screen on blocked tasks",
-            v1: '"Do first" and "After" links; tasks stay open to read',
+            v1: 'A "Finish this first" card linking to the task before it; tasks stay open to read',
             why: "A lock stops a student cold. A pointer tells them what to do next",
           },
           {
@@ -448,13 +448,13 @@ export const projects: Project[] = [
           shots: [
             { motion: "onboarding", alt: "Animation of onboarding: Mei types her name, says she's still at home, then her city and landing date, and each answer fills in the boarding pass above as the plane moves a step closer to RDU", caption: "A boarding pass that fills in as you answer" },
             phone(
-              "06-onboarding-plans-phone",
-              "Onboarding question about plans, with an off-campus internship and a STEM major selected",
+              "06-onboarding-plans-phone-v26",
+              "Aisha's onboarding as a current student: a degree pass from Fall 2024 to graduation in 2028, and Which of these apply to you? with a campus job, an off-campus internship and a STEM major ticked",
               "Plans decide which tasks apply",
             ),
             phone(
-              "37-onboarding-done-already-phone",
-              "Last onboarding question: Done any of these already? Pre-flight tasks such as booking a flight and signing a lease, each with a tick box",
+              "37-onboarding-done-already-phone-v26",
+              "Mei's last onboarding question: Done any of these already? Pre-flight tasks such as checking her passport, activating her Onyen and paying the SEVIS fee, each with a tick box",
               "New students tick off prep they've already done",
             ),
           ],
@@ -466,7 +466,7 @@ export const projects: Project[] = [
           id: "engine",
           title: "A rules engine that knows what applies to you",
           shots: [
-            { motion: "plan-build", alt: "Animation of Ziad's plan being built: four stages tick off one by one while the nine areas pop in with their task counts, then the plane lands at RDU and the screen reads Cleared for takeoff, 35 tasks across 9 areas", caption: "The plan, built stage by stage" },
+            { motion: "plan-build", alt: "Animation of Ziad's plan being built: four stages tick off one by one, then the plane lands at RDU and the screen reads Cleared for takeoff, Ziad., 35 tasks across 9 areas, in the right order", caption: "The plan, built stage by stage" },
             phone(
               "92-journey-search-phone",
               "Journey: a task search, Checks and tools (trip, full-time and I-94 checks), 6 of 9 chapters done, freshman year folded as Done before Reloco, then Sophomore and Junior year",
@@ -481,34 +481,34 @@ export const projects: Project[] = [
           id: "today",
           title: "Today: one next step",
           shots: [
-            { motion: "today", alt: "Animation of Mei's Today: she marks her on-campus job found, the payroll forms that were waiting on it become her one next step, the week moves to 2 of 3 tasks, her miles count up, and she taps Start", caption: "Finish one step, and the next one is ready" },
+            { motion: "today", alt: "Animation of Mei's Today on day 53 in Chapel Hill: she marks her on-campus job Already done, the payroll forms that were waiting on it become her one next step, the count on her strip moves to 7 of 14 done for this chapter, and she taps Start", caption: "Finish one step, and the next one is ready" },
             phone(
-              "64-task-locked-phone",
-              "Mei's task Check in with ISSS, marked Locked, with a Finish this first card linking to Download your I-94 and check it",
+              "64-task-locked-phone-v26",
+              "Mei's task Open a US bank account, marked Locked and opening Oct 15, with Compare 5 banks side by side and a Finish this first card linking to Download your I-94 and check it",
               "Locked until the task before it is done",
             ),
           ],
-          what: 'One focus task and at most two more this week. A task waiting on another is locked: a "Finish this first" card links to what comes first, and its steps and Complete button stay locked until then.',
-          why: "Hick's Law. One clear action beats a list of 40. Calm urgency: red means a real missed deadline. Anything due before a student joined asks 'done?' instead, so a late joiner doesn't start the app already failing.",
+          what: 'One focus task and at most two more this week. A task waiting on another is locked: a "Finish this first" card links to what comes first, and its steps and Mark done button stay locked until then.',
+          why: "Hick's Law. One clear action beats a list of 40. Calm urgency: red means a real missed deadline, or a rule that changes what's safe to do. Anything due before a student joined asks 'done?' instead, so a late joiner doesn't start the app already failing.",
           how: "A planner ranks by urgency and dependencies. The order is enforced on the server too: completing a task checks its prerequisites, and steps can only be ticked in order. Skipping cascades to the tasks that depend on it, and reopening restores them.",
         },
         {
           id: "task",
           title: "Inside a task",
           shots: [
-            { motion: "task-steps", alt: "Animation of the task Pack your entry documents in your carry-on: its four steps are ticked one by one in order, each unlocking the next, the counter climbs to 4 of 4 and the bar turns into Complete, plus 80 miles", caption: "Steps ticked in order, then Complete" },
+            { motion: "task-steps", alt: "Animation of the task Pack your entry documents in your carry-on: its four steps are ticked one by one in order, each unlocking the next, the counter climbs to 4 of 4 and the bar moves from Next: step 2 of 4 to Mark done, with no miles on an immigration task", caption: "Steps ticked in order, then Mark done" },
             phone(
               "91-task-travel-ban-phone",
               "Task: Thinking of going home for winter 2026? Talk to ISSS first. A red Before you plan a trip warning says Nigeria is under the US entry ban, with the Federal Register source and How to reach ISSS, and step 1 is talking to ISSS",
               "A warning that changes what's safe to do comes before the steps",
             ),
             phone(
-              "65-task-locked-steps-phone",
-              "Check in with ISSS further down: three steps with their ISSS links, a locked Mark complete button, and a Bring list with the I-20 waiting for a check and the I-94 not added",
-              "Steps, sources, and what to bring from Documents",
+              "65-task-locked-steps-phone-v26",
+              "Open a US bank account further down: Bring, with the passport, I-20 and I-94 not on file yet and an Add button for each, then proof of address, a student ID, Add Nov 1 to Google Calendar, the ISSS source and a locked Mark done button",
+              "What to bring, checked against Documents",
             ),
           ],
-          what: "A few short steps with tick boxes, and the source link on the step that needs it. Then what to bring, checked against the student's Documents (on file, needs a check, or missing with an Upload button), add to calendar, the sources, and a fixed Mark complete / Skip bar.",
+          what: "A few short steps with tick boxes, and the source link on the step that needs it. Then what to bring, checked against the student's Documents (on file, needs a check, or missing with an Add button), add to calendar, the sources, and a fixed bar that points to the next step (Next: step 1 of 3), then becomes Mark done, beside Skip (or Doesn't apply for a trip or a move).",
           why: '"Pack your entry documents" is really four small actions. Broken down, it\'s 20 minutes, not a worry.',
           how: "Steps, sources, documents, time and miles are typed fields in the task library, so every task renders the same way.",
         },
@@ -529,18 +529,18 @@ export const projects: Project[] = [
               caption: "A first license, planned around what's ready",
             },
             phone(
-              "83-tool-drop-class-phone",
-              "Can I drop a class? Four classes listed, one online, and dropping STOR 435 would leave 9 credits that count, so Reloco says don't drop it yet: dropping below full time without ISSS's approval ends F-1 status",
+              "83-tool-drop-class-phone-v26",
+              "Will spring 2027 count as full time? Four classes, one online, and dropping STOR 435 would leave 9 credits that count, below 12, so Reloco says don't drop it yet: dropping below full time without ISSS's approval ends F-1 status",
               "Before dropping a class: what still counts",
             ),
             phone(
-              "82-tool-itin-phone",
-              "Do you need an ITIN? Mei's scholarship pays for more than tuition, so she likely needs one, with the ISSS Portal request, the appointment and the IRS's timing",
+              "82-tool-itin-phone-v26",
+              "Do you need an ITIN? Mei's scholarship pays for more than tuition, fees and books, so she likely needs one, with the ISSS Portal request, the appointment and the IRS's timing",
               "An ITIN only if the scholarship needs one",
             ),
             phone(
-              "85-tool-opt-dates-phone",
-              "Your OPT dates for a May 2028 graduate: decide by Dec 25, request the OPT I-20 on Jan 24, USCIS opens on Feb 13 and the last day is Jul 12",
+              "85-tool-opt-dates-phone-v26",
+              "Your OPT dates for a May 2028 graduate: decide by Dec 25, 2027, request the OPT I-20 on Jan 24, USCIS opens on Feb 13, the program ends May 13 and the last day is Jul 12",
               "OPT, dated from graduation",
             ),
           ],
@@ -564,7 +564,7 @@ export const projects: Project[] = [
           shots: [
             { motion: "compare-banks", alt: "Animation of the bank comparison: five banks fill in side by side with checkmarks, the rows that matter without an SSN are marked For you, a swipe moves through the banks, and Details on Chase opens its full terms with sources", caption: "Five banks side by side, sorted for a student without an SSN" },
             phone(
-              "74-compare-bank-details-phone",
+              "74-compare-bank-details-phone-v26",
               "Chase Secure Banking's details below the table: each fact with a Source link to Chase's own page",
               "Details on request, each fact sourced",
             ),
@@ -610,7 +610,7 @@ export const projects: Project[] = [
           ],
           what: [
             "13 kinds of documents, from the passport, visa, I-20 and DS-160 confirmation page to a lease and a job offer.",
-            "With the student's OK, AI reads the key details for them to confirm, and the plan uses the real dates. It checks the upload is the right document first: a lease uploaded as a passport is refused before it's stored.",
+            "AI reads the key details for the student to confirm (they can switch it off on any upload), and the plan uses the real dates. It checks the upload is the right document first: a lease uploaded as a passport is refused before it's stored.",
             "Tasks that need documents show what's on file, what needs a check and what's missing.",
           ],
           why: "A passport and an I-20 are the most sensitive things a student owns, so trust had to be designed in from the first version, not added later.",
@@ -621,11 +621,11 @@ export const projects: Project[] = [
           title: "Arrival mode (new students)",
           shots: [
             phone(
-              "34-arrival-checklist-phone",
-              "Arrival mode two days out: documents to keep in hand at the border, each with a Mark ready button",
+              "34-arrival-checklist-phone-v26",
+              "Arrival mode two days out: At the border, the papers to keep in hand (passport, visa, signed I-20, I-901 fee receipt, admission letter), each with an Add button",
               "At the border: keep these in hand",
             ),
-            { motion: "landing", alt: "Animation of landing day: a plane flies from Shanghai to RDU on Mei's boarding pass, Reloco asks Did you make it to Chapel Hill?, a tap on Yes, I landed clears the travel task from Next up, and Today turns to Touchdown, Day 1 in Chapel Hill", caption: "On landing day, one tap clears the travel tasks" },
+            { motion: "landing", alt: "Animation of landing day: Today reads Pre-flight, Landing day, with day 1 and the chapter's tasks on its strip, Reloco asks Did you make it to Chapel Hill?, a tap on Yes, I landed clears the travel task from Next up, and Today turns to Touchdown, Day 1 in Chapel Hill", caption: "On landing day, one tap clears the travel tasks" },
           ],
           what: 'Two days before landing, Today becomes a landing-day checklist: the border, the ride from RDU, the first 72 hours, and what to do if something goes wrong. On the day it asks "Did you make it?"',
           why: 'The border is the highest-stakes moment of year one, and flights move. "Yes" clears the travel tasks; "On a different day" fixes the date and reschedules everything.',
@@ -634,10 +634,10 @@ export const projects: Project[] = [
           id: "yearly",
           title: "Every year, on schedule (current students)",
           shots: [
-            { motion: "yearly", alt: "Animation of Journey scrolling through the class years: Sophomore, Junior, Senior and After graduation open in turn, and the same yearly tasks (winter travel signature, tax forms, summer CPT, full-time registration, summer move) reappear in each chapter with that year's date", caption: "The same deadlines, back every year with new dates" },
+            { motion: "yearly", alt: "Animation of Journey, from its top (a task search, Checks and tools, 5 of 9 chapters done and 2,460 miles, freshman year folded away) down the class years: Sophomore, Junior, Senior and After graduation open in turn, and the same yearly tasks (winter travel signature, tax forms, summer CPT, full-time registration, summer move) reappear in each chapter with that year's date", caption: "The same deadlines, back every year with new dates" },
             phone(
-              "51-tax-forms-phone",
-              "Task: File your 2026 tax forms, Form 8843 plus a 1040-NR if you had US income",
+              "51-tax-forms-phone-v26",
+              "Task: File your 2026 tax forms, opening Feb 1, 2027: Form 8843 again, plus a 1040-NR if there was US income, with four steps that start with the free Sprintax code from ISSS",
               "Tax season, every February",
             ),
             {
@@ -666,9 +666,9 @@ export const projects: Project[] = [
           title: "When life changes",
           shots: [
             phone(
-              "84-life-changes-phone",
-              "Profile, What changed?: I got a job, My SSN arrived, I'm going abroad and I moved, with Mei's saved winter trip below",
-              "A job, an SSN, a trip or a move, each with its paperwork",
+              "84-life-changes-phone-v26",
+              "Profile, What changed?: I got a job, I'm going abroad and I moved, with Mei's saved trip abroad from Dec 15, 2026 to Jan 8, 2027 below",
+              "A job, a trip or a move, each with its paperwork",
             ),
           ],
           what: [
@@ -685,8 +685,8 @@ export const projects: Project[] = [
           title: "Taxes, the nonresident way",
           shots: [
             phone(
-              "81-tax-card-phone",
-              "Aisha's 2026 taxes: she worked, her scholarship didn't pay more than tuition, no other income, so she files Form 8843 and a 1040-NR",
+              "81-tax-card-phone-v26",
+              "Aisha's 2026 taxes: she worked, her scholarship didn't pay more than tuition, no other US income, so she files Form 8843 and a 1040-NR",
               "Three answers, then exactly what to file",
             ),
           ],
@@ -703,8 +703,8 @@ export const projects: Project[] = [
           title: "Updates: new rules, and what they mean for you",
           shots: [
             phone(
-              "80-updates-phone",
-              "Updates: the proposed OPT fees, marked May affect you later and Proposed, with How this affects you using Aisha's May 13, 2028 graduation date and a link to comment",
+              "80-updates-phone-v26",
+              "Updates, Proposed and other news: the paused end of duration of status, marked Could affect you, with How this affects you using Aisha's May 13, 2028 graduation date and its Details folded, then the proposed OPT fees",
               "A new rule, said for one student",
             ),
           ],
@@ -720,10 +720,10 @@ export const projects: Project[] = [
           id: "sources",
           title: "Sourced, current, and yours to share",
           shots: [
-            { motion: "sources", alt: "Animation of Ziad's task Book a flight inside your entry window: the rule that you can enter no earlier than 30 days before the program start date on your I-20 is highlighted, a step links UNC ISSS, Add due date to Google Calendar is tapped, and the official sources appear", caption: "The 30-day rule, sourced to UNC ISSS" },
+            { motion: "sources", alt: "Animation of Ziad's task Book a flight inside your entry window: the rule that you can enter no earlier than 30 days before the program start date on your I-20 is highlighted, a step links UNC ISSS, Add Dec 4 to Google Calendar is tapped, and the official sources appear", caption: "The 30-day rule, sourced to UNC ISSS" },
             phone(
-              "23-family-share-phone",
-              "Read-only share page showing a student's first-year certificate and stamps",
+              "23-family-share-phone-v26",
+              "Read-only share page, a snapshot from Oct 11, 2026, showing Aisha's first-year certificate and stamps",
               "A read-only page for family",
             ),
           ],
@@ -742,21 +742,21 @@ export const projects: Project[] = [
         title: "Progress that motivates",
         text: "Everyday tasks earn miles, chapters earn stamps, and streaks are weekly, not daily, because visa work comes in bursts. Status and tax tasks earn no points: finishing one shows a calm \"done and saved\" with Undo instead of confetti. Miles and stamps live in Journey, so Today keeps one number, this year's tasks done. A certificate marks the first year, and another marks graduation.",
         shots: [
-          { motion: "miles", alt: "Animation of completing a task: the last step of Get a US phone number is ticked, Complete is tapped, and a card says Nice work as confetti falls and the miles count up to 60", caption: "Miles for every task" },
-          { motion: "stamp", alt: "Animation of finishing a chapter: the Pre-flight stamp comes down on the reward card with confetti and plus 50 miles, then the card closes and Mei's passport shows the Pre-flight stamp, 1 of 9", caption: "A stamp for every chapter" },
+          { motion: "miles", alt: "Animation of completing a task: the last step of Get a US phone number is ticked, the bar turns into Mark done plus 60 miles and is tapped, and a card says Get a US phone number, done. as confetti falls and the miles count up to 60", caption: "Miles for every task" },
+          { motion: "stamp", alt: "Animation of finishing a chapter: Mark done is tapped on the last Pre-flight task, the Pre-flight stamp comes down on the reward card reading Pre-flight, done. with confetti and plus 50 miles, Continue closes it, and Mei's Profile shows the stamp under Your chapters, 1 of 9", caption: "A stamp for every chapter" },
           phone(
-            "20-passport-phone",
-            "Aisha's profile: a passport with six of nine chapter stamps and her trip dates",
-            "The passport",
+            "20-passport-phone-v26",
+            "Aisha's profile: Your chapters, six of nine stamps, grey for the chapters done before she joined Reloco, and Up next: Junior year, 1 of 11 tasks",
+            "Your chapters",
           ),
           phone(
-            "22-certificate-phone",
-            "First-year certificate listing tasks, miles and the finish date",
+            "22-certificate-phone-v26",
+            "Aisha's first-year certificate for 2025: five chapter stamps, two grey for chapters finished before Reloco, 28 tasks, 2,780 miles, finished May 8",
             "The first-year certificate",
           ),
           phone(
-            "66-certificate-graduation-phone",
-            "Graduation certificate for the class of 2028 with eight chapter stamps, 71 tasks and 22,400 miles",
+            "66-certificate-graduation-phone-v26",
+            "Nour's graduation certificate for the class of 2026: eight chapter stamps, six grey for chapters finished before Reloco, 14 tasks, 1,410 miles, finished May 8",
             "And one at graduation",
           ),
         ],
@@ -775,7 +775,7 @@ export const projects: Project[] = [
           },
           {
             title: "Calm urgency",
-            text: "Red only for real overdue deadlines; due-soon is blue; missed-before-joining is a question.",
+            text: "Red only for a real overdue deadline or a rule that changes what's safe to do, like an entry ban; due-soon is blue; missed-before-joining is a question.",
           },
           {
             title: "Progressive disclosure",

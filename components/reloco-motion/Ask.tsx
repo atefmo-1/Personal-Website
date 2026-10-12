@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { H, useClock } from "./Stage";
-import { At, Scene, Tap, Typed, ease, typedFor } from "./ui";
+import { AppHeader, At, Scene, Tap, Typed, ease, typedFor } from "./ui";
 
 // Ask Reloco, answering a question about work hours: typed and sent, the check it runs, the
 // answer written out, then the saved answer marked "Confirm with ISSS" with its sources. The
@@ -141,6 +141,8 @@ function Composer() {
   const ready = t >= TYPE + SPEED && t < SEND + 100;
   const pressed = t >= SEND && t < SEND + 200;
   return (
+    // On the Ask page it sits just above the tab bar; the bar is left out here so the whole
+    // answer, its "Confirm with ISSS" label and its sources fit on the screen.
     <div className="absolute right-3 bottom-4 left-3">
       <div className="rounded-[22px] p-2" style={{ background: "var(--r-surface)", boxShadow: `${typing ? "0 0 0 2px var(--r-leaf), " : ""}0 22px 50px -14px rgb(19 41 75 / 0.35), 0 0 0 1px var(--r-line)`, transition: "box-shadow 200ms" }}>
         <div className="relative min-h-11 px-2.5 pt-2.5 pb-1 text-[15px] leading-snug">
@@ -197,9 +199,11 @@ function Ask() {
   return (
     <Scene className="relative h-full overflow-hidden">
       <motion.div ref={content} className="px-3 pb-[136px]" animate={{ y }} transition={reduced ? { duration: 0 } : { duration: 0.7, ease }}>
-        <p className={`${relocoDisplay.className} px-2 pt-3 text-[28px] leading-none`}>reloco</p>
+        <div className="-mx-3">
+          <AppHeader />
+        </div>
 
-        <header className="mt-9 flex items-center gap-3 px-1 pb-2">
+        <header className="mt-5 flex items-center gap-3 px-1 pb-2">
           <span className="grid size-11 shrink-0 place-items-center rounded-full" style={{ background: "var(--r-leaf-soft)", color: "var(--r-leaf-ink)" }}>
             <Sparkles size={20} />
           </span>

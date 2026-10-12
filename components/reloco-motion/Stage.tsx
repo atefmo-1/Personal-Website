@@ -19,7 +19,7 @@ const PALETTE = {
   "--r-line": "rgb(19 41 75 / 0.12)",
   "--r-ink": "#13294b",
   "--r-ink-2": "#52607a",
-  "--r-ink-3": "#8e96a6",
+  "--r-ink-3": "#636b7d",
   "--r-primary": "#13294b",
   "--r-on-primary": "#fffbf4",
   "--r-leaf": "#4b9cd3",
@@ -32,7 +32,11 @@ const PALETTE = {
   "--r-urgent-ink": "#9e3325",
   "--r-urgent-soft": "#f7e1da",
   "--r-success": "#2f7fbf",
-  "--r-shadow": "0 1px 0 rgb(19 41 75 / 0.05), 0 2px 8px -2px rgb(19 41 75 / 0.09)",
+  "--r-success-ink": "#1f5f97",
+  "--r-on-primary-accent": "#e6b04a",
+  // Cards are flat: a hairline ring, no drop shadow. Only floating bars and sheets lift.
+  "--r-shadow": "0 0 0 1px rgb(19 41 75 / 0.07)",
+  "--r-shadow-float": "0 22px 50px -14px rgb(19 41 75 / 0.35), 0 0 0 1px rgb(19 41 75 / 0.06)",
 } as CSSProperties;
 
 export interface Clock {
@@ -109,7 +113,8 @@ export function Stage({ alt, duration, children }: { alt: string; duration: numb
         <div
           aria-hidden
           className={`${relocoSans.className} absolute top-0 left-0 origin-top-left antialiased`}
-          style={{ ...PALETTE, width: W, height: H, transform: `scale(${scale})`, visibility: scale ? "visible" : "hidden", color: "var(--r-ink)", background: "var(--r-canvas)" }}
+          // The serif has one weight: never let the browser fake a bold one.
+          style={{ ...PALETTE, width: W, height: H, transform: `scale(${scale})`, visibility: scale ? "visible" : "hidden", color: "var(--r-ink)", background: "var(--r-canvas)", fontSynthesis: "none" }}
         >
           <ClockContext.Provider value={clock}>
             {/* A new key each loop remounts the scene, so every entrance plays again. */}

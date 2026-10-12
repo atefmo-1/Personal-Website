@@ -104,7 +104,7 @@ export function DmvVisit() {
           </Card>
         </At>
       </motion.div>
-      <TaskBar label="3 steps to go" />
+      <TaskBar of={3} />
     </Scene>
   );
 }

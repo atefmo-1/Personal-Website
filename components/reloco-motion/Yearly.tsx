@@ -2,18 +2,20 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { createElement, useId, type CSSProperties, type ReactNode } from "react";
+import { createElement, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { relocoDisplay } from "@/lib/relocoFonts";
 import { useClock } from "./Stage";
-import { Scene, Tap } from "./ui";
+import { AppHeader, MilesStar, Scene, TabBar, Tap } from "./ui";
 
-// Every year, on schedule: Journey for a sophomore, scrolling down the class years. The same
-// yearly tasks come back as dated copies in each year's chapter (winter travel signature, tax
-// forms, CPT for the summer, full-time enrollment, a summer move), and each copy's year rolls
-// on as its chapter opens. Rows, dates and miles are what the app builds for an invented
-// student who started in Aug 2024 and graduates May 13, 2028, seen on Oct 1, 2025.
+// Every year, on schedule: Journey for a sophomore, from its top (the search, Checks and tools,
+// chapters done and miles, freshman year folded away) down the class years. The same yearly
+// tasks come back as dated copies in each year's chapter (winter travel signature, tax forms, CPT
+// for the summer, full-time enrollment, a summer move), and each copy's year rolls on as its
+// chapter opens. Rows, dates and miles are what the app builds for an invented student who
+// started in Aug 2024 and graduates May 13, 2028, seen on Oct 1, 2025.
 //
-// The Journey and Today pieces below are shared with the Landing and Opt scenes.
+// The Journey and Today pieces below are shared with the Landing and Opt scenes; the tab bar and
+// header are ui's.
 
 /* ───────────── Shared pieces of Reloco's interface ───────────── */
 
@@ -50,6 +52,9 @@ export const I = {
   check: [["path", { d: "M20 6 9 17l-5-5" }]],
   minus: [["path", { d: "M5 12h14" }]],
   chevronDown: [["path", { d: "m6 9 6 6 6-6" }]],
+  chevronRight: [["path", { d: "m9 18 6-6-6-6" }]],
+  search: [["path", { d: "m21 21-4.34-4.34" }], ["circle", { cx: 11, cy: 11, r: 8 }]],
+  wrench: [["path", { d: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" }]],
   clock: [["circle", { cx: 12, cy: 12, r: 10 }], ["path", { d: "M12 6v6l4 2" }]],
   flame: [["path", { d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" }]],
   sparkles: [["path", { d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" }], ["path", { d: "M20 2v4" }], ["path", { d: "M22 4h-4" }], ["circle", { cx: 4, cy: 20, r: 2 }]],
@@ -120,17 +125,23 @@ export interface Row {
   category: Category;
   due: string;
   tone?: "urgent" | "soon" | "later";
+  /** Shown only on everyday tasks: immigration, tax and other status-critical tasks pass 0. */
   miles: number;
+  /** "Only if it applies", while it's open: an Optional tag before the date. */
+  optional?: boolean;
   done?: boolean;
   skipped?: boolean;
   /** 1 while waiting on an earlier task; eases to 0 as it unlocks. */
   locked?: number;
 }
 
-/** One row in an inset list, as the app's TaskRow: icon, title, due, chevron. */
+const TAG: CSSProperties = { background: "var(--r-fill)", color: "var(--r-ink-2)" };
+
+/** One row in an inset list, as the app's TaskRow: icon, title, tags and due, miles, chevron. */
 export function TaskRow({ row, last = false, style }: { row: Row; last?: boolean; style?: CSSProperties }) {
-  const { title, category, due, tone = "later", miles, done, skipped, locked = 0 } = row;
+  const { title, category, due, tone = "later", miles, optional, done, skipped, locked = 0 } = row;
   const dueColor = tone === "urgent" ? "var(--r-urgent-ink)" : tone === "soon" ? "var(--r-leaf-ink)" : "var(--r-ink-2)";
+  const lockShown = Math.min(1, locked * 1.6);
   return (
     <div className="flex min-h-[58px] items-center gap-3 px-3.5" style={style}>
       <span className="relative shrink-0">
@@ -151,35 +162,45 @@ export function TaskRow({ row, last = false, style }: { row: Row; last?: boolean
       </span>
       <span className="flex min-w-0 flex-1 flex-col py-2.5" style={{ borderBottom: last ? "none" : "1px solid var(--r-line)" }}>
         <span
-          className="truncate text-[15px] leading-tight font-semibold"
+          className="line-clamp-2 text-[15px] leading-snug font-semibold"
           style={{ color: done ? "var(--r-ink-2)" : "var(--r-ink)", textDecorationLine: done ? "line-through" : "none", textDecorationColor: "var(--r-ink-3)" }}
         >
           {title}
         </span>
-        <span className="mt-0.5 flex items-center text-[13px] whitespace-nowrap" style={{ color: done ? "var(--r-ink-2)" : dueColor, fontWeight: tone === "urgent" ? 600 : tone === "soon" ? 500 : 400 }}>
+        {/* One fact per piece: tags for state, the date as text, miles at the end. */}
+        <span className="mt-1 flex items-center gap-x-2 text-[13px] whitespace-nowrap">
           {!done && locked > 0 && (
-            <span className="inline-flex items-center overflow-hidden font-semibold" style={{ color: "var(--r-ink-2)", maxWidth: 80 * Math.min(1, locked * 1.6), opacity: locked }}>
-              <LockIcon open={1 - Math.min(1, locked * 1.6)} />
-              <span className="ml-0.5">Locked ·&nbsp;</span>
+            <span className="inline-flex h-5 items-center gap-1 overflow-hidden rounded-full text-[12px] font-semibold" style={{ ...TAG, maxWidth: 80 * lockShown, opacity: locked, paddingInline: 8 * lockShown, marginRight: -8 * (1 - lockShown) }}>
+              <LockIcon open={1 - lockShown} />
+              Locked
             </span>
           )}
-          {done ? (skipped ? "Not needed" : "Done") : due}
-          {!done && <span style={{ color: "var(--r-ink-3)" }}>&nbsp;· +{miles} mi</span>}
+          {!done && optional && (
+            <span className="inline-flex h-5 items-center rounded-full px-2 text-[12px] font-semibold" style={TAG}>
+              Optional
+            </span>
+          )}
+          <span style={{ color: done ? "var(--r-ink-2)" : dueColor, fontWeight: !done && tone === "urgent" ? 600 : !done && tone === "soon" ? 500 : 400 }}>{done ? (skipped ? "Not needed" : "Done") : due}</span>
+          {!done && miles > 0 && (
+            <span className="ml-auto font-semibold tabular-nums" style={{ color: "var(--r-gold-ink)" }}>
+              <MilesStar /> +{miles}
+            </span>
+          )}
         </span>
       </span>
       <span style={{ color: "var(--r-ink-3)" }}>
-        <Icon node={I.arrowRight} size={16} />
+        <Icon node={I.chevronRight} size={20} />
       </span>
     </div>
   );
 }
 
 /** A painting from the app's series, filling its (relative) parent, with the app's veils. */
-export function Painting({ name, position = "50% 50%", veil, scale = 1, opacity = 1 }: { name: string; position?: string; veil?: "top" | "left" | "full" | "bottom"; scale?: number; opacity?: number }) {
+export function Painting({ name, position = "50% 50%", veil, topVeil = false, scale = 1, opacity = 1 }: { name: string; position?: string; veil?: "top" | "left" | "full" | "bottom"; topVeil?: boolean; scale?: number; opacity?: number }) {
   const veils = {
     top: "linear-gradient(180deg, rgb(10 20 40 / 0.55), transparent 55%)",
-    bottom: "linear-gradient(0deg, rgb(10 20 40 / 0.7), transparent 60%)",
-    left: "linear-gradient(90deg, rgb(10 20 40 / 0.6), transparent 75%)",
+    bottom: "linear-gradient(0deg, rgb(10 20 40 / 0.72), rgb(10 20 40 / 0.35) 55%, transparent 80%)",
+    left: "linear-gradient(90deg, rgb(10 20 40 / 0.78), rgb(10 20 40 / 0.62) 55%, rgb(10 20 40 / 0.3))",
     full: "rgb(10 20 40 / 0.35)",
   };
   return (
@@ -188,21 +209,24 @@ export function Painting({ name, position = "50% 50%", veil, scale = 1, opacity 
         <Image src={`/projects/reloco/motion/${name}.webp`} alt="" fill sizes="400px" className="object-cover" style={{ objectPosition: position }} priority />
       </div>
       {veil && <div className="absolute inset-0" style={{ background: veils[veil] }} />}
+      {topVeil && <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgb(10 20 40 / 0.55), rgb(10 20 40 / 0.3) 15%, transparent 30%)" }} />}
     </div>
   );
 }
 
 // One stamp glyph per chapter, Pre-flight to After graduation (the app's Stamp).
 const PLANE: Node = [["path", { d: "M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" }]];
-const GLYPHS: Node[] = [PLANE, PLANE, I.cap, I.house, I.receipt, I.bookOpen, I.briefcase, I.award, I.rocket];
+const PLANE_LANDING: Node = [["path", { d: "M2 22h20" }], ["path", { d: "M3.77 10.77 2 9l2-4.5 1.1.55c.55.28.9.84.9 1.45s.35 1.17.9 1.45L8 8.5l3-6 1.05.53a2 2 0 0 1 1.09 1.52l.72 5.4a2 2 0 0 0 1.09 1.52l4.4 2.2c.42.22.78.55 1.01.96l.6 1.03c.49.88-.06 1.98-1.06 2.1l-1.18.15c-.47.06-.95-.02-1.37-.24L4.29 11.15a2 2 0 0 1-.52-.38Z" }]];
+const BUILDING: Node = [["path", { d: "M10 12h4" }], ["path", { d: "M10 8h4" }], ["path", { d: "M14 21v-3a2 2 0 0 0-4 0v3" }], ["path", { d: "M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" }], ["path", { d: "M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" }]];
+const GLYPHS: Node[] = [PLANE, PLANE_LANDING, I.cap, BUILDING, I.receipt, I.bookOpen, I.briefcase, I.award, I.rocket];
 const STAMP_INK = ["#2b6495", "#b5553a", "#3c7a4a", "#7a4e8c", "#9a7428"];
 
-/** A chapter's passport stamp: inked when earned, a dashed outline until then. */
-export function Stamp({ index, name, earned, size = 58 }: { index: number; name: string; earned: boolean; size?: number }) {
+/** A chapter's passport stamp: inked when earned, grey when done before Reloco, a dashed outline until then. */
+export function Stamp({ index, name, earned, inherited = false, size = 58 }: { index: number; name: string; earned: boolean; inherited?: boolean; size?: number }) {
   const id = useId().replace(/:/g, "");
-  const color = earned ? STAMP_INK[index % 5] : "var(--r-ink-3)";
+  const color = earned && !inherited ? STAMP_INK[index % 5] : "var(--r-ink-3)";
   return (
-    <svg viewBox="0 0 100 100" width={size} height={size} style={{ color, opacity: earned ? 1 : 0.45, flexShrink: 0 }} aria-hidden>
+    <svg viewBox="0 0 100 100" width={size} height={size} style={{ color, opacity: !earned ? 0.45 : inherited ? 0.6 : 1, flexShrink: 0 }} aria-hidden>
       <defs>
         <path id={`${id}a`} d="M 15 50 A 35 35 0 0 1 85 50" />
         <path id={`${id}b`} d="M 9 50 A 41 41 0 0 0 91 50" />
@@ -233,42 +257,69 @@ export function Stamp({ index, name, earned, size = 58 }: { index: number; name:
 export interface ChapterProps {
   index: number;
   name: string;
+  /** The chapter's line under its name ("Your first week on the ground"). */
+  blurb: string;
   art: string;
   done: number;
   total: number;
   current?: boolean;
+  /** Finished before the student joined Reloco: a grey stamp and "Done before Reloco". */
+  inherited?: boolean;
   /** 0 closed, 1 open: the clock drives it, so a scene can open a chapter mid-loop. */
   open: number;
-  /** Height of the rows when open. */
-  bodyHeight: number;
   children?: ReactNode;
   /** When a fingertip opens it. */
   tapAt?: number;
 }
 
-/** A Journey chapter: its painting and stamp, a progress bar, and its rows when open. */
-export function Chapter({ index, name, art, done, total, current, open, bodyHeight, children, tapAt }: ChapterProps) {
+/** A Journey chapter: its painting and stamp, name and line, a progress bar, and its rows when open. */
+export function Chapter({ index, name, blurb, art, done, total, current, inherited = false, open, children, tapAt }: ChapterProps) {
   const complete = done === total;
+  // The rows' own height, measured, so a chapter opens to exactly its rows however they wrap.
+  const body = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+  useLayoutEffect(() => {
+    const el = body.current;
+    if (!el) return;
+    const measure = () => setHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   return (
-    <section className="relative overflow-hidden rounded-[20px]" style={{ background: "var(--r-surface)", boxShadow: current ? "0 0 0 2px var(--r-leaf), var(--r-shadow)" : "var(--r-shadow)" }}>
+    <section className="relative overflow-hidden rounded-[20px]" style={{ background: "var(--r-surface)", boxShadow: current ? "0 0 0 2px var(--r-leaf)" : "var(--r-shadow)" }}>
       <div className="relative flex min-h-[112px] w-full items-center gap-3 overflow-hidden px-4 py-4 text-left text-white">
         <Painting name={art} position="50% 45%" veil="left" />
         <span className="relative grid size-[64px] shrink-0 place-items-center rounded-full" style={{ background: "rgb(255 251 244 / 0.9)" }}>
-          <Stamp index={index} name={name} earned={complete} />
+          <Stamp index={index} name={name} earned={complete} inherited={inherited} />
         </span>
         <span className="relative min-w-0 flex-1">
           <span className="flex items-center gap-2">
             <span className={`${display} text-[28px] leading-none`} style={tight}>
               {name}
             </span>
-            {current && <span className="rounded-full px-2 py-0.5 text-[11px] font-bold" style={{ background: "var(--r-leaf)" }}>NOW</span>}
+            {current && (
+              <span className="rounded-full px-2 py-0.5 text-[12px] font-bold" style={{ background: "var(--r-leaf)", color: "#13294b" }}>
+                Now
+              </span>
+            )}
+          </span>
+          <span className="mt-1 block text-[13px] leading-snug" style={{ filter: "drop-shadow(0 1px 4px rgb(0 0 0 / 0.5))" }}>
+            {blurb}
           </span>
           <span className="mt-2 flex items-center gap-2.5">
-            <span className="h-1.5 w-20 overflow-hidden rounded-full" style={{ background: "rgb(255 255 255 / 0.25)" }}>
+            <span className="h-1.5 w-20 shrink-0 overflow-hidden rounded-full" style={{ background: "rgb(255 255 255 / 0.25)" }}>
               <span className="block h-full rounded-full bg-white" style={{ width: `${(done / total) * 100}%`, transition: "width 500ms cubic-bezier(0.22, 1, 0.36, 1)" }} />
             </span>
-            <span className="text-[12px] font-semibold tabular-nums" style={{ color: "rgb(255 255 255 / 0.85)" }}>
-              {complete ? "Stamped ✓" : `${done}/${total}`}
+            <span className="inline-flex items-center gap-1 text-[13px] font-semibold tabular-nums" style={{ filter: "drop-shadow(0 1px 4px rgb(0 0 0 / 0.5))" }}>
+              {complete ? (
+                <>
+                  <Icon node={I.check} size={14} stroke={3} /> {inherited ? "Done before Reloco" : "Done"}
+                </>
+              ) : (
+                `${done} of ${total}`
+              )}
             </span>
           </span>
         </span>
@@ -277,39 +328,84 @@ export function Chapter({ index, name, art, done, total, current, open, bodyHeig
         </span>
         {tapAt !== undefined && <Tap at={tapAt} x="58%" y="50%" />}
       </div>
-      {bodyHeight > 0 && (
-        <div className="overflow-hidden" style={{ height: (bodyHeight + 1) * open, opacity: Math.min(1, open * 1.5) }}>
-          <div style={{ borderTop: "1px solid var(--r-line)" }}>{children}</div>
+      {children && (
+        <div className="overflow-hidden" style={{ height: height * open, opacity: Math.min(1, open * 1.5) }}>
+          <div ref={body} style={{ borderTop: "1px solid var(--r-line)" }}>
+            {children}
+          </div>
         </div>
       )}
     </section>
   );
 }
 
-/** The floating pill of tabs on phones. */
-export function TabBar({ active }: { active: "Today" | "Journey" }) {
-  const tabs = [
-    { label: "Today", icon: I.sparkles },
-    { label: "Journey", icon: I.map },
-    { label: "Documents", icon: I.folderLock },
-    { label: "Profile", icon: I.user },
-  ];
+/** The top of Journey: find a task, the checks and tools (folded), and one line of where you are. */
+export function JourneyTop({ chapters, miles }: { chapters: number; miles: number }) {
   return (
-    <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center px-4">
-      <div className="flex h-[60px] items-center gap-1 rounded-full p-1.5" style={{ background: "rgb(20 22 27 / 0.94)", boxShadow: "0 12px 40px -8px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.1)" }}>
-        {tabs.map((tab) => {
-          const on = tab.label === active;
-          return (
-            <span
-              key={tab.label}
-              className="flex h-12 min-w-12 items-center justify-center gap-2 rounded-full px-3.5 text-[14px] font-semibold"
-              style={{ background: on ? "#fff" : "transparent", color: on ? "#14161b" : "rgb(255 255 255 / 0.6)" }}
-            >
-              <Icon node={tab.icon} size={20} stroke={2.2} />
-              {on && tab.label}
+    <>
+      <div className="mb-4 space-y-3">
+        <div className="relative flex h-12 items-center rounded-full pr-4 pl-12 text-[16px]" style={{ background: "var(--r-surface)", boxShadow: "inset 0 0 0 1px var(--r-line)", color: "var(--r-ink-2)" }}>
+          <span className="absolute left-4">
+            <Icon node={I.search} size={20} />
+          </span>
+          Find a task, like taxes or travel
+        </div>
+        <div className="flex min-h-[58px] items-center gap-3 rounded-[20px] px-4" style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow)" }}>
+          <span style={{ color: "var(--r-leaf-ink)" }}>
+            <Icon node={I.wrench} size={20} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-semibold">Checks and tools</span>
+            <span className="block truncate text-[13px]" style={{ color: "var(--r-ink-2)" }}>
+              Check a trip, Full-time check, I-94 check, Tax forms
             </span>
-          );
-        })}
+          </span>
+          <span style={{ color: "var(--r-ink-3)" }}>
+            <Icon node={I.chevronDown} size={20} />
+          </span>
+        </div>
+      </div>
+      <p className="mb-2 px-1 text-[14px]" style={{ color: "var(--r-ink-2)" }}>
+        {chapters} of 9 chapters done
+        {miles > 0 && (
+          <>
+            {" · "}
+            <span className="font-semibold tabular-nums" style={{ color: "var(--r-gold-ink)" }}>
+              <MilesStar /> {miles.toLocaleString("en-US")}
+            </span>{" "}
+            miles
+          </>
+        )}
+      </p>
+    </>
+  );
+}
+
+/** Freshman year folded to one row once all five chapters are stamped: their stamps, overlapping. */
+export function FreshmanFold({ inherited = false }: { inherited?: boolean }) {
+  const names = ["Pre-flight", "Touchdown", "First month", "Settling in", "First spring"];
+  return (
+    <div>
+      <h2 className={`${display} px-1 pb-1 text-[24px] leading-none`} style={tight}>
+        Freshman year
+      </h2>
+      <div className="flex w-full items-center gap-3 rounded-[20px] px-4 py-3" style={{ background: "var(--r-surface)", boxShadow: "var(--r-shadow)" }}>
+        <span className="flex -space-x-3">
+          {names.map((n, i) => (
+            <span key={n} className="grid size-10 place-items-center rounded-full" style={{ background: "#fffbf4", boxShadow: "0 0 0 2px var(--r-surface)" }}>
+              <Stamp index={i} name={n} earned inherited={inherited} size={36} />
+            </span>
+          ))}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15px] font-semibold">{inherited ? "Done before Reloco" : "All 5 done"}</span>
+          <span className="block text-[13px]" style={{ color: "var(--r-ink-2)" }}>
+            Show freshman year
+          </span>
+        </span>
+        <span style={{ color: "var(--r-ink-3)" }}>
+          <Icon node={I.chevronDown} size={20} />
+        </span>
       </div>
     </div>
   );
@@ -345,16 +441,16 @@ function Year({ from, to, at }: { from?: string; to: string; at: number }) {
 type Repeat = { category: Category; due: string; miles: number; title: (y: ReactNode) => ReactNode; years: string[] };
 
 // The five tasks that repeat each year, with their copies' years: Sophomore, Junior, Senior,
-// After graduation (lib/library/tasks.ts). A task stops once its years run out.
+// After graduation (lib/library/tasks.ts). A task stops once its years run out. Only the CPT
+// task earns miles: travel, taxes, full-time enrollment and the address report are status tasks.
 const REPEATS: Repeat[] = [
-  { category: "immigration", due: "Opens Nov 1", miles: 60, title: (y) => <>Going home for winter {y}? Get a travel signature first</>, years: ["2025", "2026", "2027"] },
-  { category: "taxes", due: "Opens Feb 1", miles: 120, title: (y) => <>File your {y} tax forms</>, years: ["2025", "2026", "2027", "2028"] },
+  { category: "immigration", due: "Opens Nov 1", miles: 0, title: (y) => <>Going home for winter {y}? Get a travel signature first</>, years: ["2025", "2026", "2027"] },
+  { category: "taxes", due: "Opens Feb 1", miles: 0, title: (y) => <>File your {y} tax forms</>, years: ["2025", "2026", "2027", "2028"] },
   { category: "employment", due: "Opens Mar 1", miles: 200, title: (y) => <>Summer {y} internship? Get CPT approved first</>, years: ["2026", "2027"] },
-  { category: "campus", due: "Opens Mar 20", miles: 60, title: (y) => <>Register full time for {y}</>, years: ["2026–27", "2027–28"] },
-  { category: "housing", due: "Opens May 1", miles: 40, title: (y) => <>Moving in summer {y}? Report your new address within 10 days</>, years: ["2026", "2027"] },
+  { category: "campus", due: "Opens Mar 20", miles: 0, title: (y) => <>Register full time for fall {y}</>, years: ["2026", "2027"] },
+  { category: "immigration", due: "Opens May 1", miles: 0, title: (y) => <>Moving in summer {y}? Report your new address within 10 days</>, years: ["2026", "2027"] },
 ];
 
-const ROW = 61.25;
 const GAP = 10;
 
 /** Rows for one class year: the yearly copies roll their year on from the year before. */
@@ -402,9 +498,10 @@ function Rows({ rows, at }: { rows: Row[]; at: number }) {
   );
 }
 
-// The beats: Sophomore is open (it's now), then Junior, Senior and After graduation open in
-// turn, each a tap, a glide down, and the years rolling on.
-const T = { soph: 200, junior: 2300, senior: 4700, after: 7100, end: 10400 };
+// The beats: Journey opens at its top (the search, the checks and where she is), glides down to
+// Sophomore, which is open (it's now), then Junior, Senior and After graduation open in turn,
+// each a tap, a glide down, and the years rolling on.
+const T = { soph: 200, down: 900, junior: 2300, senior: 4700, after: 7100, end: 10400 };
 const OPEN = 450;
 
 function Yearly() {
@@ -414,42 +511,47 @@ function Yearly() {
   const sOpen = open(T.senior);
   const aOpen = open(T.after);
 
-  // The camera: Sophomore up top, then each newly opened year brought fully into view
-  // with the end of the year before still showing above it.
+  // The camera: the top of Journey, then Sophomore, then each newly opened year brought fully
+  // into view with the end of the year before still showing above it.
   const camera = glide(
     t,
     [
       [0, 0],
-      [T.junior + 150, 200],
-      [T.senior + 150, 680],
-      [T.after + 150, 940],
+      [T.down, 330],
+      [T.junior + 150, 720],
+      [T.senior + 150, 1230],
+      [T.after + 150, 1680],
     ],
     1000,
   );
 
   return (
     <Scene className="relative h-full overflow-hidden">
-      <div className="absolute inset-x-0 top-0 px-3" style={{ transform: `translateY(${-camera}px)` }}>
-        {/* The end of freshman year, already stamped, just above the fold. */}
-        <div className="relative" style={{ marginTop: -70 }}>
-          <Chapter index={4} name="First spring" art="tax-season" done={5} total={5} open={0} bodyHeight={0} />
-        </div>
-        <h2 className={`${display} px-1 pt-5 pb-1 text-[24px] leading-none`} style={{ ...tight, color: "var(--r-ink-2)" }}>
-          The rest of your degree
-        </h2>
-        <div className="flex flex-col" style={{ gap: GAP }}>
-          <Chapter index={5} name="Sophomore year" art="cat-campus" done={0} total={5} current open={1} bodyHeight={5 * ROW}>
-            <Rows rows={yearRows(0, T.soph + 500)} at={T.soph} />
-          </Chapter>
-          <Chapter index={6} name="Junior year" art="study" done={0} total={5} open={jOpen} bodyHeight={5 * ROW} tapAt={T.junior}>
-            <Rows rows={yearRows(1, T.junior + 700)} at={T.junior + 120} />
-          </Chapter>
-          <Chapter index={7} name="Senior year" art="certificate" done={0} total={6} open={sOpen} bodyHeight={6 * ROW} tapAt={T.senior}>
-            <Rows rows={seniorRows(T.senior + 700)} at={T.senior + 120} />
-          </Chapter>
-          <Chapter index={8} name="After graduation" art="cat-employment" done={0} total={4} open={aOpen} bodyHeight={4 * ROW} tapAt={T.after}>
-            <Rows rows={afterRows(T.after + 700)} at={T.after + 120} />
-          </Chapter>
+      <div className="absolute inset-x-0 top-0" style={{ transform: `translateY(${-camera}px)` }}>
+        <AppHeader />
+        <div className="px-3 pt-5">
+          <JourneyTop chapters={5} miles={2460} />
+          <div className="flex flex-col" style={{ gap: GAP }}>
+            <FreshmanFold />
+            <div>
+              <h2 className={`${display} px-1 pt-5 pb-1 text-[24px] leading-none`} style={tight}>
+                The rest of your degree
+              </h2>
+              <Chapter index={5} name="Sophomore year" blurb="Staying full time, taxes and summer plans" art="cat-campus" done={0} total={5} current open={1}>
+                <Rows rows={yearRows(0, T.soph + 500)} at={T.soph} />
+              </Chapter>
+            </div>
+            <Chapter index={6} name="Junior year" blurb="Summers, travel and staying on track" art="study" done={0} total={5} open={jOpen} tapAt={T.junior}>
+              <Rows rows={yearRows(1, T.junior + 700)} at={T.junior + 120} />
+            </Chapter>
+            <Chapter index={7} name="Senior year" blurb="Graduation and OPT, timed from your graduation date" art="certificate" done={0} total={6} open={sOpen} tapAt={T.senior}>
+              <Rows rows={seniorRows(T.senior + 700)} at={T.senior + 120} />
+            </Chapter>
+            <Chapter index={8} name="After graduation" blurb="OPT, reporting your job and STEM OPT" art="cat-employment" done={0} total={4} open={aOpen} tapAt={T.after}>
+              <Rows rows={afterRows(T.after + 700)} at={T.after + 120} />
+            </Chapter>
+          </div>
+          <div className="h-40" />
         </div>
       </div>
       <TabBar active="Journey" />

@@ -172,7 +172,7 @@ export function VisaCheck() {
           </Card>
         </At>
       </motion.div>
-      <TaskBar label="4 steps to go" />
+      <TaskBar of={4} />
     </Scene>
   );
 }
