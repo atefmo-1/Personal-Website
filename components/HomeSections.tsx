@@ -63,7 +63,7 @@ export function HomeSections() {
 
       {/* Signed off: my name, drawn by a Fourier series */}
       <SignatureFigure
-        caption={`Fig. 2 · My name, drawn by ${signaturePoints.length / 3} spinning circles (a Fourier series)`}
+        caption={`Fig. 1 · My name, drawn by ${signaturePoints.length / 3} spinning circles (a Fourier series)`}
         className="mx-auto max-w-2xl"
       />
     </div>

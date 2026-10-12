@@ -6,7 +6,7 @@ import { Art, RedrawButton } from "./Art";
 // The ridgelines panel inside the Outward Bound card on About.
 export function TripRidgelines() {
   const [redraws, setRedraws] = useState(0);
-  const caption = "Fig. 2 · Smith Rock to Broken Top, as ridgelines";
+  const caption = "Fig. 1 · Smith Rock to Broken Top, as ridgelines";
   return (
     <>
       <Art kind="ridges" seed={3} label={caption} className="h-28 lg:h-auto lg:min-h-[120px] lg:flex-1" redraws={redraws} />

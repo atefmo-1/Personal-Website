@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { ArtFigure } from "./Art";
 import { Button } from "./Button";
 import { InkJourney } from "./InkJourney";
 import { RotatingWord } from "./RotatingWord";
@@ -86,14 +85,6 @@ export function Hero() {
               </Button>
             </div>
           </div>
-
-          {/* The tagline, drawn: tangled lines that settle into calm, parallel ones */}
-          <ArtFigure
-            kind="order"
-            caption="Fig. 1 · Messy workflows in, tools people use out"
-            className="enter-fade mt-7 max-w-[560px]"
-            artClassName="aspect-[6/1]"
-          />
         </div>
 
         <div className="order-last col-span-12 mt-4 sm:mt-8">

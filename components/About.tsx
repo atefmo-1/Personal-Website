@@ -35,7 +35,7 @@ const sketchGrid = "mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10
 
 export function About() {
   return (
-    <Section title="About" art={{ kind: "shots", caption: "Fig. 1 · Every jump shot is a parabola" }}>
+    <Section title="About">
       {/* Hobbies */}
       <section>
         <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl"><Ink>{about.hobbiesTitle}</Ink></h2>

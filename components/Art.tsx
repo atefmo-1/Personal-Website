@@ -6,7 +6,7 @@ import { fbm, noise, rng } from "@/lib/noise";
 // Generative ink figures, drawn on a canvas in the theme's text color. Each one draws itself
 // the first time it scrolls into view, and clicking it draws a new variation (a new seed).
 // Reduced-motion readers get the finished figure straight away. Nothing reacts to hover.
-export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "shots" | "planes" | "lost" | "pascal" | "collatz" | "bst" | "konigsberg";
+export type ArtKind = "order" | "ridges" | "flow" | "converge" | "rings" | "lorenz" | "phyllotaxis" | "lissajous" | "spirograph" | "julia" | "planes" | "lost" | "pascal" | "collatz" | "bst" | "konigsberg";
 
 type Line = {
   pts: number[]; // x0, y0, x1, y1, ...
@@ -331,46 +331,6 @@ function isoSegments(field: Float32Array, cols: number, rows: number, cell: numb
   return out;
 }
 
-// A hoop and a handful of jump shots: each one is a parabola, y = y0 + vy*t + g*t^2/2.
-function shots(w: number, h: number, seed: number): Line[] {
-  const r = rng(seed * 40503 + 5);
-  const floor = h * 0.94;
-  const rim = { x: w * 0.83, y: h * 0.4 };
-  const lines: Line[] = [];
-  // Floor, pole, backboard, rim and net
-  lines.push({ pts: [w * 0.02, floor, w * 0.98, floor], width: 1, alpha: 0.6, start: 0, end: 0.1 });
-  lines.push({ pts: [w * 0.93, floor, w * 0.93, h * 0.22, w * 0.88, h * 0.22], width: 1.4, alpha: 0.9, start: 0.02, end: 0.12 });
-  lines.push({ pts: [w * 0.88, h * 0.12, w * 0.88, h * 0.46], width: 2, alpha: 1, start: 0.06, end: 0.14 });
-  lines.push({ pts: [w * 0.88, rim.y, w * 0.79, rim.y], width: 1.6, alpha: 1, start: 0.1, end: 0.16 });
-  for (let i = 0; i < 4; i++) {
-    const x = w * 0.79 + (i / 3) * w * 0.09;
-    lines.push({ pts: [x, rim.y, w * 0.805 + (i / 3) * w * 0.06, rim.y + h * 0.12], width: 0.7, alpha: 0.55, start: 0.12, end: 0.18 });
-  }
-  const n = 7;
-  for (let i = 0; i < n; i++) {
-    const x0 = w * (0.05 + r() * 0.55);
-    const y0 = floor - h * (0.2 + r() * 0.08);
-    const miss = i === 2 || i === 5;
-    const tx = rim.x + (miss ? (r() < 0.5 ? -1 : 1) * w * 0.035 : 0);
-    const T = 1;
-    const g = h * (2.2 + r() * 1.2); // higher arcs for some shots
-    const vx = (tx - x0) / T;
-    const vy = (rim.y - y0 - (g * T * T) / 2) / T;
-    const pts: number[] = [];
-    for (let t = 0; t <= T; t += 0.01) pts.push(x0 + vx * t, y0 + vy * t + (g * t * t) / 2);
-    if (miss) {
-      // Off the rim: a small bounce away
-      const bx = tx;
-      for (let t = 0.01; t <= 0.5; t += 0.01) pts.push(bx + (tx < rim.x ? -1 : 1) * w * 0.12 * t, rim.y - h * 0.5 * t + h * 1.6 * t * t);
-    } else {
-      for (let t = 0.01; t <= 0.12; t += 0.01) pts.push(tx, rim.y + h * t);
-    }
-    const start = 0.15 + (i / n) * 0.7;
-    lines.push({ pts, width: miss ? 0.8 : 1.1, alpha: miss ? 0.5 : 0.85, start, end: start + 0.16, dot: true });
-  }
-  return lines;
-}
-
 // Paper planes on curved paths from all directions, landing in Chapel Hill.
 function planes(w: number, h: number, seed: number): Line[] {
   const r = rng(seed * 7477 + 13);
@@ -604,7 +564,7 @@ function konigsberg(w: number, h: number, seed: number): Line[] {
   return lines;
 }
 
-const builders = { pascal, collatz, bst, konigsberg, lost, shots, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
+const builders = { pascal, collatz, bst, konigsberg, lost, planes, order, ridges, flow, converge, rings, lorenz, phyllotaxis, lissajous, spirograph, julia };
 
 // `redraws` lets something outside the canvas (the caption's redraw button) ask for a new version:
 // each time the number goes up, the figure draws a new variation.

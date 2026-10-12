@@ -1,4 +1,3 @@
-import { Automaton } from "./Automaton";
 import { Reveal } from "./Reveal";
 import { ExperienceRows } from "./RoleRows";
 import { Section } from "./Section";
@@ -9,7 +8,7 @@ import { workBio } from "@/lib/experience";
 export function Experience() {
   const [lead, ...rest] = workBio;
   return (
-    <Section title="Work & Experience" aside={<Automaton caption="Fig. 1 · A finite automaton for ATE+F" />}>
+    <Section title="Work & Experience" art={{ kind: "order", caption: "Fig. 1 · Messy workflows in, tools people use out" }}>
       <Reveal className="mb-16 max-w-3xl sm:mb-20">
         <p className="font-display text-xl font-medium leading-snug tracking-tight sm:text-2xl">{lead}</p>
         {rest.map((p) => (
