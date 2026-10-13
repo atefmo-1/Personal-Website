@@ -584,12 +584,12 @@ export const projects: Project[] = [
           shots: [
             { motion: "ask", alt: "Animation of Ask Reloco: Can I work 30 hours a week at my campus job? is typed and sent, Reloco checks her work eligibility, streams an answer explaining the 20-hour limit while classes are in session, marks it Confirm with ISSS and links its ISSS sources", caption: "A work question, checked against where she is" },
             phone(
-              "61-ask-sources-phone",
+              "61-ask-sources-phone-v26",
               "The rest of the answer, with its two sources: ISSS on-campus employment and UNC International Student and Scholar Services",
               "Every answer shows what it relied on",
             ),
             phone(
-              "62-ask-email-phone",
+              "62-ask-email-phone-v26",
               "Ask Reloco explaining a pasted CPT approval email, with the print-and-sign deadline highlighted and a Mark done suggestion for the CPT task",
               "A pasted email becomes a deadline and a one-tap update",
             ),
